@@ -9,10 +9,13 @@ QML_IMPORT_PATH =
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp tile.cpp \
     map.cpp \
-    maploader.cpp
+    player.cpp \
+    gamemanager.cpp
+
 HEADERS += tile.h \
     map.h \
-    maploader.h
+    player.h \
+    gamemanager.h
 
 # Installation path
 # target.path =
@@ -26,4 +29,4 @@ RESOURCES += \
 
 OTHER_FILES += \
     default.map \
-    qml/bomb/QmlTile.qml
+    qml/bomb/MapSprite.qml

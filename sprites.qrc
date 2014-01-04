@@ -14,6 +14,38 @@
         <file>sprites/tiles/stone/stone-1.png</file>
         <file>sprites/tiles/stone/stone-2.png</file>
         <file>sprites/tiles/stone/stone-3.png</file>
+        <file>sprites/character1/character-e-0.png</file>
+        <file>sprites/character1/character-e-1.png</file>
+        <file>sprites/character1/character-e-2.png</file>
+        <file>sprites/character1/character-e-3.png</file>
+        <file>sprites/character1/character-n-0.png</file>
+        <file>sprites/character1/character-n-1.png</file>
+        <file>sprites/character1/character-n-2.png</file>
+        <file>sprites/character1/character-n-3.png</file>
+        <file>sprites/character1/character-s-0.png</file>
+        <file>sprites/character1/character-s-1.png</file>
+        <file>sprites/character1/character-s-2.png</file>
+        <file>sprites/character1/character-s-3.png</file>
+        <file>sprites/character1/character-w-0.png</file>
+        <file>sprites/character1/character-w-1.png</file>
+        <file>sprites/character1/character-w-2.png</file>
+        <file>sprites/character1/character-w-3.png</file>
+        <file>sprites/character2/character-e-0.png</file>
+        <file>sprites/character2/character-e-1.png</file>
+        <file>sprites/character2/character-e-2.png</file>
+        <file>sprites/character2/character-e-3.png</file>
+        <file>sprites/character2/character-n-0.png</file>
+        <file>sprites/character2/character-n-1.png</file>
+        <file>sprites/character2/character-n-2.png</file>
+        <file>sprites/character2/character-n-3.png</file>
+        <file>sprites/character2/character-s-0.png</file>
+        <file>sprites/character2/character-s-1.png</file>
+        <file>sprites/character2/character-s-2.png</file>
+        <file>sprites/character2/character-s-3.png</file>
+        <file>sprites/character2/character-w-0.png</file>
+        <file>sprites/character2/character-w-1.png</file>
+        <file>sprites/character2/character-w-2.png</file>
+        <file>sprites/character2/character-w-3.png</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

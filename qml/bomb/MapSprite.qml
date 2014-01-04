@@ -9,7 +9,6 @@ Rectangle {
     onTypeChanged: {
         if (type === Tile.Grass) {
             image.source = "qrc:/sprites/tiles/grass/grass-" + Math.floor(Math.random() * 4) + ".png"
-            console.log(image.source)
         } else if (type === Tile.Floor) {
             image.source = "qrc:/sprites/tiles/floor/floor-" + Math.floor(Math.random() * 3) + ".png"
         } else if (type === Tile.Wall) {

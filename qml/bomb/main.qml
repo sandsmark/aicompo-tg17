@@ -3,10 +3,18 @@ import QtQuick 2.0
 Rectangle {
     //anchors.fill: parent
     color: "black"
-    width: 1000
-    height: 1000
+
+    signal userMove(string direction)
+
+    Keys.onDownPressed: userMove("down")
+    Keys.onUpPressed: userMove("up")
+    Keys.onRightPressed: userMove("right")
+    Keys.onLeftPressed: userMove("left")
+
+    focus: true
 
     Grid {
+        id: playingField
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         //anchors.centerIn: parent
@@ -15,15 +23,23 @@ Rectangle {
 
         rows: map.height
         columns: map.width
-        Component.onCompleted: console.log("rows: " + rows + " columns: " + columns)
+
         Repeater {
             id: repeater
-            model: tiles
-    //        Component.onCompleted: console.log("height: " + tiles.length)
-            delegate: QmlTile {
+            model: map.tiles
+            delegate: MapSprite {
                 type: model.modelData.type
                 border.width: 1
             }
+        }
+    }
+
+    Repeater {
+        model: players
+        delegate: PlayerSprite {
+            playerId: model.modelData.id
+            x: playingField.x + model.modelData.position.x * 64
+            y: playingField.y + model.modelData.position.y * 64
         }
     }
 }
