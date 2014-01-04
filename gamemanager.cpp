@@ -24,14 +24,17 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
         return;
     }
 
-
+    // Set up players
     const QList<QPoint> startingPositions = m_map->startingPositions();
     for (int i=0; i < startingPositions.size(); i++) {
         m_players.append(new Player(this, i));
         player(i)->setPosition(startingPositions[i]);
     }
 
+    // Expose player objects to the QML
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+
+    connect(this, SIGNAL(gameOver()), SLOT(gameEnd()));
 }
 
 
@@ -76,7 +79,7 @@ void GameManager::userMove(const QString &direction)
         return;
     }
 
-    if (m_map->isWalkable(position)) {
+    if (m_map->isValidPosition(position)) {
         player->setPosition(position);
     }
 }
@@ -106,14 +109,41 @@ void GameManager::addBomb(const QPoint &position)
     bombSprite->setParentItem(playingField);
 
     Bomb *bomb = new Bomb(this, position, bombSprite);
-    connect(bomb, SIGNAL(boom(QPoint)), SLOT(detonateBomb(QPoint)));
+    connect(bomb, SIGNAL(boom(QPoint)), m_map, SLOT(detonateBomb(QPoint)));
     bombSprite->setProperty("bombData", QVariant::fromValue(bomb));
 }
 
-void GameManager::detonateBomb(const QPoint &position)
+void GameManager::explosionAt(const QPoint &position)
 {
-    sender()->deleteLater();
-    m_map->detonateBomb(position);
+    int dead = 0;
+    foreach(QObject *obj, m_players) {
+        Player *player = qobject_cast<Player*>(obj);
+        if (player->position() == position) {
+            player->die();
+            dead++;
+        }
+    }
+
+    if (dead == m_players.size() - 1) {
+        emit gameOver();
+    }
+}
+
+void GameManager::gameEnd()
+{
+    disconnect(m_map, SIGNAL(explosionAt(QPoint)), this, SLOT(explosionAt(QPoint)));
+    disconnect(m_view->rootObject(), SIGNAL(userMove(QString)), this, SLOT(userMove(QString)));
+
+    QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
+    if (endScreen) {
+        endScreen->setProperty("opacity", 1.0);
+    }
+}
+
+void GameManager::gameStart()
+{
+    connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
+    connect(m_view->rootObject(), SIGNAL(userMove(QString)), SLOT(userMove(QString)));
 }
 
 Player *GameManager::player(int id)

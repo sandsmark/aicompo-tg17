@@ -23,7 +23,12 @@ public:
 public slots:
     void userMove(const QString &direction);
     void addBomb(const QPoint &position);
-    void detonateBomb(const QPoint &position);
+    void explosionAt(const QPoint &position);
+    void gameEnd();
+    void gameStart();
+
+signals:
+    void gameOver();
 
 private:
     Map *m_map;

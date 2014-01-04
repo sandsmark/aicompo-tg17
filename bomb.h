@@ -7,14 +7,14 @@
 
 class QQuickItem;
 
-#define BOMB_STATES 13
+#define BOMB_STATES 14
 #define BOMB_TIME 3000
 
 class Bomb : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int state READ state() NOTIFY stateChanged())
-    Q_PROPERTY(QPoint position READ position())
+    Q_PROPERTY(QPoint position READ position() CONSTANT)
 
 public:
     explicit Bomb(QObject *parent, QPoint position, QQuickItem *sprite);

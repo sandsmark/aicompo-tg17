@@ -14,6 +14,7 @@ Rectangle {
 
     focus: true
 
+    // Map background grid
     Grid {
         id: playingField
         objectName: "playingField"
@@ -36,6 +37,7 @@ Rectangle {
         }
     }
 
+    // List of player sprites
     Repeater {
         model: players
         delegate: PlayerSprite {
@@ -43,5 +45,10 @@ Rectangle {
             x: playingField.x + model.modelData.position.x * 64
             y: playingField.y + model.modelData.position.y * 64
         }
+    }
+
+    EndScreen {
+        opacity: 0
+        objectName: "endScreen"
     }
 }

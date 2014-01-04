@@ -6,7 +6,13 @@ Image {
     smooth: false
     height: 64
     width: 64
+    property bool isAlive: alive
     source: "qrc:/sprites/character" + (playerId+1)  + "/character-s-0.png"
+    onIsAliveChanged: {
+        if (!isAlive) {
+            source = "qrc:/sprites/blood.png"
+        }
+    }
 
     Behavior on x {
         NumberAnimation {

@@ -19,12 +19,12 @@ Bomb::~Bomb()
 
 void Bomb::tick()
 {
-    qDebug() << m_state;
     m_state++;
-    if (m_state >= BOMB_STATES) {
+    if (m_state > BOMB_STATES) {
         emit boom(m_position);
         QMetaObject::invokeMethod(&m_timer, "stop");
     }
+
     emit stateChanged();
 }
 

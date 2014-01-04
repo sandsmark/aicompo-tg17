@@ -16,6 +16,7 @@ public:
         Floor,
         Wall,
         Stone,
+        Debris,
         Invalid = -1
     };
 
@@ -23,9 +24,12 @@ public:
     Tile() : m_type(Invalid) {}
 
 
-    Type type() const { return m_type; }
-    void setType(const Type type) { m_type = type; emit typeChanged(); }
+    Type type() const;
+    void setType(const Type type);
 
+    bool isWalkable() const;
+
+    void explode();
 
 signals:
     void typeChanged();

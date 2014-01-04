@@ -20,8 +20,7 @@ int main(int argc, char *argv[])
     GameManager *manager = new GameManager(&view);
     view.setSource(QStringLiteral("qml/bomb/main.qml"));
     view.showMaximized();
-    QObject *item = view.rootObject();
-    QObject::connect(item, SIGNAL(userMove(QString)), manager, SLOT(userMove(QString)));
 
+    manager->gameStart();
     return app.exec();
 }

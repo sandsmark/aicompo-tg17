@@ -1,7 +1,9 @@
 #include "player.h"
 
+#include <QDebug>
+
 Player::Player(QObject *parent, int id) :
-    QObject(parent), m_id(id)
+    QObject(parent), m_id(id), m_alive(true)
 {
 }
 
@@ -20,4 +22,16 @@ void Player::setPosition(const QPoint &position)
 int Player::id()
 {
     return m_id;
+}
+
+void Player::die()
+{
+    qDebug() << m_id << "died";
+    m_alive = false;
+    emit aliveChanged();
+}
+
+bool Player::isAlive()
+{
+    return m_alive;
 }

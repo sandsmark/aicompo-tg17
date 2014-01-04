@@ -64,6 +64,15 @@
         <file>qml/bomb/main.qml</file>
         <file>qml/bomb/MapSprite.qml</file>
         <file>qml/bomb/PlayerSprite.qml</file>
+        <file>sprites/explosion/flame-0.png</file>
+        <file>sprites/explosion/flame-1.png</file>
+        <file>sprites/explosion/flame-2.png</file>
+        <file>sprites/explosion/flame-3.png</file>
+        <file>sprites/explosion/flame-4.png</file>
+        <file>sprites/tiles/debris/debris-0.png</file>
+        <file>sprites/tiles/debris/debris-1.png</file>
+        <file>sprites/tiles/debris/debris-2.png</file>
+        <file>sprites/blood.png</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

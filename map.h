@@ -13,9 +13,9 @@ class Map : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int width READ width() NOTIFY sizeChanged())
-    Q_PROPERTY(int height READ height() NOTIFY sizeChanged())
-    Q_PROPERTY(QList<QObject*> tiles READ tiles() NOTIFY tilesChanged())
+    Q_PROPERTY(int width READ width() CONSTANT)
+    Q_PROPERTY(int height READ height() CONSTANT)
+    Q_PROPERTY(QList<QObject*> tiles READ tiles() CONSTANT)
 
 
 public:
@@ -23,28 +23,27 @@ public:
 
     int width();
     int height();
-    void setWidth(int width);
-    void setHeight(int height);
 
     bool isNull();
     bool isValid();
 
     QList<QObject*> tiles();
-    void addTile(Tile *tile);
-
-    bool isWalkable(const QPoint &position);
 
     const QList<QPoint> &startingPositions() const;
 
+    bool isValidPosition(const QPoint &position) const;
+    bool isWithinBounds(const QPoint &position) const;
+
+public slots:
     void detonateBomb(const QPoint &position);
 
 signals:
-    void sizeChanged();
-    void tilesChanged();
-
-public slots:
+    void explosionAt(QPoint position);
 
 private:
+    Tile *tileAt(const QPoint &position) const;
+    void explodeTile(const QPoint &position);
+
     int m_width;
     int m_height;
     QList<QObject*> m_tiles;

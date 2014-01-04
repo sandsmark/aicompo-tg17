@@ -18,8 +18,8 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
 
     // Read in size
     QByteArray dimensions = file.readLine().trimmed();
-    setHeight(dimensions.split('x').first().toInt());
-    setWidth(dimensions.split('x').last().toInt());
+    m_height = dimensions.split('x').first().toInt();
+    m_width = dimensions.split('x').last().toInt();
     if (height() == 0 || width() == 0) {
         qWarning() << "Map: Unable to parse size from file:" << path;
         return;
@@ -50,16 +50,16 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
         foreach(const char type, line) {
             switch(type) {
             case '.':
-                addTile(new Tile(this, Tile::Grass));
+                m_tiles.append(new Tile(this, Tile::Grass));
                 break;
             case '_':
-                addTile(new Tile(this, Tile::Floor));
+                m_tiles.append(new Tile(this, Tile::Floor));
                 break;
             case '+':
-                addTile(new Tile(this, Tile::Wall));
+                m_tiles.append(new Tile(this, Tile::Wall));
                 break;
             case '#':
-                addTile(new Tile(this, Tile::Stone));
+                m_tiles.append(new Tile(this, Tile::Stone));
                 break;
             }
         }
@@ -76,17 +76,6 @@ int Map::height()
     return m_height;
 }
 
-void Map::setWidth(int width)
-{
-    m_width = width; emit sizeChanged();
-}
-
-void Map::setHeight(int height)
-{
-    m_height = height;
-    emit sizeChanged();
-}
-
 bool Map::isValid()
 {
     return (!m_tiles.isEmpty() && m_width * m_height == m_tiles.size());
@@ -96,40 +85,30 @@ QList<QObject *> Map::tiles() {
     return m_tiles;
 }
 
-void Map::addTile(Tile *tile) {
-    m_tiles.append(tile); emit tilesChanged();
-}
-
-bool Map::isWalkable(const QPoint &position)
+bool Map::isValidPosition(const QPoint &position) const
 {
-    const int x = position.x();
-    const int y = position.y();
-
-    if (x < 0 || x > m_width)
+    if (!isWithinBounds(position)) {
         return false;
+    }
 
-    if (y < 0 || y > m_height)
-        return false;
-
-    Tile *tile = qobject_cast<Tile*>(m_tiles[y * m_width + x]);
+    Tile *tile = tileAt(position);
 
     if (!tile) {
         return false;
     }
 
-    Tile::Type type = tile->type();
+    return tile->isWalkable();
+}
 
-    switch(type) {
-    case Tile::Grass:
-    case Tile::Floor:
-        return true;
-    case Tile::Stone:
-    case Tile::Wall:
-    case Tile::Invalid:
+bool Map::isWithinBounds(const QPoint &position) const
+{
+    if (position.x() < 0 || position.x() >= m_width)
         return false;
-    }
 
-    return false;
+    if (position.y() < 0 || position.y() >= m_height)
+        return false;
+
+    return true;
 }
 
 const QList<QPoint> &Map::startingPositions() const
@@ -137,9 +116,33 @@ const QList<QPoint> &Map::startingPositions() const
     return m_startingPositions;
 }
 
-void Map::detonateBomb(const QPoint &position)
+Tile *Map::tileAt(const QPoint &position) const
 {
-    for (int i = -2; i<2; i++) {
+    int index = position.y() * m_width + position.x();
+    if (index > m_tiles.size() || index < 0) {
+        return NULL;
+    }
 
+    return qobject_cast<Tile*>(m_tiles[index]);
+}
+
+void Map::explodeTile(const QPoint &position)
+{
+    if (!isWithinBounds(position)) {
+        return;
+    }
+
+    tileAt(position)->explode();
+
+    emit explosionAt(position);
+}
+
+void Map::detonateBomb(const QPoint &center)
+{
+    sender()->deleteLater();
+
+    for (int i = -2; i<=2; i++) {
+        explodeTile(QPoint(center.x() + i, center.y()));
+        explodeTile(QPoint(center.x(), center.y() + i));
     }
 }
