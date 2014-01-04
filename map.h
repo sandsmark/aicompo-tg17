@@ -36,6 +36,8 @@ public:
 
     const QList<QPoint> &startingPositions() const;
 
+    void detonateBomb(const QPoint &position);
+
 signals:
     void sizeChanged();
     void tilesChanged();

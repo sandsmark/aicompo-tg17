@@ -136,3 +136,10 @@ const QList<QPoint> &Map::startingPositions() const
 {
     return m_startingPositions;
 }
+
+void Map::detonateBomb(const QPoint &position)
+{
+    for (int i = -2; i<2; i++) {
+
+    }
+}

@@ -46,6 +46,24 @@
         <file>sprites/character2/character-w-1.png</file>
         <file>sprites/character2/character-w-2.png</file>
         <file>sprites/character2/character-w-3.png</file>
+        <file>sprites/bomb/bomb-0.png</file>
+        <file>sprites/bomb/bomb-1.png</file>
+        <file>sprites/bomb/bomb-2.png</file>
+        <file>sprites/bomb/bomb-3.png</file>
+        <file>sprites/bomb/bomb-4.png</file>
+        <file>sprites/bomb/bomb-5.png</file>
+        <file>sprites/bomb/bomb-6.png</file>
+        <file>sprites/bomb/bomb-7.png</file>
+        <file>sprites/bomb/bomb-8.png</file>
+        <file>sprites/bomb/bomb-9.png</file>
+        <file>sprites/bomb/bomb-10.png</file>
+        <file>sprites/bomb/bomb-11.png</file>
+        <file>sprites/bomb/bomb-12.png</file>
+        <file>sprites/bomb/bomb-13.png</file>
+        <file>qml/bomb/BombSprite.qml</file>
+        <file>qml/bomb/main.qml</file>
+        <file>qml/bomb/MapSprite.qml</file>
+        <file>qml/bomb/PlayerSprite.qml</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

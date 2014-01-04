@@ -10,11 +10,13 @@ Rectangle {
     Keys.onUpPressed: userMove("up")
     Keys.onRightPressed: userMove("right")
     Keys.onLeftPressed: userMove("left")
+    Keys.onSpacePressed: userMove("dropBomb")
 
     focus: true
 
     Grid {
         id: playingField
+        objectName: "playingField"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         //anchors.centerIn: parent

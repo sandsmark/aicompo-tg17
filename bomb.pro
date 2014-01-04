@@ -10,12 +10,14 @@ QML_IMPORT_PATH =
 SOURCES += main.cpp tile.cpp \
     map.cpp \
     player.cpp \
-    gamemanager.cpp
+    gamemanager.cpp \
+    bomb.cpp
 
 HEADERS += tile.h \
     map.h \
     player.h \
-    gamemanager.h
+    gamemanager.h \
+    bomb.h
 
 # Installation path
 # target.path =

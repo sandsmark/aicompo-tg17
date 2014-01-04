@@ -9,7 +9,7 @@ class Player : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QPoint position READ position() NOTIFY positionChanged())
-    Q_PROPERTY(int id READ id() NOTIFY idChanged())
+    Q_PROPERTY(int id READ id() CONSTANT)
 
 public:
     explicit Player(QObject *parent, int id);
@@ -22,7 +22,6 @@ public:
 
 signals:
     void positionChanged();
-    void idChanged();
 
 public slots:
 

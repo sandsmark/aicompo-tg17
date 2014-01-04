@@ -1,18 +1,21 @@
+#include "gamemanager.h"
 
 #include "tile.h"
 #include "map.h"
 #include "player.h"
+#include "bomb.h"
 
 #include <QDebug>
 #include <QFile>
 #include <QQmlContext>
+#include <QQuickView>
+#include <QQuickItem>
 #include <QPoint>
 #include <QList>
+#include <QQmlComponent>
 
-#include "gamemanager.h"
-
-GameManager::GameManager(QQmlContext *view) : QObject(view),
-    m_map(0), m_context(view)
+GameManager::GameManager(QQuickView *view) : QObject(view),
+    m_map(0), m_view(view), m_bombComponent(0)
 {
     loadMap(":/maps/default.map");
 
@@ -28,7 +31,7 @@ GameManager::GameManager(QQmlContext *view) : QObject(view),
         player(i)->setPosition(startingPositions[i]);
     }
 
-    m_context->setContextProperty("players", QVariant::fromValue(m_players));
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }
 
 
@@ -42,7 +45,7 @@ void GameManager::loadMap(const QString &path)
         return;
     }
 
-    m_context->setContextProperty("map", map);
+    m_view->rootContext()->setContextProperty("map", map);
 
     if (m_map)
         m_map->deleteLater();
@@ -66,6 +69,9 @@ void GameManager::userMove(const QString &direction)
         position.setX(position.x() - 1);
     } else if (direction == "right") {
         position.setX(position.x() + 1);
+    } else if (direction == "dropBomb") {
+        addBomb(position);
+        return;
     } else {
         return;
     }
@@ -73,6 +79,41 @@ void GameManager::userMove(const QString &direction)
     if (m_map->isWalkable(position)) {
         player->setPosition(position);
     }
+}
+
+void GameManager::addBomb(const QPoint &position)
+{
+    if (!m_bombComponent) {
+        m_bombComponent = new QQmlComponent(m_view->engine(), QUrl("qrc:/qml/bomb/BombSprite.qml"), QQmlComponent::PreferSynchronous);
+    }
+
+    if (m_bombComponent->status() != QQmlComponent::Ready) {
+        qWarning() << "GameManager: Unable to instantiate bomb sprite:" << m_bombComponent->errorString();;
+        return;
+    }
+    QObject *playingFieldObject = m_view->rootObject()->findChild<QObject*>("playingField");
+    if (!playingFieldObject) {
+        qWarning() << "GameManager: Unable to locate playing field object!";
+        return;
+    }
+    QQuickItem *playingField = qobject_cast<QQuickItem*>(playingFieldObject);
+    if (!playingField) {
+        qWarning() << "GameManager: Unable to locate playing field QML item!";
+        return;
+    }
+
+    QQuickItem *bombSprite = qobject_cast<QQuickItem*>(m_bombComponent->create());
+    bombSprite->setParentItem(playingField);
+
+    Bomb *bomb = new Bomb(this, position, bombSprite);
+    connect(bomb, SIGNAL(boom(QPoint)), SLOT(detonateBomb(QPoint)));
+    bombSprite->setProperty("bombData", QVariant::fromValue(bomb));
+}
+
+void GameManager::detonateBomb(const QPoint &position)
+{
+    sender()->deleteLater();
+    m_map->detonateBomb(position);
 }
 
 Player *GameManager::player(int id)
