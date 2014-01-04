@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sprites/tiles/grass/grass-0.png</file>
+        <file>sprites/tiles/grass/grass-1.png</file>
+        <file>sprites/tiles/grass/grass-2.png</file>
+        <file>sprites/tiles/grass/grass-3.png</file>
+        <file>sprites/tiles/floor/floor-0.png</file>
+        <file>sprites/tiles/floor/floor-1.png</file>
+        <file>sprites/tiles/floor/floor-2.png</file>
+        <file>sprites/tiles/brickwall/brickwall-0.png</file>
+        <file>sprites/tiles/brickwall/brickwall-1.png</file>
+        <file>sprites/tiles/brickwall/brickwall-2.png</file>
+        <file>sprites/tiles/stone/stone-0.png</file>
+        <file>sprites/tiles/stone/stone-1.png</file>
+        <file>sprites/tiles/stone/stone-2.png</file>
+        <file>sprites/tiles/stone/stone-3.png</file>
+    </qresource>
+    <qresource prefix="/maps">
+        <file>default.map</file>
+    </qresource>
+</RCC>
