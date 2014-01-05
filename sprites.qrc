@@ -73,6 +73,8 @@
         <file>sprites/tiles/debris/debris-1.png</file>
         <file>sprites/tiles/debris/debris-2.png</file>
         <file>sprites/blood.png</file>
+        <file>sprites/tiles/pebbles/pebbles-0.png</file>
+        <file>sprites/tiles/pebbles/pebbles-1.png</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

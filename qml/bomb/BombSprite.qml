@@ -12,6 +12,8 @@ Image {
     y: bombY
     source: bombData == null ? "" : "qrc:/sprites/bomb/bomb-" + bombData.state + ".png"
 
+
+
     Connections {
         target: bombData
         onStateChanged: {
@@ -22,6 +24,21 @@ Image {
         }
     }
 
+    Behavior on x {
+        NumberAnimation {
+            easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
+            duration: 500
+        }
+    }
+
+    Behavior on y {
+        NumberAnimation {
+            easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
+            duration: 500
+        }
+    }
+
+    // Flames
     Item {
         anchors.fill: parent
         id: explosion

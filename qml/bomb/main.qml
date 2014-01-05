@@ -1,16 +1,15 @@
 import QtQuick 2.0
 
 Rectangle {
-    //anchors.fill: parent
     color: "black"
 
     signal userMove(string direction)
 
-    Keys.onDownPressed: userMove("down")
-    Keys.onUpPressed: userMove("up")
-    Keys.onRightPressed: userMove("right")
-    Keys.onLeftPressed: userMove("left")
-    Keys.onSpacePressed: userMove("dropBomb")
+    Keys.onDownPressed: userMove("DOWN")
+    Keys.onUpPressed: userMove("UP")
+    Keys.onRightPressed: userMove("RIGHT")
+    Keys.onLeftPressed: userMove("LEFT")
+    Keys.onSpacePressed: userMove("BOMB")
 
     focus: true
 
@@ -18,9 +17,9 @@ Rectangle {
     Grid {
         id: playingField
         objectName: "playingField"
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        //anchors.centerIn: parent
+        //anchors.horizontalCenter: parent.horizontalCenter
+        //anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
         width: rows * 64
         height: columns * 64
 
@@ -33,6 +32,29 @@ Rectangle {
             delegate: MapSprite {
                 type: model.modelData.type
                 border.width: 1
+            }
+        }
+
+        Timer {
+            property int count: 0
+            id: explosionTimer
+            interval: 50
+            repeat: true
+            running: false
+            onTriggered: {
+                playingField.anchors.horizontalCenterOffset = Math.random() * 10
+                playingField.anchors.verticalCenterOffset = Math.random() * 10
+                if (count > 3) {
+                    running = false
+                }
+                count++;
+            }
+        }
+        Connections {
+            target: map
+            onExplosionAt: {
+                explosionTimer.count = 0
+                explosionTimer.running = true
             }
         }
     }

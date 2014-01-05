@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QString>
+#include <QTimer>
 
 class Map;
 class QQuickView;
@@ -19,9 +20,9 @@ public:
     Q_INVOKABLE void loadMap(const QString &path);
 
     Player *player(int id);
+    int playerCount();
 
 public slots:
-    void userMove(const QString &direction);
     void addBomb(const QPoint &position);
     void explosionAt(const QPoint &position);
     void gameEnd();
@@ -30,11 +31,15 @@ public slots:
 signals:
     void gameOver();
 
+private slots:
+    void gameTick();
+
 private:
     Map *m_map;
     QQuickView *m_view;
     QList<QObject*> m_players;
     QQmlComponent *m_bombComponent;
+    QTimer m_timer;
 };
 
 #endif // MAPLOADER_H

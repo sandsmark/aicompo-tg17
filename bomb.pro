@@ -11,13 +11,15 @@ SOURCES += main.cpp tile.cpp \
     map.cpp \
     player.cpp \
     gamemanager.cpp \
-    bomb.cpp
+    bomb.cpp \
+    userplayer.cpp
 
 HEADERS += tile.h \
     map.h \
     player.h \
     gamemanager.h \
-    bomb.h
+    bomb.h \
+    userplayer.h
 
 # Installation path
 # target.path =

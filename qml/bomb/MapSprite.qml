@@ -16,7 +16,7 @@ Rectangle {
         } else if (type === Tile.Stone) {
             image.source = "qrc:/sprites/tiles/stone/stone-" + Math.floor(Math.random() * 4) + ".png"
         } else if (type == Tile.Debris) {
-            image.source = "qrc:/sprites/tiles/debris/debris-" + Math.floor(Math.random() * 3) + ".png"
+            image.source = "qrc:/sprites/tiles/pebbles/pebbles-" + Math.floor(Math.random() * 2) + ".png"
         } else {
             console.log("TILE: Unknown tile type:" + type)
         }

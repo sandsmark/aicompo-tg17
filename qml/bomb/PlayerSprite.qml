@@ -7,10 +7,27 @@ Image {
     height: 64
     width: 64
     property bool isAlive: alive
-    source: "qrc:/sprites/character" + (playerId+1)  + "/character-s-0.png"
+    property int walkCycle: 0
+    property string direction: "s"
+    property string command: lastCommand
+
+
+    source: "qrc:/sprites/character" + (playerId+1)  + "/character-" + direction + "-" + walkCycle + ".png"
     onIsAliveChanged: {
         if (!isAlive) {
             source = "qrc:/sprites/blood.png"
+        }
+    }
+
+    onCommandChanged: {
+        if (command === "UP") {
+            direction = "n"
+        } else if (command === "DOWN") {
+            direction = "s"
+        } else if (command === "RIGHT") {
+            direction = "e"
+        } else if (command === "LEFT") {
+            direction = "w"
         }
     }
 

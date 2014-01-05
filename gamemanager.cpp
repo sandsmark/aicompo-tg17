@@ -34,6 +34,11 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     // Expose player objects to the QML
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 
+    // 20 times a second
+    m_timer.setInterval(100);
+    m_timer.setSingleShot(false);
+
+    connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
     connect(this, SIGNAL(gameOver()), SLOT(gameEnd()));
 }
 
@@ -54,34 +59,6 @@ void GameManager::loadMap(const QString &path)
         m_map->deleteLater();
 
     m_map = map;
-}
-
-void GameManager::userMove(const QString &direction)
-{
-    if (!m_map) return;
-
-    Player *player = qobject_cast<Player*>(m_players[0]);
-
-    QPoint position = player->position();
-
-    if (direction == "up") {
-        position.setY(position.y() - 1);
-    } else if (direction == "down") {
-        position.setY(position.y() + 1);
-    } else if (direction == "left") {
-        position.setX(position.x() - 1);
-    } else if (direction == "right") {
-        position.setX(position.x() + 1);
-    } else if (direction == "dropBomb") {
-        addBomb(position);
-        return;
-    } else {
-        return;
-    }
-
-    if (m_map->isValidPosition(position)) {
-        player->setPosition(position);
-    }
 }
 
 void GameManager::addBomb(const QPoint &position)
@@ -123,10 +100,6 @@ void GameManager::explosionAt(const QPoint &position)
             dead++;
         }
     }
-
-    if (dead == m_players.size() - 1) {
-        emit gameOver();
-    }
 }
 
 void GameManager::gameEnd()
@@ -138,16 +111,67 @@ void GameManager::gameEnd()
     if (endScreen) {
         endScreen->setProperty("opacity", 1.0);
     }
+    m_timer.stop();
 }
 
 void GameManager::gameStart()
 {
     connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
-    connect(m_view->rootObject(), SIGNAL(userMove(QString)), SLOT(userMove(QString)));
+    for(int i=0; i<playerCount(); i++) {
+        connect(m_view->rootObject(), SIGNAL(userMove(QString)), player(i), SLOT(setCommand(QString)));
+    }
+    m_timer.start();
+}
+
+void GameManager::gameTick()
+{
+    for (int i=0; i<playerCount(); i++) {
+        QString command = player(i)->command();
+        if (command.isEmpty()) {
+            continue;
+        }
+
+        QPoint position = player(i)->position();
+
+        if (command == "UP") {
+            position.setY(position.y() - 1);
+        } else if (command == "DOWN") {
+            position.setY(position.y() + 1);
+        } else if (command == "LEFT") {
+            position.setX(position.x() - 1);
+        } else if (command == "RIGHT") {
+            position.setX(position.x() + 1);
+        } else if (command == "BOMB") {
+            addBomb(position);
+            return;
+        } else {
+            return;
+        }
+
+        if (m_map->isValidPosition(position)) {
+            player(i)->setPosition(position);
+        }
+    }
+
+    int dead = 0;
+    for(int i=0; i<playerCount(); i++) {
+        if (!player(i)->isAlive()) {
+            dead++;
+        }
+    }
+
+    if (m_players.size() - dead < 2) {
+        emit gameOver();
+    }
 }
 
 Player *GameManager::player(int id)
 {
     if (id > m_players.size()) return NULL;
     return qobject_cast<Player*>(m_players[id]);
+}
+
+int GameManager::playerCount()
+{
+    return m_players.size();
 }
