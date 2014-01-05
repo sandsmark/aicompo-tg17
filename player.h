@@ -38,6 +38,8 @@ private:
     QPoint m_position;
     int m_id;
     bool m_alive;
+    QString m_name;
+
     QString m_lastCommand;
     QString m_command;
 };

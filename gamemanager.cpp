@@ -4,6 +4,7 @@
 #include "map.h"
 #include "player.h"
 #include "bomb.h"
+#include "networkclient.h"
 
 #include <QDebug>
 #include <QFile>
@@ -13,6 +14,7 @@
 #include <QPoint>
 #include <QList>
 #include <QQmlComponent>
+#include <QTcpSocket>
 
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_map(0), m_view(view), m_bombComponent(0)
@@ -24,14 +26,6 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
         return;
     }
 
-    // Set up players
-    const QList<QPoint> startingPositions = m_map->startingPositions();
-    for (int i=0; i < startingPositions.size(); i++) {
-        m_players.append(new Player(this, i));
-        player(i)->setPosition(startingPositions[i]);
-    }
-
-    // Expose player objects to the QML
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 
     // 20 times a second
@@ -39,9 +33,10 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_timer.setSingleShot(false);
 
     connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
+    connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
+    connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
     connect(this, SIGNAL(gameOver()), SLOT(gameEnd()));
 }
-
 
 void GameManager::loadMap(const QString &path)
 {
@@ -105,7 +100,7 @@ void GameManager::explosionAt(const QPoint &position)
 void GameManager::gameEnd()
 {
     disconnect(m_map, SIGNAL(explosionAt(QPoint)), this, SLOT(explosionAt(QPoint)));
-    disconnect(m_view->rootObject(), SIGNAL(userMove(QString)), this, SLOT(userMove(QString)));
+    disconnect(m_view->rootObject(), SIGNAL(userMove(QString)));
 
     QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
     if (endScreen) {
@@ -116,10 +111,14 @@ void GameManager::gameEnd()
 
 void GameManager::gameStart()
 {
-    connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
-    for(int i=0; i<playerCount(); i++) {
-        connect(m_view->rootObject(), SIGNAL(userMove(QString)), player(i), SLOT(setCommand(QString)));
+    if (m_players.isEmpty()) {
+        return;
     }
+
+
+    // Expose player objects to the QML
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+
     m_timer.start();
 }
 
@@ -143,9 +142,9 @@ void GameManager::gameTick()
             position.setX(position.x() + 1);
         } else if (command == "BOMB") {
             addBomb(position);
-            return;
+            continue;
         } else {
-            return;
+            continue;
         }
 
         if (m_map->isValidPosition(position)) {
@@ -165,6 +164,16 @@ void GameManager::gameTick()
     }
 }
 
+void GameManager::clientConnect()
+{
+    if (playerCount() >= m_map->startingPositions().count()) {
+        return;
+    }
+
+    QTcpSocket *socket = m_server.nextPendingConnection();
+    addPlayer(new NetworkClient(socket));
+}
+
 Player *GameManager::player(int id)
 {
     if (id > m_players.size()) return NULL;
@@ -174,4 +183,21 @@ Player *GameManager::player(int id)
 int GameManager::playerCount()
 {
     return m_players.size();
+}
+
+void GameManager::addPlayer(NetworkClient *client)
+{
+    if (playerCount() >= m_map->startingPositions().count()) {
+        return;
+    }
+
+    Player *player = new Player(this, playerCount());
+    player->setPosition(m_map->startingPositions().at(player->id()));
+    m_players.append(player);
+
+    if (!client) {
+        connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
+    } else {
+        connect(client, SIGNAL(commandReceived(QString)), player, SLOT(setCommand(QString)));
+    }
 }
