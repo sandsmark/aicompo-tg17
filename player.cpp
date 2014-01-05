@@ -66,5 +66,7 @@ void Player::setName(const QString &name)
 
 void Player::setCommand(QString command)
 {
-    m_command = command;
+    if (m_alive) {
+        m_command = command;
+    }
 }

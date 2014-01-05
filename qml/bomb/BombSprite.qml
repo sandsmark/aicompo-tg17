@@ -3,11 +3,11 @@ import QtQuick 2.0
 Image {
     id: image
     smooth: false
-    width: 64
-    height: 64
+    width: parent.height / (parent.rows + 1)
+    height: width
     property QtObject bombData
-    property int bombX: bombData == null ? 0 : bombData.position.x * 64;
-    property int bombY: bombData == null ? 0 : bombData.position.y * 64;
+    property int bombX: bombData == null ? 0 : bombData.position.x * width;
+    property int bombY: bombData == null ? 0 : bombData.position.y * width;
     x: bombX
     y: bombY
     source: bombData == null ? "" : "qrc:/sprites/bomb/bomb-" + bombData.state + ".png"

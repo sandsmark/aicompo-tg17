@@ -52,6 +52,7 @@ private:
     QTimer m_timer;
     QTcpServer m_server;
     QList<NetworkClient*> m_clients;
+    QString m_currentMap;
 };
 
 #endif // MAPLOADER_H

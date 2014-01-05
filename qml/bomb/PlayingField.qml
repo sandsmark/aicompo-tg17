@@ -1,22 +1,30 @@
 import QtQuick 2.0
+import com.iskrembilen.bomb 1.0
 
 Grid {
+    id: playingField
     objectName: "playingField"
     //anchors.horizontalCenter: parent.horizontalCenter
     //anchors.verticalCenter: parent.verticalCenter
-    anchors.centerIn: parent
-    width: rows * 64
-    height: columns * 64
+    //anchors.centerIn: parent
+    //width: rows * 64
+    //height: columns * 64
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
 
     rows: map.height
     columns: map.width
 
     Repeater {
+        anchors.horizontalCenter: parent.horizontalCenter
         id: repeater
         model: map.tiles
         delegate: MapSprite {
+            z: (type == Tile.Grass) ? -1 : 0
+            height: playingField.height / (playingField.rows +1)
+            width: height
             type: model.modelData.type
-            border.width: 1
         }
     }
 

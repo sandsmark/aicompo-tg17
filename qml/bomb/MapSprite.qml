@@ -3,8 +3,8 @@ import com.iskrembilen.bomb 1.0
 
 
 Rectangle {
-    height: 64
-    width: 64
+    //height: 64
+    //width: 64
     property int type: -1
     onTypeChanged: {
         if (type === Tile.Grass) {
@@ -25,7 +25,10 @@ Rectangle {
     Image {
         id: image
         smooth: false
-        height: 80
-        width: 64
+        //anchors.fill: parent
+        height: width * 1.25
+        width: parent.width
+        //height: 80
+        //width: 64
     }
 }

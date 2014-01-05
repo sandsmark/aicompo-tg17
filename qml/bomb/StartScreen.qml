@@ -23,11 +23,11 @@ Rectangle {
             id: checkMark
             anchors.fill: parent
             anchors.margins: 3
-            opacity: 0.0
             property bool checked: false
-            //border.color: "white"
-            //color: "transparent"
-            radius: 15
+            border.color: "white"
+            opacity: 0
+            border.width: 3
+            color: checkMark.checked ? "white" : "black"
         }
 
         MouseArea {
@@ -120,7 +120,8 @@ Rectangle {
         id: startButton
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.right: parent.horizontalCenter
+        anchors.rightMargin: 10
         width: 200
         height: 50
 
@@ -154,5 +155,118 @@ Rectangle {
             font.pointSize: 25
         }
     }
+
+    Rectangle {
+        id: mapList
+        width: mapSelect.width
+        height: visible ? mapsRepeater.model.length * 50 : 0
+        anchors.bottom: mapSelect.top
+        anchors.right: mapSelect.right
+        visible: false
+        color: "#c0000000"
+        border.color: "white"
+
+        Behavior on height {
+            NumberAnimation {
+                easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
+                duration: 500
+            }
+        }
+
+        Column {
+            anchors.fill: parent
+            Repeater {
+                id: mapsRepeater
+                model: ["Arena", "default"]
+                delegate: Rectangle {
+                    id: mapSelection
+                    width: 200
+                    height: 50
+
+                    color: "transparent"
+                    //border.color: "white"
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: mapList.visible
+                        cursorShape: MouseArea.PointingHandCursor
+                        onEntered: {
+                            mapSelectionText.color = "black"
+                            mapSelection.color = "white"
+                        }
+                        onExited: {
+                            mapSelectionText.color = "white"
+                            mapSelection.color = "#50000000"
+                        }
+                        onClicked: {
+                            mapList.visible = false
+                            game.loadMap(modelData)
+                        }
+                    }
+                    Text {
+                        id: mapSelectionText
+                        anchors.centerIn: parent
+                        text: modelData
+                        color: "white"
+                        font.pointSize: 25
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: mapSelect
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 10
+        anchors.left: parent.horizontalCenter
+        anchors.leftMargin: 10
+        width: 200
+        height: 50
+
+        color: "#50000000"
+        border.color: "white"
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: MouseArea.PointingHandCursor
+            onEntered: {
+                mapSelectText.color = "black"
+                mapSelect.color = "white"
+            }
+            onExited: {
+                mapSelectText.color = "white"
+                mapSelect.color = "#50000000"
+            }
+            onClicked: {
+                mapList.visible = !mapList.visible
+            }
+        }
+        Text {
+            id: mapSelectText
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: mapSelect.verticalCenter
+            text: map.name
+            color: "white"
+            font.pointSize: 25
+        }
+        Rectangle {
+            anchors.right: mapSelect.right
+            anchors.rightMargin: 10
+            anchors.verticalCenter: mapSelect.verticalCenter
+            color: "transparent"
+            border.color: mapSelectText.color
+            border.width: 3
+            height: 40
+            width: 40
+            Text {
+                anchors.centerIn: parent
+                font.pointSize: 25
+                color: mapSelectText.color
+                text: mapList.visible ? "][" : "+"
+            }
+        }
+    }
+
 }
 

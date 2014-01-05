@@ -5,14 +5,15 @@
 #include <QDebug>
 #include <QDir>
 
-Map::Map(QObject *parent, const QString &path) : QObject(parent),
+Map::Map(QObject *parent, const QString &mapName) : QObject(parent),
     m_width(0),
-    m_height(0)
+    m_height(0),
+    m_name(mapName)
 {
-    QFile file(path);
+    QFile file(":/maps/" + mapName + ".map");
 
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Map: Unable to open file:" << path;
+        qWarning() << "Map: Unable to open file:" << mapName;
         return;
     }
 
@@ -23,13 +24,13 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
     m_height = line.split('x').first().toInt();
     m_width = line.split('x').last().toInt();
     if (height() == 0 || width() == 0) {
-        qWarning() << "Map: Unable to parse size from file:" << path;
+        qWarning() << "Map: Unable to parse size from file:" << mapName;
         return;
     }
 
     int players = file.readLine().trimmed().toInt();
     if (players < 2) {
-        qWarning() << "Map: Unable to read a valid number of players for map:" << path;
+        qWarning() << "Map: Unable to read a valid number of players for map:" << mapName;
         return;
     }
 
@@ -37,7 +38,7 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
         line = file.readLine();
         QList<QByteArray> coordinates = line.trimmed().split(',');
         if (coordinates.size() != 2) {
-            qWarning() << "Map: Unable to read starting coordinates for map:" << path;
+            qWarning() << "Map: Unable to read starting coordinates for map:" << mapName;
             return;
         }
 
@@ -47,8 +48,10 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
         m_startingPositions.append(position);
     }
 
+    int c=0;
     // Read in the map itself
     while (!file.atEnd()) {
+        c++;
         line = file.readLine();
         m_mapData.append(line);
 
@@ -69,6 +72,7 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
             }
         }
     }
+    qDebug() << c;
 }
 
 int Map::width()
@@ -119,6 +123,11 @@ bool Map::isWithinBounds(const QPoint &position) const
 QByteArray Map::mapData() const
 {
     return m_mapData;
+}
+
+QString Map::name() const
+{
+    return m_name;
 }
 
 const QList<QPoint> &Map::startingPositions() const

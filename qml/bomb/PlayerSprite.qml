@@ -4,13 +4,11 @@ Image {
     property int playerId
     id: image
     smooth: false
-    height: 64
-    width: 64
     property int walkCycle: 0
     property string direction: "s"
     property string command: lastCommand
 
-    source: alive ? "qrc:/sprites/character" + (playerId+1)  + "/character-" + direction + "-" + walkCycle + ".png" : "qrc:/sprites/blood.png"
+    source: alive ? "qrc:/sprites/character" + ((playerId % 2)+1)  + "/character-" + direction + "-" + walkCycle + ".png" : "qrc:/sprites/blood.png"
 
 
     onCommandChanged: {

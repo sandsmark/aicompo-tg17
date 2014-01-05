@@ -13,7 +13,6 @@ Bomb::Bomb(QObject *parent, QPoint position, QQuickItem *sprite) :
 
 Bomb::~Bomb()
 {
-    m_sprite->setParentItem(0);
     m_sprite->deleteLater();
 }
 

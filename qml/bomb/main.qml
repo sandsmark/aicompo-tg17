@@ -23,8 +23,10 @@ Rectangle {
         model: players
         delegate: PlayerSprite {
             playerId: model.modelData.id
-            x: playingField.x + model.modelData.position.x * 64
-            y: playingField.y + model.modelData.position.y * 64
+            x: playingField.x + model.modelData.position.x * height
+            y: playingField.y + model.modelData.position.y * height
+            height: playingField.height / (playingField.rows + 1)
+            width: height
         }
     }
 

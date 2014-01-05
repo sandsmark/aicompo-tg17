@@ -19,7 +19,7 @@
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_map(0), m_view(view), m_bombComponent(0)
 {
-    loadMap(":/maps/default.map");
+    loadMap("default");
 
     if (!m_map) {
         qWarning() << "GameManager: Unable to load default map!";
