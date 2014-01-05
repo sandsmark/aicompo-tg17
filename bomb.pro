@@ -6,6 +6,8 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
+QT += network quick
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp tile.cpp \
     map.cpp \
@@ -28,4 +30,10 @@ RESOURCES += \
 
 OTHER_FILES += \
     default.map \
-    qml/bomb/MapSprite.qml
+    qml/bomb/MapSprite.qml \
+    qml/bomb/BombSprite.qml \
+    qml/bomb/EndScreen.qml \
+    qml/bomb/main.qml \
+    qml/bomb/PlayerSprite.qml \
+    qml/bomb/PlayingField.qml \
+    qml/bomb/StartScreen.qml

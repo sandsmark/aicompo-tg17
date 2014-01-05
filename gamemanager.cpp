@@ -249,3 +249,15 @@ void GameManager::addPlayer(NetworkClient *client)
     // We need to reset the property, the qobjectlist model doesn't automatically update
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }
+
+void GameManager::removeHumanPlayers()
+{
+    for (int i=0; i<playerCount(); i++) {
+        if (!m_clients[i]) {
+            m_clients.takeAt(i)->deleteLater();
+            m_players.takeAt(i)->deleteLater();
+            break;
+        }
+    }
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+}

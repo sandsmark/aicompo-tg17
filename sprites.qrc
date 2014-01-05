@@ -75,6 +75,9 @@
         <file>sprites/blood.png</file>
         <file>sprites/tiles/pebbles/pebbles-0.png</file>
         <file>sprites/tiles/pebbles/pebbles-1.png</file>
+        <file>qml/bomb/EndScreen.qml</file>
+        <file>qml/bomb/PlayingField.qml</file>
+        <file>qml/bomb/StartScreen.qml</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

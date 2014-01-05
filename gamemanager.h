@@ -24,7 +24,8 @@ public:
     Player *player(int id);
     int playerCount();
 
-    void addPlayer(NetworkClient *client = 0);
+    Q_INVOKABLE void addPlayer(NetworkClient *client = 0);
+    Q_INVOKABLE void removeHumanPlayers();
 
 public slots:
     void addBomb(const QPoint &position);

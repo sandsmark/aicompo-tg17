@@ -8,10 +8,79 @@ Rectangle {
     color: "#cc000000"
     border.color: "white"
 
+    Rectangle {
+        id: humanPlayerCheckbox
+        height: 20
+        width: 20
+        anchors.bottom: userList.top
+        anchors.bottomMargin: 30
+        anchors.right: parent.right
+        anchors.rightMargin: 30
+        border.color: "white"
+        color: "transparent"
+
+        Rectangle {
+            id: checkMark
+            anchors.fill: parent
+            anchors.margins: 2
+            opacity: 0
+            property bool checked: false
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: MouseArea.PointingHandCursor
+            hoverEnabled: true
+            onEntered: {
+                if (checkMark.checked) {
+                    checkMark.opacity = 0.7
+                } else {
+                    checkMark.opacity = 0.3
+                }
+            }
+            onExited: {
+                if (checkMark.checked) {
+                    checkMark.opacity = 1.0
+                } else {
+                    checkMark.opacity = 0.0
+                }
+            }
+
+
+            onClicked: {
+                if (checkMark.checked) {
+                    game.removeHumanPlayers()
+                    if (containsMouse) {
+                        checkMark.opacity = 0.3
+                    } else {
+                        checkMark.opacity = 0.0
+                    }
+                    checkMark.checked = false
+                } else {
+                    game.addPlayer()
+                    if (containsMouse) {
+                        checkMark.opacity = 0.7
+                    } else {
+                        checkMark.opacity = 1.0
+                    }
+                    checkMark.checked = true
+                }
+            }
+        }
+    }
+
+    Text {
+        anchors.right: humanPlayerCheckbox.left
+        anchors.verticalCenter: humanPlayerCheckbox.verticalCenter
+        anchors.rightMargin: 10
+        text: "Enable human player:"
+        color: "white"
+    }
+
     Text {
         id: topLabel
         font.pixelSize: 20
-        color: "white"
+        color: "red"
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: 30

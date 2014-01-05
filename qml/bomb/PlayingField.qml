@@ -29,7 +29,7 @@ Grid {
         onTriggered: {
             playingField.anchors.horizontalCenterOffset = Math.random() * 10
             playingField.anchors.verticalCenterOffset = Math.random() * 10
-            if (count > 3) {
+            if (count > 2) {
                 running = false
             }
             count++;
