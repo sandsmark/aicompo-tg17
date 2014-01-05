@@ -24,10 +24,9 @@ int Player::id()
     return m_id;
 }
 
-void Player::die()
+void Player::setAlive(bool alive)
 {
-    qDebug() << m_id << "died";
-    m_alive = false;
+    m_alive = alive;
     emit aliveChanged();
 }
 

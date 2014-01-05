@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<Tile>("com.iskrembilen.bomb", 1, 0, "Tile");
     QQuickView view;
+    QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     GameManager *manager = new GameManager(&view);
     view.setSource(QUrl("qrc:/qml/bomb/main.qml"));

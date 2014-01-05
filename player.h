@@ -20,7 +20,7 @@ public:
     QPoint position() const;
     void setPosition(const QPoint &position);
     int id();
-    void die();
+    void setAlive(bool alive);
     bool isAlive();
 
     QString lastCommand();

@@ -8,7 +8,7 @@
 class QQuickItem;
 
 #define BOMB_STATES 14
-#define BOMB_TIME 3000
+#define BOMB_TIME 1000
 
 class Bomb : public QObject
 {

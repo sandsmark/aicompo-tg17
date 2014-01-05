@@ -42,6 +42,16 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(this, SIGNAL(gameOver()), SLOT(gameEnd()));
 }
 
+GameManager::~GameManager()
+{
+    // Ensure we don't crash because we delete stuff before it disconnects
+    foreach(NetworkClient *client, m_clients) {
+        if (client) {
+            disconnect(client, SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
+        }
+    }
+}
+
 void GameManager::loadMap(const QString &path)
 {
     Map *map = new Map(this, path);
@@ -91,12 +101,10 @@ void GameManager::addBomb(const QPoint &position)
 
 void GameManager::explosionAt(const QPoint &position)
 {
-    int dead = 0;
     foreach(QObject *obj, m_players) {
         Player *player = qobject_cast<Player*>(obj);
         if (player->position() == position) {
-            player->die();
-            dead++;
+            player->setAlive(false);
         }
     }
 }
@@ -119,6 +127,16 @@ void GameManager::gameStart()
         return;
     }
     m_timer.start();
+}
+
+void GameManager::gameRestart()
+{
+    for (int i=0; i<playerCount(); i++) {
+        player(i)->setAlive(true);
+        player(i)->setPosition(m_map->startingPositions()[i]);
+    }
+    loadMap(":/maps/default.map");
+    gameStart();
 }
 
 void GameManager::gameTick()
@@ -230,6 +248,7 @@ void GameManager::addPlayer(NetworkClient *client)
     if (playerCount() >= m_map->startingPositions().count()) {
         return;
     }
+    qDebug() << client;
 
     Player *player = new Player(this, playerCount());
     player->setPosition(m_map->startingPositions().at(player->id()));

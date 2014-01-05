@@ -19,6 +19,7 @@ class GameManager : public QObject
 
 public:
     explicit GameManager(QQuickView *parent);
+    ~GameManager();
     Q_INVOKABLE void loadMap(const QString &path);
 
     Player *player(int id);
@@ -32,6 +33,7 @@ public slots:
     void explosionAt(const QPoint &position);
     void gameEnd();
     void gameStart();
+    void gameRestart();
 
 signals:
     void gameOver();
