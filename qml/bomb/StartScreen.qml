@@ -22,9 +22,12 @@ Rectangle {
         Rectangle {
             id: checkMark
             anchors.fill: parent
-            anchors.margins: 2
-            opacity: 0
+            anchors.margins: 3
+            opacity: 0.0
             property bool checked: false
+            //border.color: "white"
+            //color: "transparent"
+            radius: 15
         }
 
         MouseArea {
@@ -33,14 +36,14 @@ Rectangle {
             hoverEnabled: true
             onEntered: {
                 if (checkMark.checked) {
-                    checkMark.opacity = 0.7
+                    checkMark.opacity = 1.0
                 } else {
                     checkMark.opacity = 0.3
                 }
             }
             onExited: {
                 if (checkMark.checked) {
-                    checkMark.opacity = 1.0
+                    checkMark.opacity = 0.7
                 } else {
                     checkMark.opacity = 0.0
                 }
@@ -59,9 +62,9 @@ Rectangle {
                 } else {
                     game.addPlayer()
                     if (containsMouse) {
-                        checkMark.opacity = 0.7
-                    } else {
                         checkMark.opacity = 1.0
+                    } else {
+                        checkMark.opacity = 0.7
                     }
                     checkMark.checked = true
                 }
@@ -80,7 +83,7 @@ Rectangle {
     Text {
         id: topLabel
         font.pixelSize: 20
-        color: "red"
+        color: "white"
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: 30
@@ -89,18 +92,25 @@ Rectangle {
     }
 
     // List of connected users
-    Column {
+    Rectangle {
+        color: "#c0000000";
         id: userList
         anchors.top: topLabel.bottom
         anchors.left: parent.left
-        anchors.topMargin: 20
-        anchors.leftMargin: 20
-        Repeater {
-            model: players
-            delegate: Text {
-                color: "white"
-                font.pixelSize: 15
-                text: model.modelData.name
+        anchors.right: parent.right
+        anchors.bottom: startButton.top
+        anchors.margins: 20
+        border.color: "white"
+        Column {
+            anchors.fill: parent
+            anchors.margins: 20
+            Repeater {
+                model: players
+                delegate: Text {
+                    color: "white"
+                    font.pixelSize: 15
+                    text: model.modelData.name
+                }
             }
         }
     }
