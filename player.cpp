@@ -55,6 +55,16 @@ QString Player::command()
     return m_lastCommand;
 }
 
+QString Player::name()
+{
+    return m_name;
+}
+
+void Player::setName(const QString &name)
+{
+    m_name = name;
+}
+
 void Player::setCommand(QString command)
 {
     m_command = command;

@@ -12,6 +12,7 @@ class Player : public QObject
     Q_PROPERTY(int id READ id() CONSTANT)
     Q_PROPERTY(bool alive READ isAlive() NOTIFY aliveChanged())
     Q_PROPERTY(QString lastCommand READ lastCommand() NOTIFY lastCommandChanged())
+    Q_PROPERTY(QString name READ name() CONSTANT)
 
 public:
     explicit Player(QObject *parent, int id);
@@ -24,6 +25,10 @@ public:
 
     QString lastCommand();
     QString command();
+
+    QString name();
+    void setName(const QString &name);
+
 
 public slots:
     void setCommand(QString command);

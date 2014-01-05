@@ -39,6 +39,7 @@ signals:
 private slots:
     void gameTick();
     void clientConnect();
+    void clientDisconnected();
 
 private:
     Map *m_map;
@@ -47,6 +48,7 @@ private:
     QQmlComponent *m_bombComponent;
     QTimer m_timer;
     QTcpServer m_server;
+    QList<NetworkClient*> m_clients;
 };
 
 #endif // MAPLOADER_H

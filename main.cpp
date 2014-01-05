@@ -17,9 +17,7 @@ int main(int argc, char *argv[])
     GameManager *manager = new GameManager(&view);
     view.setSource(QStringLiteral("qml/bomb/main.qml"));
     view.showMaximized();
-
     manager->addPlayer();
-    manager->addPlayer();
-    manager->gameStart();
+    //manager->addPlayer();
     return app.exec();
 }

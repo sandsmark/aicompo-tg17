@@ -34,6 +34,8 @@ public:
     bool isValidPosition(const QPoint &position) const;
     bool isWithinBounds(const QPoint &position) const;
 
+    QByteArray mapData() const;
+
 public slots:
     void detonateBomb(const QPoint &position);
 
@@ -48,6 +50,7 @@ private:
     int m_height;
     QList<QObject*> m_tiles;
     QList<QPoint> m_startingPositions;
+    QByteArray m_mapData;
 };
 
 #endif // MAP_H

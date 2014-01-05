@@ -27,10 +27,14 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     }
 
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
 
+    // Set up gametick timer
     // 20 times a second
     m_timer.setInterval(100);
     m_timer.setSingleShot(false);
+
+    m_server.listen(QHostAddress::Any, 54321);
 
     connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
@@ -114,16 +118,23 @@ void GameManager::gameStart()
     if (m_players.isEmpty()) {
         return;
     }
-
-
-    // Expose player objects to the QML
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
-
     m_timer.start();
 }
 
 void GameManager::gameTick()
 {
+    QList<Player*> players;
+    for (int i=0; i<playerCount(); i++) {
+        players.append(player(i));
+    }
+    for (int i=0; i<playerCount(); i++) {
+        if (!m_clients[i]) continue;
+
+        QList<Player*> list = players;
+        list.takeAt(i);
+        m_clients[i]->sendPlayers(list);
+    }
+
     for (int i=0; i<playerCount(); i++) {
         QString command = player(i)->command();
         if (command.isEmpty()) {
@@ -161,6 +172,10 @@ void GameManager::gameTick()
 
     if (m_players.size() - dead < 2) {
         emit gameOver();
+    } else {
+        foreach(NetworkClient *client, m_clients) {
+            if (client) client->sendOK();
+        }
     }
 }
 
@@ -172,6 +187,31 @@ void GameManager::clientConnect()
 
     QTcpSocket *socket = m_server.nextPendingConnection();
     addPlayer(new NetworkClient(socket));
+}
+
+void GameManager::clientDisconnected()
+{
+    if (m_timer.isActive()) {
+        emit gameOver();
+        return;
+    }
+
+    NetworkClient *client = qobject_cast<NetworkClient*>(sender());
+    if (!client) {
+        qWarning() << "GameManager: invalid sender for disconnect signal";
+        return;
+    }
+    qDebug() << m_clients << client;
+    int index = m_clients.indexOf(client);
+    if (index < 0) {
+        qDebug() << "GameManager: unable to find disconnecting client.";
+        return;
+    }
+    m_clients.takeAt(index)->deleteLater();
+    m_players.takeAt(index)->deleteLater();
+    qDebug() << m_players;
+    // We need to reset the property, the qobjectlist model doesn't automatically update
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }
 
 Player *GameManager::player(int id)
@@ -194,10 +234,18 @@ void GameManager::addPlayer(NetworkClient *client)
     Player *player = new Player(this, playerCount());
     player->setPosition(m_map->startingPositions().at(player->id()));
     m_players.append(player);
+    m_clients.append(client);
 
     if (!client) {
         connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
+        player->setName(QString::number(player->id()) + ". Local user");
     } else {
+        client->sendWelcome(m_map->mapData(), player->position());
+        player->setName(QString::number(player->id()) + ". " + client->remoteName());
         connect(client, SIGNAL(commandReceived(QString)), player, SLOT(setCommand(QString)));
+        connect(client, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
     }
+
+    // We need to reset the property, the qobjectlist model doesn't automatically update
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }

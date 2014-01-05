@@ -17,9 +17,11 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
     }
 
     // Read in size
-    QByteArray dimensions = file.readLine().trimmed();
-    m_height = dimensions.split('x').first().toInt();
-    m_width = dimensions.split('x').last().toInt();
+    QByteArray line = file.readLine();
+    m_mapData.append(line);
+    line = line.trimmed();
+    m_height = line.split('x').first().toInt();
+    m_width = line.split('x').last().toInt();
     if (height() == 0 || width() == 0) {
         qWarning() << "Map: Unable to parse size from file:" << path;
         return;
@@ -32,7 +34,8 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
     }
 
     for (int i = 0; i < players; i++) {
-        QList<QByteArray> coordinates = file.readLine().trimmed().split(',');
+        line = file.readLine();
+        QList<QByteArray> coordinates = line.trimmed().split(',');
         if (coordinates.size() != 2) {
             qWarning() << "Map: Unable to read starting coordinates for map:" << path;
             return;
@@ -46,7 +49,9 @@ Map::Map(QObject *parent, const QString &path) : QObject(parent),
 
     // Read in the map itself
     while (!file.atEnd()) {
-        QByteArray line = file.readLine();
+        line = file.readLine();
+        m_mapData.append(line);
+
         foreach(const char type, line) {
             switch(type) {
             case '.':
@@ -109,6 +114,11 @@ bool Map::isWithinBounds(const QPoint &position) const
         return false;
 
     return true;
+}
+
+QByteArray Map::mapData() const
+{
+    return m_mapData;
 }
 
 const QList<QPoint> &Map::startingPositions() const
