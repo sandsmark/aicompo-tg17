@@ -23,13 +23,6 @@ HEADERS += tile.h \
     userplayer.h \
     networkclient.h
 
-# Installation path
-# target.path =
-
-# Please do not modify the following two lines. Required for deployment.
-include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
-qtcAddDeployment()
-
 RESOURCES += \
     sprites.qrc
 
