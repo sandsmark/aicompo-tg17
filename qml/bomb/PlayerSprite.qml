@@ -8,7 +8,9 @@ Image {
     property string direction: "s"
     property string command: lastCommand
 
-    source: alive ? "qrc:/sprites/character" + ((playerId % 2)+1)  + "/character-" + direction + "-" + walkCycle + ".png" : "qrc:/sprites/blood.png"
+    source: alive ?
+                "qrc:/sprites/character" + ((playerId % 2)+1)  + "/character-" + direction + "-" + walkCycle + ".png" :
+                "qrc:/sprites/blood.png"
 
 
     onCommandChanged: {
@@ -24,6 +26,7 @@ Image {
     }
 
     Behavior on x {
+        enabled: alive
         NumberAnimation {
             id: xAnimation
             easing { type: Easing.OutQuad; amplitude: 1.0; period: 0.9 }
@@ -71,6 +74,14 @@ Image {
                 walkCycle += 1
             }
         }
+    }
+    Text {
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: "white"
+        text: name
+        font.bold: true
+        style: Text.Outline
     }
 }
 

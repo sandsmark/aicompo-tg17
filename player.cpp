@@ -24,6 +24,12 @@ int Player::id()
     return m_id;
 }
 
+void Player::setId(int id)
+{
+    m_id = id;
+    emit idChanged();
+}
+
 void Player::setAlive(bool alive)
 {
     m_alive = alive;
@@ -56,7 +62,7 @@ QString Player::command()
 
 QString Player::name()
 {
-    return m_name;
+    return QString::number(m_id) + ". " + m_name;
 }
 
 void Player::setName(const QString &name)

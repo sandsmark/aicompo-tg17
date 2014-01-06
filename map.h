@@ -17,6 +17,7 @@ class Map : public QObject
     Q_PROPERTY(int height READ height() CONSTANT)
     Q_PROPERTY(QList<QObject*> tiles READ tiles() CONSTANT)
     Q_PROPERTY(QString name READ name() CONSTANT)
+    Q_PROPERTY(int maxPlayers READ maxPlayers() CONSTANT)
 
 public:
     explicit Map(QObject *parent, const QString &mapName);
@@ -36,6 +37,8 @@ public:
 
     QByteArray mapData() const;
     QString name() const;
+
+    int maxPlayers() const;
 
 public slots:
     void detonateBomb(const QPoint &position);

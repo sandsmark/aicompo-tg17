@@ -3,8 +3,7 @@ import QtQuick 2.0
 Rectangle {
     id: endScreen
     anchors.fill: parent
-    width: 100
-    height: 62
+    enabled: opacity > 0.1 ? true : false
 
     Behavior on opacity {
         NumberAnimation {
@@ -15,7 +14,10 @@ Rectangle {
 
     color: "#a0000000"
     Text {
-        anchors.centerIn: parent
+        id: gameOverText
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 20
         font.pointSize: 25
         font.bold: true
         text: "Game Over"
@@ -27,20 +29,23 @@ Rectangle {
     Rectangle {
         color: "#c0000000";
         id: userList
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.top: gameOverText.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: quitButton.top
         anchors.margins: 20
+        width: 600
         border.color: "white"
         Column {
-            anchors.fill: parent
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: parent.top
             anchors.margins: 20
             Repeater {
                 model: players
                 delegate: Text {
-                    color: "white"
-                    font.pixelSize: 15
+                    horizontalAlignment: Text.AlignHCenter
+                    color: model.modelData.alive ? "green" : "red"
+                    font.pixelSize: 45
+                    font.bold: true
                     text: model.modelData.name + ": " + (model.modelData.alive ? "Alive" : "Dead")
                 }
             }

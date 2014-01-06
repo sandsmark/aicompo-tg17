@@ -12,12 +12,20 @@ Rectangle {
         id: humanPlayerCheckbox
         height: 20
         width: 20
-        anchors.bottom: userList.top
-        anchors.bottomMargin: 30
+        anchors.top: parent.top
+        anchors.topMargin: 30
         anchors.right: parent.right
         anchors.rightMargin: 30
         border.color: "white"
         color: "transparent"
+        opacity: (players.length < map.maxPlayers || checkMark.checked) ? 1 : 0
+        enabled: players.length < map.maxPlayers || checkMark.checked
+
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 250
+            }
+        }
 
         Rectangle {
             id: checkMark
@@ -26,7 +34,7 @@ Rectangle {
             property bool checked: false
             border.color: "white"
             opacity: 0
-            border.width: 3
+            border.width: 1
             color: checkMark.checked ? "white" : "black"
         }
 
@@ -60,6 +68,7 @@ Rectangle {
                     }
                     checkMark.checked = false
                 } else {
+                    if (players.length > map.maxPlayers) return;
                     game.addPlayer()
                     if (containsMouse) {
                         checkMark.opacity = 1.0
@@ -77,7 +86,9 @@ Rectangle {
         anchors.verticalCenter: humanPlayerCheckbox.verticalCenter
         anchors.rightMargin: 10
         text: "Enable human player:"
+        font.pixelSize: 20
         color: "white"
+        opacity: humanPlayerCheckbox.opacity
     }
 
     Text {
@@ -89,6 +100,19 @@ Rectangle {
         anchors.leftMargin: 30
         anchors.topMargin: 30
         text: "Connected users:"
+    }
+
+    Text {
+        anchors.left: topLabel.right
+        anchors.leftMargin: 10
+        anchors.bottom: topLabel.bottom
+        color: players.length < 2 ? "red" : "green"
+        text: players.length + "/" + map.maxPlayers;
+        font.pixelSize: 20
+        font.bold: true
+        Behavior on color {
+            ColorAnimation { duration: 200 }
+        }
     }
 
     // List of connected users
@@ -181,10 +205,9 @@ Rectangle {
                 delegate: Rectangle {
                     id: mapSelection
                     width: 200
-                    height: 50
+                    height: mapList.height/mapsRepeater.model.length
 
                     color: "transparent"
-                    //border.color: "white"
                     MouseArea {
                         anchors.fill: parent
                         hoverEnabled: mapList.visible
@@ -204,8 +227,9 @@ Rectangle {
                     }
                     Text {
                         id: mapSelectionText
-                        anchors.centerIn: parent
-                        text: modelData
+                        anchors.fill: parent
+                        anchors.margins: 5
+                        text: "● " + modelData
                         color: "white"
                         font.pointSize: 25
                     }
@@ -263,7 +287,13 @@ Rectangle {
                 anchors.centerIn: parent
                 font.pointSize: 25
                 color: mapSelectText.color
-                text: mapList.visible ? "][" : "+"
+                rotation: mapList.visible ? 180 : 0
+                text: "|"
+                Behavior on rotation {
+                    NumberAnimation {
+                        duration: 150
+                    }
+                }
             }
         }
     }

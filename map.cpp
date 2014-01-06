@@ -130,6 +130,11 @@ QString Map::name() const
     return m_name;
 }
 
+int Map::maxPlayers() const
+{
+    return m_startingPositions.size();
+}
+
 const QList<QPoint> &Map::startingPositions() const
 {
     return m_startingPositions;

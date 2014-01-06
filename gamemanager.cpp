@@ -30,15 +30,13 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
 
     // Set up gametick timer
-    // 20 times a second
-    m_timer.setInterval(100);
+    m_timer.setInterval(100); // 10 times a second
     m_timer.setSingleShot(false);
 
     m_server.listen(QHostAddress::Any, 54321);
 
     connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
-    connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
     connect(this, SIGNAL(gameOver()), SLOT(gameEnd()));
 }
 
@@ -62,12 +60,33 @@ void GameManager::loadMap(const QString &path)
         return;
     }
 
-    m_view->rootContext()->setContextProperty("map", map);
 
     if (m_map)
         m_map->deleteLater();
-
     m_map = map;
+
+
+    // Kick out players if too many
+    for (int i=playerCount()-1; i>=0; --i) {
+        if (playerCount() <= m_map->startingPositions().count()) {
+            break;
+        }
+        if (!m_clients[i]) continue; // Don't kick out human player
+
+        m_players.takeAt(i)->deleteLater();
+        m_clients.takeAt(i)->deleteLater();
+    }
+
+    // Update positions and id
+    for (int i=0; i<playerCount(); i++) {
+        player(i)->setPosition(m_map->startingPositions()[i]);
+        player(i)->setId(i);
+    }
+
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    m_view->rootContext()->setContextProperty("map", map);
+
+    connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
 }
 
 void GameManager::addBomb(const QPoint &position)
@@ -101,19 +120,15 @@ void GameManager::addBomb(const QPoint &position)
 
 void GameManager::explosionAt(const QPoint &position)
 {
-    foreach(QObject *obj, m_players) {
-        Player *player = qobject_cast<Player*>(obj);
-        if (player->position() == position) {
-            player->setAlive(false);
+    for (int i=0; i<playerCount(); i++) {
+        if (player(i)->position() == position) {
+            player(i)->setAlive(false);
         }
     }
 }
 
 void GameManager::gameEnd()
 {
-    disconnect(m_map, SIGNAL(explosionAt(QPoint)), this, SLOT(explosionAt(QPoint)));
-    disconnect(m_view->rootObject(), SIGNAL(userMove(QString)));
-
     QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
     if (endScreen) {
         endScreen->setProperty("opacity", 1.0);
@@ -135,7 +150,7 @@ void GameManager::gameRestart()
         player(i)->setAlive(true);
         player(i)->setPosition(m_map->startingPositions()[i]);
     }
-    loadMap(":/maps/default.map");
+    loadMap(m_map->name());
     gameStart();
 }
 
@@ -199,11 +214,14 @@ void GameManager::gameTick()
 
 void GameManager::clientConnect()
 {
+    QTcpSocket *socket = m_server.nextPendingConnection();
+
     if (playerCount() >= m_map->startingPositions().count()) {
+        socket->disconnect();
+        socket->deleteLater();
         return;
     }
 
-    QTcpSocket *socket = m_server.nextPendingConnection();
     addPlayer(new NetworkClient(socket));
 }
 
@@ -219,7 +237,6 @@ void GameManager::clientDisconnected()
         qWarning() << "GameManager: invalid sender for disconnect signal";
         return;
     }
-    qDebug() << m_clients << client;
     int index = m_clients.indexOf(client);
     if (index < 0) {
         qDebug() << "GameManager: unable to find disconnecting client.";
@@ -227,7 +244,9 @@ void GameManager::clientDisconnected()
     }
     m_clients.takeAt(index)->deleteLater();
     m_players.takeAt(index)->deleteLater();
-    qDebug() << m_players;
+    for (int i=0; i<playerCount(); i++) {
+        player(i)->setId(i);
+    }
     // We need to reset the property, the qobjectlist model doesn't automatically update
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }
@@ -248,7 +267,6 @@ void GameManager::addPlayer(NetworkClient *client)
     if (playerCount() >= m_map->startingPositions().count()) {
         return;
     }
-    qDebug() << client;
 
     Player *player = new Player(this, playerCount());
     player->setPosition(m_map->startingPositions().at(player->id()));
@@ -257,10 +275,10 @@ void GameManager::addPlayer(NetworkClient *client)
 
     if (!client) {
         connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
-        player->setName(QString::number(player->id()) + ". Local user");
+        player->setName("Local user");
     } else {
         client->sendWelcome(m_map->mapData(), player->position());
-        player->setName(QString::number(player->id()) + ". " + client->remoteName());
+        player->setName(client->remoteName());
         connect(client, SIGNAL(commandReceived(QString)), player, SLOT(setCommand(QString)));
         connect(client, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
     }
@@ -277,6 +295,9 @@ void GameManager::removeHumanPlayers()
             m_players.takeAt(i)->deleteLater();
             break;
         }
+    }
+    for (int i=0; i<playerCount(); i++) {
+        player(i)->setId(i);
     }
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }
