@@ -21,7 +21,7 @@ Grid {
         id: repeater
         model: map.tiles
         delegate: MapSprite {
-            z: (type == Tile.Grass) ? -1 : 0
+            z: (type == Tile.Grass || type == Tile.Debris) ? -1 : 0
             height: playingField.height / (playingField.rows +1)
             width: height
             type: model.modelData.type

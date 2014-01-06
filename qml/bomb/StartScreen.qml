@@ -228,7 +228,7 @@ Rectangle {
                     Text {
                         id: mapSelectionText
                         anchors.fill: parent
-                        anchors.margins: 5
+                        anchors.leftMargin: 10
                         text: "● " + modelData
                         color: "white"
                         font.pointSize: 25
@@ -288,7 +288,7 @@ Rectangle {
                 font.pointSize: 25
                 color: mapSelectText.color
                 rotation: mapList.visible ? 180 : 0
-                text: "|"
+                text: "↑"
                 Behavior on rotation {
                     NumberAnimation {
                         duration: 150
