@@ -12,7 +12,7 @@ class Player : public QObject
     Q_PROPERTY(int id READ id() NOTIFY idChanged())
     Q_PROPERTY(bool alive READ isAlive() NOTIFY aliveChanged())
     Q_PROPERTY(QString lastCommand READ lastCommand() NOTIFY lastCommandChanged())
-    Q_PROPERTY(QString name READ name() CONSTANT)
+    Q_PROPERTY(QString name READ name() NOTIFY nameChanged())
 
 public:
     explicit Player(QObject *parent, int id);
@@ -28,11 +28,11 @@ public:
     QString command();
 
     QString name();
-    void setName(const QString &name);
 
 
 public slots:
     void setCommand(QString command);
+    void setName(QString name);
 
 
 signals:
@@ -40,6 +40,7 @@ signals:
     void aliveChanged();
     void lastCommandChanged();
     void idChanged();
+    void nameChanged();
 
 private:
     QPoint m_position;

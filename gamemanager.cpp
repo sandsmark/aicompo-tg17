@@ -141,6 +141,9 @@ void GameManager::gameStart()
     if (m_players.isEmpty()) {
         return;
     }
+    foreach(NetworkClient *client, m_clients) {
+        client->disconnect(SIGNAL(nameChanged(QString)));
+    }
     m_timer.start();
 }
 
@@ -279,6 +282,7 @@ void GameManager::addPlayer(NetworkClient *client)
     } else {
         client->sendWelcome(m_map->mapData(), player->position());
         player->setName(client->remoteName());
+        connect(client, SIGNAL(nameChanged(QString)), player, SLOT(setName(QString)));
         connect(client, SIGNAL(commandReceived(QString)), player, SLOT(setCommand(QString)));
         connect(client, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
     }

@@ -20,12 +20,18 @@ public:
 signals:
     void commandReceived(const QString command);
     void clientDisconnected();
+    void nameChanged(QString name);
 
 private slots:
     void dataReceived();
 
 private:
+    void sendString(QByteArray string);
+
     QTcpSocket *m_socket;
+    QString m_name;
+    bool m_isWebSocket;
+    QByteArray m_webSocketFrame;
 };
 
 #endif // NETWORKCLIENT_H

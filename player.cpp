@@ -65,9 +65,10 @@ QString Player::name()
     return QString::number(m_id) + ". " + m_name;
 }
 
-void Player::setName(const QString &name)
+void Player::setName(QString name)
 {
     m_name = name;
+    emit nameChanged();
 }
 
 void Player::setCommand(QString command)
