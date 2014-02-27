@@ -206,7 +206,7 @@ void GameManager::gameTick()
         }
     }
 
-    if (m_players.size() - dead < 2) {
+    if (dead > 0 && m_players.size() - dead < 2) {
         emit gameOver();
     } else {
         foreach(NetworkClient *client, m_clients) {

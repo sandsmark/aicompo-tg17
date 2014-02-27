@@ -164,7 +164,7 @@ Rectangle {
                 startButton.color = "#50000000"
             }
             onClicked: {
-                if (players.length < 2) {
+                if (players.length < 1) {
                     return
                 }
                 startScreen.visible = false

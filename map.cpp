@@ -72,7 +72,6 @@ Map::Map(QObject *parent, const QString &mapName) : QObject(parent),
             }
         }
     }
-    qDebug() << c;
 }
 
 int Map::width()
