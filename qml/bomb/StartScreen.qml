@@ -168,7 +168,7 @@ Rectangle {
                     return
                 }
                 startScreen.visible = false
-                game.gameStart()
+                game.startRound()
             }
         }
         Text {

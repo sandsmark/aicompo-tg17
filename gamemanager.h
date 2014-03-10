@@ -17,6 +17,8 @@ class GameManager : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
+
 public:
     explicit GameManager(QQuickView *parent);
     ~GameManager();
@@ -31,13 +33,16 @@ public:
 public slots:
     void addBomb(const QPoint &position);
     void explosionAt(const QPoint &position);
-    void gameEnd();
-    void gameStart();
-    void gameRestart();
+    void endRound();
+    void startRound();
+    void restartGame();
+
+    int roundsPlayed() { return m_roundsPlayed; }
 
 signals:
     void gameOver();
     void clientConnected();
+    void roundsPlayedChanged();
 
 private slots:
     void gameTick();
@@ -48,11 +53,11 @@ private:
     Map *m_map;
     QQuickView *m_view;
     QList<QObject*> m_players;
-    QQmlComponent *m_bombComponent;
     QTimer m_timer;
     QTcpServer m_server;
     QList<NetworkClient*> m_clients;
     QString m_currentMap;
+    int m_roundsPlayed;
 };
 
 #endif // MAPLOADER_H

@@ -3,13 +3,13 @@ import QtQuick 2.0
 Image {
     id: image
     smooth: false
-    width: (parent === 0 || parent.rows === 0) ? 0 : parent.height / (parent.rows + 1)
+    width: (parent == null || parent.rows === 0) ? 0 : parent.height / (parent.rows + 1)
     height: width
     property QtObject bombData
-    property int bombX: bombData == null ? 0 : bombData.position.x * width;
-    property int bombY: bombData == null ? 0 : bombData.position.y * width;
-    x: bombX
-    y: bombY
+    property int bombX
+    property int bombY
+    x: bombX * width;
+    y: bombY * height
     source: bombData == null ? "" : "qrc:/sprites/bomb/bomb-" + bombData.state + ".png"
 
 
@@ -19,7 +19,9 @@ Image {
         onStateChanged: {
             if (bombData.state > 13) {
                 image.source = "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-                explosion.opacity = 1
+                explosion.shown = true
+                explosion.visible = true
+                explosion.opacity = 0
             }
         }
     }
@@ -42,13 +44,23 @@ Image {
     Item {
         anchors.fill: parent
         id: explosion
-        opacity: 0
+        opacity: 1
+        visible: false
+
+        onOpacityChanged: {
+            console.log("FETTE" + shown + opacity)
+            if (opacity == 0 && shown) {
+                console.log("HOREUNGE")
+                parent.destroy()
+            }
+        }
+        property bool shown: false
 
 
         Behavior on opacity {
             NumberAnimation {
                 //easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
-                duration: 300
+                duration: 250
             }
         }
 

@@ -46,7 +46,7 @@ Rectangle {
                     color: model.modelData.alive ? "green" : "red"
                     font.pixelSize: 45
                     font.bold: true
-                    text: model.modelData.name + ": " + (model.modelData.alive ? "Alive" : "Dead")
+                    text: model.modelData.name + ": " + model.modelData.wins + " wins"
                 }
             }
         }
@@ -77,9 +77,6 @@ Rectangle {
                 quitButton.color = "#50000000"
             }
             onClicked: {
-                if (players.length < 2) {
-                    return
-                }
                 Qt.quit()
             }
         }
@@ -101,6 +98,7 @@ Rectangle {
         anchors.leftMargin: 10
         width: 200
         height: 50
+        visible: players.length > 1
 
         color: "#50000000"
         border.color: "white"
@@ -121,7 +119,7 @@ Rectangle {
                     return
                 }
                 endScreen.opacity = 0
-                game.gameRestart()
+                game.restartGame()
             }
         }
         Text {

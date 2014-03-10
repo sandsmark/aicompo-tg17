@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
     QQuickView view;
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
-    GameManager *manager = new GameManager(&view);
+    GameManager manager(&view);
+    Q_UNUSED(manager);
     view.setSource(QUrl("qrc:/qml/bomb/main.qml"));
     view.showMaximized();
     return app.exec();

@@ -6,6 +6,7 @@
 #include <QTimer>
 
 class QQuickItem;
+class QQuickView;
 
 #define BOMB_STATES 14
 #define BOMB_TIME 1000
@@ -17,7 +18,7 @@ class Bomb : public QObject
     Q_PROPERTY(QPoint position READ position() CONSTANT)
 
 public:
-    explicit Bomb(QObject *parent, QPoint position, QQuickItem *sprite);
+    explicit Bomb(QQuickView *view, QPoint position);
     ~Bomb();
 
     int state();

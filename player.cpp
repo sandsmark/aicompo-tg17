@@ -3,7 +3,7 @@
 #include <QDebug>
 
 Player::Player(QObject *parent, int id) :
-    QObject(parent), m_id(id), m_alive(true)
+    QObject(parent), m_id(id), m_alive(true), m_wins(0)
 {
 }
 
@@ -62,7 +62,7 @@ QString Player::command()
 
 QString Player::name()
 {
-    return QString::number(m_id) + ". " + m_name;
+    return m_name + " (" + QString::number(m_id) + ')';
 }
 
 void Player::setName(QString name)

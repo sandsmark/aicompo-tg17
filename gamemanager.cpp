@@ -17,7 +17,7 @@
 #include <QTcpSocket>
 
 GameManager::GameManager(QQuickView *view) : QObject(view),
-    m_map(0), m_view(view), m_bombComponent(0)
+    m_map(0), m_view(view), m_roundsPlayed(0)
 {
     loadMap("default");
 
@@ -37,7 +37,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
 
     connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
-    connect(this, SIGNAL(gameOver()), SLOT(gameEnd()));
+    connect(this, SIGNAL(gameOver()), SLOT(endRound()));
 }
 
 GameManager::~GameManager()
@@ -59,7 +59,6 @@ void GameManager::loadMap(const QString &path)
         delete map;
         return;
     }
-
 
     if (m_map)
         m_map->deleteLater();
@@ -91,31 +90,8 @@ void GameManager::loadMap(const QString &path)
 
 void GameManager::addBomb(const QPoint &position)
 {
-    if (!m_bombComponent) {
-        m_bombComponent = new QQmlComponent(m_view->engine(), QUrl("qrc:/qml/bomb/BombSprite.qml"), QQmlComponent::PreferSynchronous);
-    }
-
-    if (m_bombComponent->status() != QQmlComponent::Ready) {
-        qWarning() << "GameManager: Unable to instantiate bomb sprite:" << m_bombComponent->errorString();;
-        return;
-    }
-    QObject *playingFieldObject = m_view->rootObject()->findChild<QObject*>("playingField");
-    if (!playingFieldObject) {
-        qWarning() << "GameManager: Unable to locate playing field object!";
-        return;
-    }
-    QQuickItem *playingField = qobject_cast<QQuickItem*>(playingFieldObject);
-    if (!playingField) {
-        qWarning() << "GameManager: Unable to locate playing field QML item!";
-        return;
-    }
-
-    QQuickItem *bombSprite = qobject_cast<QQuickItem*>(m_bombComponent->create());
-    bombSprite->setParentItem(playingField);
-
-    Bomb *bomb = new Bomb(this, position, bombSprite);
+    Bomb *bomb = new Bomb(m_view, position);
     connect(bomb, SIGNAL(boom(QPoint)), m_map, SLOT(detonateBomb(QPoint)));
-    bombSprite->setProperty("bombData", QVariant::fromValue(bomb));
 }
 
 void GameManager::explosionAt(const QPoint &position)
@@ -127,34 +103,50 @@ void GameManager::explosionAt(const QPoint &position)
     }
 }
 
-void GameManager::gameEnd()
+void GameManager::endRound()
 {
-    QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
-    if (endScreen) {
-        endScreen->setProperty("opacity", 1.0);
-    }
     m_timer.stop();
+
+    if (m_roundsPlayed < 5) {
+        for (int i=0; i<playerCount(); i++) {
+            if (player(i)->isAlive()) {
+                player(i)->addWin();
+                break;
+            }
+        }
+        m_roundsPlayed++;
+        QTimer::singleShot(1000, this, SLOT(startRound()));
+    } else {
+        QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
+        if (endScreen) {
+            endScreen->setProperty("opacity", 1.0);
+        }
+    }
 }
 
-void GameManager::gameStart()
+void GameManager::startRound()
 {
     if (m_players.isEmpty()) {
         return;
     }
+
+    for (int i=0; i<playerCount(); i++) {
+        player(i)->setAlive(true);
+        player(i)->setPosition(m_map->startingPositions()[i]);
+    }
+    loadMap(m_map->name());
+
+    // Do not allow to change name after game has started
     foreach(NetworkClient *client, m_clients) {
         client->disconnect(SIGNAL(nameChanged(QString)));
     }
     m_timer.start();
 }
 
-void GameManager::gameRestart()
+void GameManager::restartGame()
 {
-    for (int i=0; i<playerCount(); i++) {
-        player(i)->setAlive(true);
-        player(i)->setPosition(m_map->startingPositions()[i]);
-    }
-    loadMap(m_map->name());
-    gameStart();
+    m_roundsPlayed = 0;
+    startRound();
 }
 
 void GameManager::gameTick()
