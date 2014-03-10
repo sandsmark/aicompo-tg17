@@ -24,6 +24,8 @@ public:
     int state();
     QPoint position();
 
+    void blow();
+
 signals:
     void boom(const QPoint &position);
     void stateChanged();

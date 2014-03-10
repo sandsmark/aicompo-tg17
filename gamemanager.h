@@ -33,8 +33,9 @@ public:
 
     QString address();
 
+    QQuickView *view() { return m_view; }
+
 public slots:
-    void addBomb(const QPoint &position);
     void explosionAt(const QPoint &position);
     void endRound();
     void startRound();

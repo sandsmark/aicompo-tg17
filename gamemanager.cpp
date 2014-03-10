@@ -3,7 +3,6 @@
 #include "tile.h"
 #include "map.h"
 #include "player.h"
-#include "bomb.h"
 #include "networkclient.h"
 
 #include <QDebug>
@@ -86,12 +85,6 @@ void GameManager::loadMap(const QString &path)
     m_view->rootContext()->setContextProperty("map", map);
 
     connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
-}
-
-void GameManager::addBomb(const QPoint &position)
-{
-    Bomb *bomb = new Bomb(m_view, position);
-    connect(bomb, SIGNAL(boom(QPoint)), m_map, SLOT(detonateBomb(QPoint)));
 }
 
 void GameManager::explosionAt(const QPoint &position)
@@ -180,7 +173,7 @@ void GameManager::gameTick()
         } else if (command == "RIGHT") {
             position.setX(position.x() + 1);
         } else if (command == "BOMB") {
-            addBomb(position);
+            m_map->addBomb(position);
             continue;
         } else {
             continue;
@@ -234,7 +227,7 @@ void GameManager::clientDisconnected()
     }
     int index = m_clients.indexOf(client);
     if (index < 0) {
-        qDebug() << "GameManager: unable to find disconnecting client.";
+        qWarning() << "GameManager: unable to find disconnecting client.";
         return;
     }
     m_clients.takeAt(index)->deleteLater();

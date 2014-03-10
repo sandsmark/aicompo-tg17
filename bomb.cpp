@@ -33,7 +33,6 @@ Bomb::Bomb(QQuickView *view, QPoint position) :
     m_sprite->setProperty("bombData", QVariant::fromValue(this));
     m_sprite->setProperty("bombX", QVariant::fromValue(position.x()));
     m_sprite->setProperty("bombY", QVariant::fromValue(position.y()));
-    qDebug() << position.y();
 
     m_timer.setInterval(BOMB_TIME / BOMB_STATES);
     m_timer.setSingleShot(false);
@@ -55,6 +54,12 @@ void Bomb::tick()
     }
 
     emit stateChanged();
+}
+
+void Bomb::blow()
+{
+    m_state = BOMB_STATES;
+    tick();
 }
 
 int Bomb::state()

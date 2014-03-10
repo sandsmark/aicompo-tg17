@@ -1,14 +1,17 @@
 #include "map.h"
 #include "tile.h"
 #include "player.h"
+#include "gamemanager.h"
+#include "bomb.h"
 
 #include <QDebug>
 #include <QDir>
 
-Map::Map(QObject *parent, const QString &mapName) : QObject(parent),
+Map::Map(GameManager *game, const QString &mapName) : QObject(game),
     m_width(0),
     m_height(0),
-    m_name(mapName)
+    m_name(mapName),
+    m_game(game)
 {
     QFile file(":/maps/" + mapName + ".map");
 
@@ -157,11 +160,26 @@ void Map::explodeTile(const QPoint &position)
 
     tileAt(position)->explode();
 
+    foreach (Bomb *bomb, m_bombs) {
+        if (bomb->position() == position) {
+            bomb->blow();
+        }
+    }
+
     emit explosionAt(position);
+}
+
+
+void Map::addBomb(const QPoint &position)
+{
+    Bomb *bomb = new Bomb(m_game->view(), position);
+    m_bombs.append(bomb);
+    connect(bomb, SIGNAL(boom(QPoint)), SLOT(detonateBomb(QPoint)));
 }
 
 void Map::detonateBomb(const QPoint &center)
 {
+    m_bombs.removeAll(qobject_cast<Bomb*>(sender()));
     sender()->deleteLater();
 
     for (int i = -2; i<=2; i++) {

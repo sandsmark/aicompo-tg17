@@ -8,6 +8,8 @@
 #include "tile.h"
 
 class Player;
+class Bomb;
+class GameManager;
 
 class Map : public QObject
 {
@@ -20,7 +22,7 @@ class Map : public QObject
     Q_PROPERTY(int maxPlayers READ maxPlayers() CONSTANT)
 
 public:
-    explicit Map(QObject *parent, const QString &mapName);
+    explicit Map(GameManager *game, const QString &mapName);
 
     int width();
     int height();
@@ -40,6 +42,8 @@ public:
 
     int maxPlayers() const;
 
+    void addBomb(const QPoint &position);
+
 public slots:
     void detonateBomb(const QPoint &position);
 
@@ -56,6 +60,8 @@ private:
     QList<QPoint> m_startingPositions;
     QByteArray m_mapData;
     QString m_name;
+    QList<Bomb*> m_bombs;
+    GameManager *m_game;
 };
 
 #endif // MAP_H
