@@ -90,7 +90,7 @@ Rectangle {
         color: "white"
         opacity: humanPlayerCheckbox.opacity
     }
-
+/*
     Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
@@ -132,7 +132,7 @@ Rectangle {
         }
     }
 
-
+*/
     Text {
         id: address
         color: "white"
@@ -203,11 +203,11 @@ Rectangle {
         height: 50
         text: "Start game"
         onClicked: {
-            if (players.length < 2) {
+            if (players.length < 1) {
                 return
             }
             startScreen.visible = false
-            game.gameStart()
+            game.startRound()
         }
     }
 
@@ -261,7 +261,7 @@ Rectangle {
                         id: mapSelectionText
                         anchors.fill: parent
                         anchors.leftMargin: 10
-                        text: "● " + modelData
+                        text: "- " + modelData
                         color: "white"
                         font.pointSize: 25
                     }

@@ -43,6 +43,7 @@ Bomb::Bomb(QQuickView *view, QPoint position) :
 
 Bomb::~Bomb()
 {
+    QTimer::singleShot(500, m_sprite, SLOT(deleteLater()));
 }
 
 void Bomb::tick()

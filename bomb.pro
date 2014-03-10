@@ -30,6 +30,7 @@ RESOURCES += \
 
 OTHER_FILES += \
     default.map \
+    Arena.map \
     qml/bomb/MapSprite.qml \
     qml/bomb/BombSprite.qml \
     qml/bomb/EndScreen.qml \

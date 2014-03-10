@@ -14,14 +14,20 @@ Image {
 
 
 
+    Behavior on opacity {
+        NumberAnimation {
+            //easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
+            duration: 250
+        }
+    }
+
     Connections {
         target: bombData
         onStateChanged: {
             if (bombData.state > 13) {
                 image.source = "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-                explosion.shown = true
                 explosion.visible = true
-                explosion.opacity = 0
+                image.opacity = 0
             }
         }
     }
@@ -44,25 +50,7 @@ Image {
     Item {
         anchors.fill: parent
         id: explosion
-        opacity: 1
         visible: false
-
-        onOpacityChanged: {
-            console.log("FETTE" + shown + opacity)
-            if (opacity == 0 && shown) {
-                console.log("HOREUNGE")
-                parent.destroy()
-            }
-        }
-        property bool shown: false
-
-
-        Behavior on opacity {
-            NumberAnimation {
-                //easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
-                duration: 250
-            }
-        }
 
         Image {
             x: 0
