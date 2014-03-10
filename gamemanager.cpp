@@ -297,3 +297,8 @@ void GameManager::removeHumanPlayers()
     }
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
 }
+
+QString GameManager::address()
+{
+    return m_server.serverAddress().toString() + QLatin1Char(':') + QString::number(m_server.serverPort());
+}

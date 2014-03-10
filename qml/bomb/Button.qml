@@ -1,14 +1,8 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: startButton
-    anchors.bottom: parent.bottom
-    anchors.bottomMargin: 10
-    anchors.right: parent.horizontalCenter
-    anchors.rightMargin: 10
-    width: 200
-    height: 50
-    
+    signal clicked
+    property string text
     color: "#50000000"
     border.color: "white"
     MouseArea {
@@ -17,25 +11,19 @@ Rectangle {
         cursorShape: MouseArea.PointingHandCursor
         onEntered: {
             startButtonText.color = "black"
-            startButton.color = "white"
+            parent.color = "white"
         }
         onExited: {
             startButtonText.color = "white"
-            startButton.color = "#50000000"
+            parent.color = "#50000000"
         }
-        onClicked: {
-            if (players.length < 2) {
-                return
-            }
-            startScreen.visible = false
-            game.gameStart()
-        }
+        onClicked: parent.clicked()
     }
     Text {
         id: startButtonText
         anchors.centerIn: parent
-        text: "Start game"
+        text: parent.text
         color: "white"
-        font.pointSize: 25
+        font.pointSize: 20
     }
 }

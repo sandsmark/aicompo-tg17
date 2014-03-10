@@ -2,8 +2,8 @@ import QtQuick 2.0
 
 Rectangle {
     id: startScreen
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     anchors.centerIn: parent
     color: "#cc000000"
     border.color: "white"
@@ -12,8 +12,8 @@ Rectangle {
         id: humanPlayerCheckbox
         height: 20
         width: 20
-        anchors.top: parent.top
-        anchors.topMargin: 30
+        anchors.top: address.bottom
+        anchors.topMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 30
         border.color: "white"
@@ -91,14 +91,67 @@ Rectangle {
         opacity: humanPlayerCheckbox.opacity
     }
 
+    Rectangle {
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.topMargin: 30
+        anchors.rightMargin: 30
+        height: 30
+        width: 350
+        border.color: "white"
+        color: "#c0000000";
+        TextInput {
+            id: ipInput
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 200
+            anchors.margins: 2
+            verticalAlignment: TextInput.AlignVCenter
+            font.pixelSize: 20
+            color:"white"
+            inputMask: "000.000.000.000;_"
+            opacity: focus ? 1 : 0.5
+            onFocusChanged: if (focus) cursorPosition = 0
+        }
+        Text {
+            verticalAlignment: TextInput.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            anchors.fill: ipInput
+            font.pixelSize: 20
+            text: "remote address"
+            opacity: ipInput.focus ? 0 : 0.9
+            color: "white"
+        }
+        Button {
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 150
+            text: "connect"
+        }
+    }
+
+
     Text {
-        id: topLabel
-        font.pixelSize: 20
+        id: address
         color: "white"
+        font.pixelSize: 20
+        text: "Listening on: " + game.address
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: 30
         anchors.topMargin: 30
+    }
+
+    Text {
+        id: topLabel
+        font.pixelSize: 20
+        color: "white"
+        anchors.top: address.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 30
+        anchors.topMargin: 10
         text: "Connected users:"
     }
 
@@ -140,7 +193,7 @@ Rectangle {
     }
 
     // Start button
-    Rectangle {
+    Button {
         id: startButton
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
@@ -148,35 +201,13 @@ Rectangle {
         anchors.rightMargin: 10
         width: 200
         height: 50
-
-        color: "#50000000"
-        border.color: "white"
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: MouseArea.PointingHandCursor
-            onEntered: {
-                startButtonText.color = "black"
-                startButton.color = "white"
+        text: "Start game"
+        onClicked: {
+            if (players.length < 2) {
+                return
             }
-            onExited: {
-                startButtonText.color = "white"
-                startButton.color = "#50000000"
-            }
-            onClicked: {
-                if (players.length < 1) {
-                    return
-                }
-                startScreen.visible = false
-                game.startRound()
-            }
-        }
-        Text {
-            id: startButtonText
-            anchors.centerIn: parent
-            text: "Start game"
-            color: "white"
-            font.pointSize: 25
+            startScreen.visible = false
+            game.gameStart()
         }
     }
 
@@ -198,6 +229,7 @@ Rectangle {
         }
 
         Column {
+            id: maplist
             anchors.fill: parent
             Repeater {
                 id: mapsRepeater
@@ -287,16 +319,9 @@ Rectangle {
                 anchors.centerIn: parent
                 font.pointSize: 25
                 color: mapSelectText.color
-                rotation: mapList.visible ? 180 : 0
-                text: "↑"
-                Behavior on rotation {
-                    NumberAnimation {
-                        duration: 150
-                    }
-                }
+                text: mapList.visible ? "[]" : "="
             }
         }
     }
-
 }
 

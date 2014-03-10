@@ -78,6 +78,7 @@
         <file>qml/bomb/EndScreen.qml</file>
         <file>qml/bomb/PlayingField.qml</file>
         <file>qml/bomb/StartScreen.qml</file>
+        <file>qml/bomb/Button.qml</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

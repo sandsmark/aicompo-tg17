@@ -18,6 +18,7 @@ class GameManager : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
+    Q_PROPERTY(QString address READ address() CONSTANT)
 
 public:
     explicit GameManager(QQuickView *parent);
@@ -29,6 +30,8 @@ public:
 
     Q_INVOKABLE void addPlayer(NetworkClient *client = 0);
     Q_INVOKABLE void removeHumanPlayers();
+
+    QString address();
 
 public slots:
     void addBomb(const QPoint &position);
