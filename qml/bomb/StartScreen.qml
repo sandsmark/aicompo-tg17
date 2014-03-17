@@ -199,7 +199,7 @@ Rectangle {
         anchors.bottomMargin: 10
         anchors.right: parent.horizontalCenter
         anchors.rightMargin: 10
-        width: 200
+        width: 350
         height: 50
         text: "Start game"
         onClicked: {
@@ -233,10 +233,10 @@ Rectangle {
             anchors.fill: parent
             Repeater {
                 id: mapsRepeater
-                model: ["Arena", "default"]
+                model: game.maps
                 delegate: Rectangle {
                     id: mapSelection
-                    width: 200
+                    width: mapSelect.width
                     height: mapList.height/mapsRepeater.model.length
 
                     color: "transparent"
@@ -261,9 +261,10 @@ Rectangle {
                         id: mapSelectionText
                         anchors.fill: parent
                         anchors.leftMargin: 10
-                        text: "- " + modelData
+                        text: modelData[0] === ":" ? "[ " + modelData + " ]" : modelData
                         color: "white"
-                        font.pointSize: 25
+                        font.pointSize: 20
+                        verticalAlignment: Text.AlignVCenter
                     }
                 }
             }
@@ -276,7 +277,7 @@ Rectangle {
         anchors.bottomMargin: 10
         anchors.left: parent.horizontalCenter
         anchors.leftMargin: 10
-        width: 200
+        width: 350
         height: 50
 
         color: "#50000000"
@@ -304,7 +305,7 @@ Rectangle {
             anchors.verticalCenter: mapSelect.verticalCenter
             text: map.name
             color: "white"
-            font.pointSize: 25
+            font.pointSize: 20
         }
         Rectangle {
             anchors.right: mapSelect.right
@@ -317,7 +318,7 @@ Rectangle {
             width: 40
             Text {
                 anchors.centerIn: parent
-                font.pointSize: 25
+                font.pointSize: 20
                 color: mapSelectText.color
                 text: mapList.visible ? "[]" : "="
             }

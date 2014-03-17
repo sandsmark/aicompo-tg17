@@ -19,6 +19,7 @@ class GameManager : public QObject
 
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
     Q_PROPERTY(QString address READ address() CONSTANT)
+    Q_PROPERTY(QStringList maps READ maps() NOTIFY mapsChanged())
 
 public:
     explicit GameManager(QQuickView *parent);
@@ -35,6 +36,8 @@ public:
 
     QQuickView *view() { return m_view; }
 
+    QStringList maps();
+
 public slots:
     void explosionAt(const QPoint &position);
     void endRound();
@@ -47,6 +50,7 @@ signals:
     void gameOver();
     void clientConnected();
     void roundsPlayedChanged();
+    void mapsChanged();
 
 private slots:
     void gameTick();

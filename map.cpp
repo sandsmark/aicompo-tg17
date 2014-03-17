@@ -13,7 +13,7 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
     m_name(mapName),
     m_game(game)
 {
-    QFile file(":/maps/" + mapName + ".map");
+    QFile file(mapName);
 
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Map: Unable to open file:" << mapName;

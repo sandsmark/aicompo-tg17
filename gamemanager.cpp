@@ -6,6 +6,7 @@
 #include "networkclient.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QQmlContext>
 #include <QQuickView>
@@ -14,11 +15,12 @@
 #include <QList>
 #include <QQmlComponent>
 #include <QTcpSocket>
+#include <QFileSystemWatcher>
 
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_map(0), m_view(view), m_roundsPlayed(0)
 {
-    loadMap("default");
+    loadMap(":/maps/default.map");
 
     if (!m_map) {
         qWarning() << "GameManager: Unable to load default map!";
@@ -37,6 +39,10 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(gameOver()), SLOT(endRound()));
+
+    QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
+    watcher->addPath("maps/");
+    connect(watcher, SIGNAL(directoryChanged(QString)), SIGNAL(mapsChanged()));
 }
 
 GameManager::~GameManager()
@@ -47,6 +53,21 @@ GameManager::~GameManager()
             disconnect(client, SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
         }
     }
+}
+
+QStringList GameManager::maps()
+{
+    QStringList ret;
+
+    ret << ":/maps/default.map"
+        << ":/maps/Arena.map";
+
+    QDir mapDir("maps/");
+    foreach (const QString file, mapDir.entryList(QDir::Files)) {
+        ret << "maps/" + file;
+    }
+
+    return ret;
 }
 
 void GameManager::loadMap(const QString &path)
