@@ -6,6 +6,7 @@
 #include <QString>
 #include <QTimer>
 #include <QTcpServer>
+#include <QSoundEffect>
 
 class Map;
 class QQuickView;
@@ -43,6 +44,7 @@ public slots:
     void endRound();
     void startRound();
     void restartGame();
+    void playBombSound();
 
     int roundsPlayed() { return m_roundsPlayed; }
 
@@ -66,6 +68,10 @@ private:
     QList<NetworkClient*> m_clients;
     QString m_currentMap;
     int m_roundsPlayed;
+
+    QSoundEffect m_backgroundLoop;
+    QSoundEffect m_explosion;
+    QSoundEffect m_death;
 };
 
 #endif // MAPLOADER_H

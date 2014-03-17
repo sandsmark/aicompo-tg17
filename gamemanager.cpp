@@ -27,6 +27,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
         return;
     }
 
+    // Add QML objects
     m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
     m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
 
@@ -40,9 +41,20 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(gameOver()), SLOT(endRound()));
 
+    // Watch filesystem for map changes
     QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
     watcher->addPath("maps/");
     connect(watcher, SIGNAL(directoryChanged(QString)), SIGNAL(mapsChanged()));
+
+    // Set up sound effects
+    m_explosion.setSource(QUrl::fromLocalFile("sound/explosion.wav"));
+    m_explosion.setVolume(0.25f);
+    m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/drumloop2.wav"));
+    m_backgroundLoop.setVolume(0.25f);
+    m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
+    m_backgroundLoop.play();
+    m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
+    m_death.setVolume(0.25f);
 }
 
 GameManager::~GameManager()
@@ -108,10 +120,16 @@ void GameManager::loadMap(const QString &path)
     connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
 }
 
+void GameManager::playBombSound()
+{
+    m_explosion.play();
+}
+
 void GameManager::explosionAt(const QPoint &position)
 {
     for (int i=0; i<playerCount(); i++) {
         if (player(i)->position() == position) {
+            m_death.play();
             player(i)->setAlive(false);
         }
     }

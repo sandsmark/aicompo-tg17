@@ -53,6 +53,10 @@ void Bomb::tick()
         QMetaObject::invokeMethod(&m_timer, "stop");
     }
 
+    if (m_state == BOMB_STATES - 2) {
+        emit aboutToBlow();
+    }
+
     emit stateChanged();
 }
 
