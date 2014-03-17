@@ -34,23 +34,14 @@ void NetworkClient::sendString(QByteArray string)
     }
 }
 
-void NetworkClient::sendWelcome(const QByteArray &mapData, const QPoint &startData)
-{
-    sendString("HELLO\n");
-    sendString("MAP\n");
-    sendString(mapData);
-    sendString("ENDMAP\n");
-    sendString("STARTPOSITION\n");
-    sendString(QByteArray::number(startData.x()) + ',');
-    sendString(QByteArray::number(startData.y()) + '\n');
-}
-
 void NetworkClient::sendOK()
 {
+    if (m_json) return;
+
     sendString("OK\n");
 }
 
-void NetworkClient::sendState(QList<Player *> players, const Map *map)
+void NetworkClient::sendState(QList<Player *> players, const Map *map, const Player *self)
 {
     if (m_json) {
         sendString("{\n  players: [\n");
@@ -58,7 +49,7 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map)
             if (!player) continue;
             sendString("    { id: " + QByteArray::number(player->id()) +
                        ", x: " + QByteArray::number(player->position().x()) +
-                       ', y:' + QByteArray::number(player->position().y()) + " }\n");
+                       ", y: " + QByteArray::number(player->position().y()) + " }\n");
         }
         sendString("  ],\n");
 
@@ -90,9 +81,20 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map)
         sendString("ENDBOMBS\n");
     }
 
+    if (m_json) {
+        sendString("  x: " + QByteArray::number(self->position().x()) + "\n");
+        sendString("  y: " + QByteArray::number(self->position().y()) + "\n");
+        sendString("  height: " + QByteArray::number(map->height()) + "\n");
+        sendString("  width: " + QByteArray::number(map->width()) + "\n");
+    } else {
+        sendString("X " + QByteArray::number(self->position().x()) + "\n");
+        sendString("Y " + QByteArray::number(self->position().y()) + "\n");
+        sendString("HEIGHT " + QByteArray::number(map->height()) + "\n");
+        sendString("WIDTH " + QByteArray::number(map->width()) + "\n");
+    }
 
     if (m_json) {
-        sendString("   map: [");
+        sendString("  map: [\n");
     } else {
         sendString("MAP\n");
     }
@@ -122,7 +124,7 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map)
             }
         }
         if (m_json) {
-            sendString("\"" + mapLine + "\",");
+            sendString("    \"" + mapLine + "\",\n");
         } else {
             sendString(mapLine + '\n');
         }

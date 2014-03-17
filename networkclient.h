@@ -17,7 +17,7 @@ public:
     QString remoteName();
     void sendWelcome(const QByteArray &mapData, const QPoint &startData);
     void sendOK();
-    void sendState(QList<Player*> players, const Map *map);
+    void sendState(QList<Player*> players, const Map *map, const Player *self);
 
 signals:
     void commandReceived(const QString command);

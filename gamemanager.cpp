@@ -153,7 +153,7 @@ void GameManager::gameTick()
 
         QList<Player*> list = players;
         list.takeAt(i);
-        m_clients[i]->sendState(list, m_map);
+        m_clients[i]->sendState(list, m_map, players[i]);
     }
 
     for (int i=0; i<playerCount(); i++) {
@@ -265,7 +265,6 @@ void GameManager::addPlayer(NetworkClient *client)
         connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
         player->setName("Local user");
     } else {
-        client->sendWelcome(m_map->mapData(), player->position());
         player->setName(client->remoteName());
         connect(client, SIGNAL(nameChanged(QString)), player, SLOT(setName(QString)));
         connect(client, SIGNAL(commandReceived(QString)), player, SLOT(setCommand(QString)));
