@@ -72,6 +72,8 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
             case '#':
                 m_tiles.append(new Tile(this, Tile::Stone));
                 break;
+            default:
+                qWarning() << "Map: Illegal tile type";
             }
         }
     }
