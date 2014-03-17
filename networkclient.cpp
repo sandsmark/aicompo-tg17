@@ -36,15 +36,26 @@ void NetworkClient::sendString(QByteArray string)
 
 void NetworkClient::sendOK()
 {
-    if (m_json) return;
+    if (m_json) {
+        sendString("{\n  type: \"ok\"\n}\n");
+    } else {
+        sendString("OK\n");
+    }
+}
 
-    sendString("OK\n");
+void NetworkClient::sendEndOfRound()
+{
+    if (m_json) {
+        sendString("{\n  type: \"round end\"\n}\n");
+    } else {
+        sendString("ENDOFROUND\n");
+    }
 }
 
 void NetworkClient::sendState(QList<Player *> players, const Map *map, const Player *self)
 {
     if (m_json) {
-        sendString("{\n  players: [\n");
+        sendString("{\n  type: \"status update\",\n  players: [\n");
         foreach(Player *player, players) {
             if (!player) continue;
             sendString("    { id: " + QByteArray::number(player->id()) +
@@ -82,10 +93,10 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
     }
 
     if (m_json) {
-        sendString("  x: " + QByteArray::number(self->position().x()) + "\n");
-        sendString("  y: " + QByteArray::number(self->position().y()) + "\n");
-        sendString("  height: " + QByteArray::number(map->height()) + "\n");
-        sendString("  width: " + QByteArray::number(map->width()) + "\n");
+        sendString("  x: " + QByteArray::number(self->position().x()) + ",\n");
+        sendString("  y: " + QByteArray::number(self->position().y()) + ",\n");
+        sendString("  height: " + QByteArray::number(map->height()) + ",\n");
+        sendString("  width: " + QByteArray::number(map->width()) + ",\n");
     } else {
         sendString("X " + QByteArray::number(self->position().x()) + "\n");
         sendString("Y " + QByteArray::number(self->position().y()) + "\n");
@@ -124,7 +135,11 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
             }
         }
         if (m_json) {
-            sendString("    \"" + mapLine + "\",\n");
+            if (y > map->height() - 2) {
+                sendString("    \"" + mapLine + "\"\n");
+            } else {
+                sendString("    \"" + mapLine + "\",\n");
+            }
         } else {
             sendString(mapLine + '\n');
         }
@@ -176,7 +191,6 @@ void NetworkClient::dataReceived()
         }
 
         if (line.startsWith("Sec-WebSocket-Key:")) {
-            qDebug() << "GOT SEECRKET";
             QList<QByteArray> splitLine = line.split(':');
             if (splitLine.length() < 2) continue;
             QByteArray handshake = splitLine[1].trimmed() + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";

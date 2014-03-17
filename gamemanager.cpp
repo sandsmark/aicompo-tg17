@@ -139,6 +139,11 @@ void GameManager::endRound()
 {
     m_timer.stop();
 
+    foreach(NetworkClient *client, m_clients) {
+        if (!client) continue;
+        client->sendEndOfRound();
+    }
+
     if (m_roundsPlayed < 5) {
         for (int i=0; i<playerCount(); i++) {
             if (player(i)->isAlive()) {
