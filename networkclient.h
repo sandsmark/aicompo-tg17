@@ -6,6 +6,8 @@
 
 class QTcpSocket;
 class Player;
+class Map;
+class Bomb;
 
 class NetworkClient : public QObject
 {
@@ -16,6 +18,7 @@ public:
     void sendWelcome(const QByteArray &mapData, const QPoint &startData);
     void sendOK();
     void sendPlayers(QList<Player*> players);
+    void sendMap(const Map *map);
 
 signals:
     void commandReceived(const QString command);

@@ -3,6 +3,8 @@
 #include <QHostAddress>
 #include <QCryptographicHash>
 #include "player.h"
+#include "map.h"
+#include "bomb.h"
 
 NetworkClient::NetworkClient(QTcpSocket *socket) :
     QObject(socket), m_socket(socket), m_isWebSocket(false)
@@ -37,6 +39,7 @@ void NetworkClient::sendWelcome(const QByteArray &mapData, const QPoint &startDa
     sendString("HELLO\n");
     sendString("MAP\n");
     sendString(mapData);
+    sendString("ENDMAP\n");
     sendString("STARTPOSITION\n");
     sendString(QByteArray::number(startData.x()) + ',');
     sendString(QByteArray::number(startData.y()) + '\n');
@@ -56,6 +59,48 @@ void NetworkClient::sendPlayers(QList<Player *> players)
         sendString(QByteArray::number(player->position().x()) + ',');
         sendString(QByteArray::number(player->position().y()) + '\n');
     }
+    sendString("ENDPLAYERS\n");
+}
+
+void NetworkClient::sendMap(const Map *map)
+{
+    sendString("BOMBS\n");
+    foreach(Bomb *bomb, map->bombs()) {
+        if (!bomb) continue;
+        sendString(QByteArray::number(bomb->position().x()) + ',');
+        sendString(QByteArray::number(bomb->position().y()) + ' ');
+        sendString(QByteArray::number(BOMB_STATES - bomb->state()) + '\n');
+    }
+    sendString("ENDBOMBS\n");
+
+    sendString("MAP\n");
+    for (int y=0; y<map->height(); y++) {
+        QByteArray mapLine;
+        for (int x=0; x<map->width(); x++) {
+            switch (map->tileAt(QPoint(x, y))->type()) {
+            case Tile::Grass:
+                mapLine += '.';
+                break;
+            case Tile::Floor:
+                mapLine += '_';
+                break;
+            case Tile::Wall:
+                mapLine += '+';
+                break;
+            case Tile::Stone:
+                mapLine += '#';
+                break;
+            case Tile::Debris:
+                mapLine += ' ';
+                break;
+            case Tile::Invalid:
+                mapLine += 'x';
+                break;
+            }
+        }
+        sendString(mapLine + '\n');
+    }
+    sendString("ENDMAP\n");
 }
 
 void NetworkClient::dataReceived()
@@ -77,6 +122,7 @@ void NetworkClient::dataReceived()
 
     QList<QByteArray> lines = data.split('\n');
     foreach(const QByteArray line, lines) {
+        qDebug() << "LINE:" << line;
         if (line.isEmpty()) continue;
 
         if (line.startsWith("NAME ")) {
@@ -91,6 +137,7 @@ void NetworkClient::dataReceived()
         }
 
         if (line.startsWith("Sec-WebSocket-Key:")) {
+            qDebug() << "GOT SEECRKET";
             QList<QByteArray> splitLine = line.split(':');
             if (splitLine.length() < 2) continue;
             QByteArray handshake = splitLine[1].trimmed() + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";

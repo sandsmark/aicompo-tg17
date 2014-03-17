@@ -4,11 +4,6 @@ import com.iskrembilen.bomb 1.0
 Grid {
     id: playingField
     objectName: "playingField"
-    //anchors.horizontalCenter: parent.horizontalCenter
-    //anchors.verticalCenter: parent.verticalCenter
-    //anchors.centerIn: parent
-    //width: rows * 64
-    //height: columns * 64
     anchors.top: parent.top
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
@@ -22,7 +17,7 @@ Grid {
         model: map.tiles
         delegate: MapSprite {
             z: (type == Tile.Grass || type == Tile.Debris) ? -1 : 0
-            height: playingField.height / (playingField.rows +1)
+            height: playingField.height / (playingField.rows + 1)
             width: height
             type: model.modelData.type
         }

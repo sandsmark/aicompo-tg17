@@ -77,12 +77,12 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
     }
 }
 
-int Map::width()
+int Map::width() const
 {
     return m_width;
 }
 
-int Map::height()
+int Map::height() const
 {
     return m_height;
 }

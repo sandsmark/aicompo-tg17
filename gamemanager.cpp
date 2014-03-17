@@ -154,6 +154,7 @@ void GameManager::gameTick()
         QList<Player*> list = players;
         list.takeAt(i);
         m_clients[i]->sendPlayers(list);
+        m_clients[i]->sendMap(m_map);
     }
 
     for (int i=0; i<playerCount(); i++) {

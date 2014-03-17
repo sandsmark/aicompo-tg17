@@ -24,8 +24,8 @@ class Map : public QObject
 public:
     explicit Map(GameManager *game, const QString &mapName);
 
-    int width();
-    int height();
+    int width() const;
+    int height() const;
 
     bool isNull();
     bool isValid();
@@ -44,6 +44,10 @@ public:
 
     void addBomb(const QPoint &position);
 
+    QList<Bomb*> bombs() const { return m_bombs; }
+
+    Tile *tileAt(const QPoint &position) const;
+
 public slots:
     void detonateBomb(const QPoint &position);
 
@@ -51,7 +55,6 @@ signals:
     void explosionAt(QPoint position);
 
 private:
-    Tile *tileAt(const QPoint &position) const;
     void explodeTile(const QPoint &position);
 
     int m_width;

@@ -84,5 +84,3 @@ Image {
         style: Text.Outline
     }
 }
-
-

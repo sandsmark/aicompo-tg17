@@ -1,10 +1,7 @@
 import QtQuick 2.0
 import com.iskrembilen.bomb 1.0
 
-
 Rectangle {
-    //height: 64
-    //width: 64
     property int type: -1
     onTypeChanged: {
         if (type === Tile.Grass) {
