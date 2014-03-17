@@ -7,7 +7,7 @@
 #include "bomb.h"
 
 NetworkClient::NetworkClient(QTcpSocket *socket) :
-    QObject(socket), m_socket(socket), m_isWebSocket(false)
+    QObject(socket), m_socket(socket), m_isWebSocket(false), m_json(false)
 {
     socket->open(QIODevice::ReadWrite);
     m_name = m_socket->peerAddress().toString();
@@ -50,30 +50,53 @@ void NetworkClient::sendOK()
     sendString("OK\n");
 }
 
-void NetworkClient::sendPlayers(QList<Player *> players)
+void NetworkClient::sendState(QList<Player *> players, const Map *map)
 {
-    sendString("PLAYERS\n");
-    foreach(Player *player, players) {
-        if (!player) continue;
-        sendString(QByteArray::number(player->id()) + ' ');
-        sendString(QByteArray::number(player->position().x()) + ',');
-        sendString(QByteArray::number(player->position().y()) + '\n');
-    }
-    sendString("ENDPLAYERS\n");
-}
+    if (m_json) {
+        sendString("{\n  players: [\n");
+        foreach(Player *player, players) {
+            if (!player) continue;
+            sendString("    { id: " + QByteArray::number(player->id()) +
+                       ", x: " + QByteArray::number(player->position().x()) +
+                       ', y:' + QByteArray::number(player->position().y()) + " }\n");
+        }
+        sendString("  ],\n");
 
-void NetworkClient::sendMap(const Map *map)
-{
-    sendString("BOMBS\n");
-    foreach(Bomb *bomb, map->bombs()) {
-        if (!bomb) continue;
-        sendString(QByteArray::number(bomb->position().x()) + ',');
-        sendString(QByteArray::number(bomb->position().y()) + ' ');
-        sendString(QByteArray::number(BOMB_STATES - bomb->state()) + '\n');
-    }
-    sendString("ENDBOMBS\n");
+        sendString("  bombs: [\n");
+        foreach(Bomb *bomb, map->bombs()) {
+            if (!bomb) continue;
+            sendString("    { x: " + QByteArray::number(bomb->position().x()) + ", y:" +
+                       QByteArray::number(bomb->position().y()) + ", state:" +
+                       QByteArray::number(BOMB_STATES - bomb->state()) + " }\n");
+        }
+        sendString("  ],\n");
+    } else {
+        sendString("PLAYERS\n");
+        foreach(Player *player, players) {
+            if (!player) continue;
+            sendString(QByteArray::number(player->id()) + ' ' +
+                       QByteArray::number(player->position().x()) + ',' +
+                       QByteArray::number(player->position().y()) + '\n');
+        }
+        sendString("ENDPLAYERS\n");
 
-    sendString("MAP\n");
+        sendString("BOMBS\n");
+        foreach(Bomb *bomb, map->bombs()) {
+            if (!bomb) continue;
+            sendString(QByteArray::number(bomb->position().x()) + ',' +
+                       QByteArray::number(bomb->position().y()) + ' ' +
+                       QByteArray::number(BOMB_STATES - bomb->state()) + '\n');
+        }
+        sendString("ENDBOMBS\n");
+    }
+
+
+    if (m_json) {
+        sendString("   map: [");
+    } else {
+        sendString("MAP\n");
+    }
+
     for (int y=0; y<map->height(); y++) {
         QByteArray mapLine;
         for (int x=0; x<map->width(); x++) {
@@ -98,9 +121,18 @@ void NetworkClient::sendMap(const Map *map)
                 break;
             }
         }
-        sendString(mapLine + '\n');
+        if (m_json) {
+            sendString("\"" + mapLine + "\",");
+        } else {
+            sendString(mapLine + '\n');
+        }
     }
-    sendString("ENDMAP\n");
+
+    if (m_json) {
+        sendString("  ]\n}\n");
+    } else {
+        sendString("ENDMAP\n");
+    }
 }
 
 void NetworkClient::dataReceived()
@@ -133,6 +165,11 @@ void NetworkClient::dataReceived()
                 m_name = m_name.left(10);
             }
             emit nameChanged(m_name);
+            continue;
+        }
+
+        if (line.startsWith("JSON")) {
+            m_json = true;
             continue;
         }
 

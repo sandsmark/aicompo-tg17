@@ -17,8 +17,7 @@ public:
     QString remoteName();
     void sendWelcome(const QByteArray &mapData, const QPoint &startData);
     void sendOK();
-    void sendPlayers(QList<Player*> players);
-    void sendMap(const Map *map);
+    void sendState(QList<Player*> players, const Map *map);
 
 signals:
     void commandReceived(const QString command);
@@ -35,6 +34,7 @@ private:
     QString m_name;
     bool m_isWebSocket;
     QByteArray m_webSocketFrame;
+    bool m_json;
 };
 
 #endif // NETWORKCLIENT_H
