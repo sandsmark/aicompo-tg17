@@ -189,19 +189,6 @@ void GameManager::restartGame()
 
 void GameManager::gameTick()
 {
-    QList<Player*> players;
-    for (int i=0; i<playerCount(); i++) {
-        if (player(i)->isAlive())
-            players.append(player(i));
-    }
-    for (int i=0; i<playerCount(); i++) {
-        if (!m_clients[i]) continue;
-
-        QList<Player*> list = players;
-        list.takeAt(i);
-        m_clients[i]->sendState(list, m_map, players[i]);
-    }
-
     for (int i=0; i<playerCount(); i++) {
         QString command = player(i)->command();
         if (command.isEmpty()) {
@@ -240,8 +227,17 @@ void GameManager::gameTick()
     if (dead > 0 && m_players.size() - dead < 2) {
         emit gameOver();
     } else {
-        foreach(NetworkClient *client, m_clients) {
-            if (client) client->sendOK();
+        QList<Player*> players;
+        for (int i=0; i<playerCount(); i++) {
+            if (player(i)->isAlive())
+                players.append(player(i));
+        }
+        for (int i=0; i<playerCount(); i++) {
+            if (!m_clients[i]) continue;
+
+            QList<Player*> list = players;
+            list.takeAt(i);
+            m_clients[i]->sendState(list, m_map, players[i]);
         }
     }
 }

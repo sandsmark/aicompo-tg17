@@ -34,15 +34,6 @@ void NetworkClient::sendString(QByteArray string)
     }
 }
 
-void NetworkClient::sendOK()
-{
-    if (m_json) {
-        sendString("{ \"type\": \"ok\" }\n");
-    } else {
-        sendString("OK\n");
-    }
-}
-
 void NetworkClient::sendDead()
 {
     if (m_json) {
