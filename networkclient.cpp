@@ -37,7 +37,7 @@ void NetworkClient::sendString(QByteArray string)
 void NetworkClient::sendOK()
 {
     if (m_json) {
-        sendString("{\n  type: \"ok\"\n}\n");
+        sendString("{ \"type\": \"ok\" }\n");
     } else {
         sendString("OK\n");
     }
@@ -55,7 +55,7 @@ void NetworkClient::sendDead()
 void NetworkClient::sendEndOfRound()
 {
     if (m_json) {
-        sendString("{\n  type: \"round end\"\n}\n");
+        sendString("{ \"type\": \"round end\" }\n");
     } else {
         sendString("ENDOFROUND\n");
     }
@@ -64,23 +64,23 @@ void NetworkClient::sendEndOfRound()
 void NetworkClient::sendState(QList<Player *> players, const Map *map, const Player *self)
 {
     if (m_json) {
-        sendString("{\n  type: \"status update\",\n  players: [\n");
+        sendString("{ \"type\": \"status update\",  \"players\": [");
         foreach(Player *player, players) {
             if (!player) continue;
-            sendString("    { id: " + QByteArray::number(player->id()) +
-                       ", x: " + QByteArray::number(player->position().x()) +
-                       ", y: " + QByteArray::number(player->position().y()) + " }\n");
+            sendString(" { \"id\": " + QByteArray::number(player->id()) +
+                       ", \"x\": " + QByteArray::number(player->position().x()) +
+                       ", \"y\": " + QByteArray::number(player->position().y()) + " }");
         }
-        sendString("  ],\n");
+        sendString("  ], ");
 
-        sendString("  bombs: [\n");
+        sendString("  \"bombs\": [ ");
         foreach(Bomb *bomb, map->bombs()) {
             if (!bomb) continue;
-            sendString("    { x: " + QByteArray::number(bomb->position().x()) + ", y:" +
-                       QByteArray::number(bomb->position().y()) + ", state:" +
-                       QByteArray::number(BOMB_STATES - bomb->state()) + " }\n");
+            sendString(" { \"x\": " + QByteArray::number(bomb->position().x()) + ", \"y\":" +
+                       QByteArray::number(bomb->position().y()) + ", \"state\":" +
+                       QByteArray::number(BOMB_STATES - bomb->state()) + " }");
         }
-        sendString("  ],\n");
+        sendString(" ], ");
     } else {
         sendString("PLAYERS\n");
         foreach(Player *player, players) {
@@ -102,10 +102,10 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
     }
 
     if (m_json) {
-        sendString("  x: " + QByteArray::number(self->position().x()) + ",\n");
-        sendString("  y: " + QByteArray::number(self->position().y()) + ",\n");
-        sendString("  height: " + QByteArray::number(map->height()) + ",\n");
-        sendString("  width: " + QByteArray::number(map->width()) + ",\n");
+        sendString("  \"x\": " + QByteArray::number(self->position().x()) + ", ");
+        sendString("  \"y\": " + QByteArray::number(self->position().y()) + ", ");
+        sendString("  \"height\": " + QByteArray::number(map->height()) + ", ");
+        sendString("  \"width\": " + QByteArray::number(map->width()) + ", ");
     } else {
         sendString("X " + QByteArray::number(self->position().x()) + "\n");
         sendString("Y " + QByteArray::number(self->position().y()) + "\n");
@@ -114,7 +114,7 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
     }
 
     if (m_json) {
-        sendString("  map: [\n");
+        sendString(" \"map\": [ ");
     } else {
         sendString("MAP\n");
     }
@@ -145,9 +145,9 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
         }
         if (m_json) {
             if (y > map->height() - 2) {
-                sendString("    \"" + mapLine + "\"\n");
+                sendString(" \"" + mapLine + "\" ");
             } else {
-                sendString("    \"" + mapLine + "\",\n");
+                sendString(" \"" + mapLine + "\", ");
             }
         } else {
             sendString(mapLine + '\n');
@@ -155,7 +155,7 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
     }
 
     if (m_json) {
-        sendString("  ]\n}\n");
+        sendString(" ] }\n");
     } else {
         sendString("ENDMAP\n");
     }
