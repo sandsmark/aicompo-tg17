@@ -178,6 +178,7 @@ void Map::addBomb(const QPoint &position)
     m_bombs.append(bomb);
     connect(bomb, SIGNAL(boom(QPoint)), SLOT(detonateBomb(QPoint)));
     connect(bomb, SIGNAL(aboutToBlow()), m_game, SLOT(playBombSound()));
+    connect(m_game, SIGNAL(tick()), bomb, SLOT(tick()));
 }
 
 void Map::detonateBomb(const QPoint &center)

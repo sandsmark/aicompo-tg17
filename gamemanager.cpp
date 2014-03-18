@@ -38,6 +38,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_server.listen(QHostAddress::Any, 54321);
 
     connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
+    connect(&m_timer, SIGNAL(timeout()), SIGNAL(tick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(gameOver()), SLOT(endRound()));
 

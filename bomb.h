@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QPoint>
-#include <QTimer>
 
 class QQuickItem;
 class QQuickView;
@@ -36,7 +35,6 @@ private slots:
 
 private:
     QPoint m_position;
-    QTimer m_timer;
     int m_state; // Goes 1-13, then boom on 14
     QQuickItem *m_sprite;
 };

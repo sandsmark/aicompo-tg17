@@ -53,6 +53,7 @@ signals:
     void clientConnected();
     void roundsPlayedChanged();
     void mapsChanged();
+    void tick();
 
 private slots:
     void gameTick();

@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QQuickItem>
 #include <QQuickView>
-
+#include <QTimer>
 Bomb::Bomb(QQuickView *view, QPoint position) :
     QObject(view), m_position(position), m_state(0), m_sprite(0)
 {
@@ -33,11 +33,6 @@ Bomb::Bomb(QQuickView *view, QPoint position) :
     m_sprite->setProperty("bombData", QVariant::fromValue(this));
     m_sprite->setProperty("bombX", QVariant::fromValue(position.x()));
     m_sprite->setProperty("bombY", QVariant::fromValue(position.y()));
-
-    m_timer.setInterval(BOMB_TIME / BOMB_STATES);
-    m_timer.setSingleShot(false);
-    connect(&m_timer, SIGNAL(timeout()), SLOT(tick()));
-    m_timer.start();
 }
 
 Bomb::~Bomb()
@@ -47,13 +42,11 @@ Bomb::~Bomb()
 
 void Bomb::tick()
 {
-    m_state++;
-    if (m_state > BOMB_STATES) {
+    if (m_state == BOMB_STATES) {
         emit boom(m_position);
-        QMetaObject::invokeMethod(&m_timer, "stop");
-    }
-
-    if (m_state == BOMB_STATES - 2) {
+    } else if (m_state < BOMB_STATES) {
+        m_state++;
+    } else if (m_state == BOMB_STATES - 2) {
         emit aboutToBlow();
     }
 
