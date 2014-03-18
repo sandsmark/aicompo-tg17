@@ -131,7 +131,9 @@ void GameManager::explosionAt(const QPoint &position)
         if (player(i)->position() == position) {
             m_death.play();
             player(i)->setAlive(false);
-            m_clients[i]->sendDead();
+            if (m_clients[i]) {
+                m_clients[i]->sendDead();
+            }
         }
     }
 }
