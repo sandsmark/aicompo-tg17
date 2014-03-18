@@ -8,75 +8,23 @@ Rectangle {
     color: "#cc000000"
     border.color: "white"
 
-    Rectangle {
+    Checkbox {
         id: humanPlayerCheckbox
-        height: 20
-        width: 20
-        anchors.top: address.bottom
+        anchors.verticalCenter: topLabel.verticalCenter
         anchors.topMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 30
-        border.color: "white"
-        color: "transparent"
-        opacity: (players.length < map.maxPlayers || checkMark.checked) ? 1 : 0
-        enabled: players.length < map.maxPlayers || checkMark.checked
+        opacity: (players.length < map.maxPlayers || checked) ? 1 : 0
+        enabled: players.length < map.maxPlayers || checked
+        onClicked: {
+            if (checked) {
+                game.removeHumanPlayers()
+                checked = false
+            } else {
+                if (players.length >= map.maxPlayers) return;
 
-        Behavior on opacity {
-            NumberAnimation {
-                duration: 250
-            }
-        }
-
-        Rectangle {
-            id: checkMark
-            anchors.fill: parent
-            anchors.margins: 3
-            property bool checked: false
-            border.color: "white"
-            opacity: 0
-            border.width: 1
-            color: checkMark.checked ? "white" : "black"
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            cursorShape: MouseArea.PointingHandCursor
-            hoverEnabled: true
-            onEntered: {
-                if (checkMark.checked) {
-                    checkMark.opacity = 1.0
-                } else {
-                    checkMark.opacity = 0.3
-                }
-            }
-            onExited: {
-                if (checkMark.checked) {
-                    checkMark.opacity = 0.7
-                } else {
-                    checkMark.opacity = 0.0
-                }
-            }
-
-
-            onClicked: {
-                if (checkMark.checked) {
-                    game.removeHumanPlayers()
-                    if (containsMouse) {
-                        checkMark.opacity = 0.3
-                    } else {
-                        checkMark.opacity = 0.0
-                    }
-                    checkMark.checked = false
-                } else {
-                    if (players.length > map.maxPlayers) return;
-                    game.addPlayer()
-                    if (containsMouse) {
-                        checkMark.opacity = 1.0
-                    } else {
-                        checkMark.opacity = 0.7
-                    }
-                    checkMark.checked = true
-                }
+                game.addPlayer()
+                checked = true
             }
         }
     }
@@ -90,6 +38,30 @@ Rectangle {
         color: "white"
         opacity: humanPlayerCheckbox.opacity
     }
+
+    Checkbox {
+        id: debugCheckbox
+        anchors.verticalCenter: address.verticalCenter
+        anchors.topMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 30
+        opacity: (players.length < map.maxPlayers || checked) ? 1 : 0
+        enabled: players.length < map.maxPlayers || checked
+        onClicked: {
+            checked = !checked
+            game.setDebugMode(checked)
+        }
+    }
+
+    Text {
+        anchors.right: debugCheckbox.left
+        anchors.verticalCenter: debugCheckbox.verticalCenter
+        anchors.rightMargin: 10
+        text: "Enable debug mode:"
+        font.pixelSize: 20
+        color: "white"
+    }
+
 /*
     Rectangle {
         anchors.right: parent.right

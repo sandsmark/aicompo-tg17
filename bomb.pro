@@ -38,4 +38,5 @@ OTHER_FILES += \
     qml/bomb/main.qml \
     qml/bomb/PlayerSprite.qml \
     qml/bomb/PlayingField.qml \
-    qml/bomb/StartScreen.qml
+    qml/bomb/StartScreen.qml \
+    qml/bomb/Checkbox.qml
