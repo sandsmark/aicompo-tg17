@@ -43,6 +43,15 @@ void NetworkClient::sendOK()
     }
 }
 
+void NetworkClient::sendDead()
+{
+    if (m_json) {
+        sendString("{\n  type: \"dead\"\n}\n");
+    } else {
+        sendString("DEAD\n");
+    }
+}
+
 void NetworkClient::sendEndOfRound()
 {
     if (m_json) {

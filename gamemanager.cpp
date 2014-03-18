@@ -131,6 +131,7 @@ void GameManager::explosionAt(const QPoint &position)
         if (player(i)->position() == position) {
             m_death.play();
             player(i)->setAlive(false);
+            m_clients[i]->sendDead();
         }
     }
 }
@@ -190,7 +191,8 @@ void GameManager::gameTick()
 {
     QList<Player*> players;
     for (int i=0; i<playerCount(); i++) {
-        players.append(player(i));
+        if (player(i)->isAlive())
+            players.append(player(i));
     }
     for (int i=0; i<playerCount(); i++) {
         if (!m_clients[i]) continue;
