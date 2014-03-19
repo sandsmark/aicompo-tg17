@@ -186,6 +186,10 @@ void GameManager::startRound()
 
 void GameManager::restartGame()
 {
+    foreach(NetworkClient *client, m_clients) {
+        if (!client) continue;
+        client->sendEndOfRound();
+    }
     m_roundsPlayed = 0;
     startRound();
 }
