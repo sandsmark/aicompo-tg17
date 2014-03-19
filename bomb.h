@@ -21,7 +21,7 @@ public:
     ~Bomb();
 
     int state();
-    QPoint position();
+    QPoint position() const;
 
     void blow();
 

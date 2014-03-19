@@ -64,7 +64,7 @@ int Bomb::state()
     return m_state;
 }
 
-QPoint Bomb::position()
+QPoint Bomb::position() const
 {
     return m_position;
 }

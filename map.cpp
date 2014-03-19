@@ -180,6 +180,10 @@ bool Map::explodeTile(const QPoint &position)
 
 void Map::addBomb(const QPoint &position)
 {
+    foreach (const Bomb *bomb, m_bombs) {
+        if (bomb->position() == position) return;
+    }
+
     Bomb *bomb = new Bomb(this, m_game->view(), position);
     m_bombs.append(bomb);
     connect(bomb, SIGNAL(boom(QPoint)), SLOT(detonateBomb(QPoint)));
