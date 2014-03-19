@@ -3,7 +3,7 @@
 #include <QDebug>
 
 Player::Player(QObject *parent, int id) :
-    QObject(parent), m_id(id), m_alive(true), m_wins(0)
+    QObject(parent), m_id(id), m_alive(true), m_wins(0), m_availableBombs(1)
 {
 }
 

@@ -42,7 +42,7 @@ public:
 
     int maxPlayers() const;
 
-    void addBomb(const QPoint &position);
+    void addBomb(const QPoint &position, Player *player);
 
     QList<Bomb*> bombs() const { return m_bombs; }
 

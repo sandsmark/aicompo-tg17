@@ -33,6 +33,10 @@ public:
     void addWin() { m_wins++; emit winsChanged(); }
     int wins() { return m_wins; }
 
+    void addActiveBomb() { m_availableBombs--; }
+    void removeActiveBomb() { m_availableBombs++; }
+    bool canBomb() { return m_availableBombs > 0; }
+
 public slots:
     void setCommand(QString command);
     void setName(QString name);
@@ -54,6 +58,7 @@ private:
 
     QString m_lastCommand;
     QString m_command;
+    int m_availableBombs;
 };
 
 #endif // PLAYER_H

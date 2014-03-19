@@ -213,7 +213,7 @@ void GameManager::gameTick()
         } else if (command == "RIGHT") {
             position.setX(position.x() + 1);
         } else if (command == "BOMB") {
-            m_map->addBomb(position);
+            m_map->addBomb(position, player(i));
             continue;
         } else {
             continue;

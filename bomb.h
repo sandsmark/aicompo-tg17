@@ -6,6 +6,7 @@
 
 class QQuickItem;
 class QQuickView;
+class Player;
 
 #define BOMB_STATES 13
 #define BOMB_TIME 1000
@@ -17,13 +18,15 @@ class Bomb : public QObject
     Q_PROPERTY(QPoint position READ position() CONSTANT)
 
 public:
-    explicit Bomb(QObject *parent, QQuickView *view, QPoint position);
+    explicit Bomb(QObject *parent, QQuickView *view, QPoint position, Player *player);
     ~Bomb();
 
     int state();
     QPoint position() const;
 
     void blow();
+
+    Player *player() { return m_player; }
 
 signals:
     void boom(const QPoint &position);
@@ -37,6 +40,7 @@ private:
     QPoint m_position;
     int m_state; // Goes 1-13, then boom on 14
     QQuickItem *m_sprite;
+    Player *m_player;
 };
 
 #endif // BOMB_H
