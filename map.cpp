@@ -178,7 +178,7 @@ bool Map::explodeTile(const QPoint &position)
 
 void Map::addBomb(const QPoint &position)
 {
-    Bomb *bomb = new Bomb(m_game->view(), position);
+    Bomb *bomb = new Bomb(this, m_game->view(), position);
     m_bombs.append(bomb);
     connect(bomb, SIGNAL(boom(QPoint)), SLOT(detonateBomb(QPoint)));
     connect(bomb, SIGNAL(aboutToBlow()), m_game, SLOT(playBombSound()));

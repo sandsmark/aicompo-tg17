@@ -17,7 +17,7 @@ class Bomb : public QObject
     Q_PROPERTY(QPoint position READ position() CONSTANT)
 
 public:
-    explicit Bomb(QQuickView *view, QPoint position);
+    explicit Bomb(QObject *parent, QQuickView *view, QPoint position);
     ~Bomb();
 
     int state();

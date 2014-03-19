@@ -10,6 +10,13 @@ Rectangle {
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
     Keys.onSpacePressed: userMove("BOMB")
+    Keys.onPressed: {
+        if (event.key === Qt.Key_F5) {
+            game.restartGame();
+            return true;
+        }
+        return false;
+    }
 
     focus: true
 

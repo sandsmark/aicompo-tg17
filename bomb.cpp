@@ -3,8 +3,8 @@
 #include <QQuickItem>
 #include <QQuickView>
 #include <QTimer>
-Bomb::Bomb(QQuickView *view, QPoint position) :
-    QObject(view), m_position(position), m_state(0), m_sprite(0)
+Bomb::Bomb(QObject *parent, QQuickView *view, QPoint position) :
+    QObject(parent), m_position(position), m_state(0), m_sprite(0)
 {
     static QQmlComponent *bombComponent = 0;
 
