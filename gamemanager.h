@@ -41,6 +41,8 @@ public:
 
     QStringList maps();
 
+    Q_INVOKABLE QString buildTime() { return QString(__TIME__) + ' ' + QString(__DATE__); }
+
 public slots:
     void explosionAt(const QPoint &position);
     void endRound();

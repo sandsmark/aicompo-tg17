@@ -43,6 +43,12 @@ Rectangle {
     }
 
     StartScreen {
+    }
 
+    Text {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        color: "white"
+        text: "build time: " + game.buildTime()
     }
 }
