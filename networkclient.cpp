@@ -61,6 +61,10 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
             sendString(" { \"id\": " + QByteArray::number(player->id()) +
                        ", \"x\": " + QByteArray::number(player->position().x()) +
                        ", \"y\": " + QByteArray::number(player->position().y()) + " }");
+
+            if (player != players.last()){
+                sendString(",");
+            }
         }
         sendString("  ], ");
 
@@ -70,6 +74,9 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
             sendString(" { \"x\": " + QByteArray::number(bomb->position().x()) + ", \"y\":" +
                        QByteArray::number(bomb->position().y()) + ", \"state\":" +
                        QByteArray::number(BOMB_STATES - bomb->state()) + " }");
+            if (bomb != map->bombs().last()) {
+                sendString(",");
+            }
         }
         sendString(" ], ");
     } else {
