@@ -8,6 +8,8 @@ QML_IMPORT_PATH =
 
 QT += network quick multimedia
 
+QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
+
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp tile.cpp \
     map.cpp \

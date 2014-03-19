@@ -49,6 +49,6 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         color: "white"
-        text: "build time: " + game.buildTime()
+        text: "version: " + game.version()
     }
 }
