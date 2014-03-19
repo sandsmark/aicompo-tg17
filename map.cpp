@@ -154,11 +154,13 @@ Tile *Map::tileAt(const QPoint &position) const
     return qobject_cast<Tile*>(m_tiles[index]);
 }
 
-void Map::explodeTile(const QPoint &position)
+bool Map::explodeTile(const QPoint &position)
 {
     if (!isWithinBounds(position)) {
-        return;
+        return false;
     }
+
+    bool ret = isValidPosition(position);
 
     tileAt(position)->explode();
 
@@ -169,6 +171,8 @@ void Map::explodeTile(const QPoint &position)
     }
 
     emit explosionAt(position);
+
+    return ret;
 }
 
 
@@ -186,8 +190,20 @@ void Map::detonateBomb(const QPoint &center)
     m_bombs.removeAll(qobject_cast<Bomb*>(sender()));
     sender()->deleteLater();
 
-    for (int i = -2; i<=2; i++) {
-        explodeTile(QPoint(center.x() + i, center.y()));
-        explodeTile(QPoint(center.x(), center.y() + i));
+
+    explodeTile(QPoint(center.x(), center.y()));
+
+    if (explodeTile(QPoint(center.x() + 1, center.y()))) {
+        explodeTile(QPoint(center.x() + 2, center.y()));
+    }
+    if (explodeTile(QPoint(center.x() - 1, center.y()))) {
+        explodeTile(QPoint(center.x() - 2, center.y()));
+    }
+
+    if (explodeTile(QPoint(center.x(), center.y() + 1))) {
+        explodeTile(QPoint(center.x(), center.y() + 2));
+    }
+    if (explodeTile(QPoint(center.x(), center.y() - 1))) {
+        explodeTile(QPoint(center.x(), center.y() - 2));
     }
 }

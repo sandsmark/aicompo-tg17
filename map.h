@@ -55,7 +55,7 @@ signals:
     void explosionAt(QPoint position);
 
 private:
-    void explodeTile(const QPoint &position);
+    bool explodeTile(const QPoint &position);
 
     int m_width;
     int m_height;

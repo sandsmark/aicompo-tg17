@@ -37,6 +37,8 @@ void Tile::explode()
 {
     if (m_type == Tile::Stone) {
         setType(Tile::Debris);
+        emit exploded();
+    } else if (isWalkable()) {
+        emit exploded();
     }
-    emit exploded();
 }
