@@ -52,8 +52,8 @@ Rectangle {
         }
     }
 
-    // Start button
-    Rectangle {
+    // Quit button
+    Button {
         id: quitButton
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
@@ -62,35 +62,14 @@ Rectangle {
         width: 200
         height: 50
 
-        color: "#50000000"
-        border.color: "white"
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: MouseArea.PointingHandCursor
-            onEntered: {
-                quitButtonText.color = "black"
-                quitButton.color = "white"
-            }
-            onExited: {
-                quitButtonText.color = "white"
-                quitButton.color = "#50000000"
-            }
-            onClicked: {
-                Qt.quit()
-            }
+        onClicked: {
+            Qt.quit()
         }
-        Text {
-            id: quitButtonText
-            anchors.centerIn: parent
-            text: "Quit"
-            color: "white"
-            font.pointSize: 25
-        }
+        text: "Quit"
     }
 
-    // Start button
-    Rectangle {
+    // Restart button
+    Button {
         id: restartButton
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
@@ -98,36 +77,15 @@ Rectangle {
         anchors.leftMargin: 10
         width: 200
         height: 50
-        visible: players.length > 1
+        visible: players.length > 0
 
-        color: "#50000000"
-        border.color: "white"
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: MouseArea.PointingHandCursor
-            onEntered: {
-                restartButtonText.color = "black"
-                restartButton.color = "white"
+        onClicked: {
+            if (players.length < 1) {
+                return
             }
-            onExited: {
-                restartButtonText.color = "white"
-                restartButton.color = "#50000000"
-            }
-            onClicked: {
-                if (players.length < 2) {
-                    return
-                }
-                endScreen.opacity = 0
-                game.restartGame()
-            }
+            endScreen.opacity = 0
+            game.restartGame()
         }
-        Text {
-            id: restartButtonText
-            anchors.centerIn: parent
-            text: "Restart"
-            color: "white"
-            font.pointSize: 25
-        }
+        text: "Restart"
     }
 }
