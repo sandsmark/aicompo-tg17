@@ -13,10 +13,8 @@ Image {
     source: bombData == null ? "" : "qrc:/sprites/bomb/bomb-" + bombData.state + ".png"
 
 
-
     Behavior on opacity {
         NumberAnimation {
-            //easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
             duration: 250
         }
     }
@@ -25,8 +23,6 @@ Image {
         target: bombData
         onStateChanged: {
             if (bombData.state > 13) {
-                image.source = "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-                explosion.visible = true
                 image.opacity = 0
             }
         }
@@ -43,57 +39,6 @@ Image {
         NumberAnimation {
             easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
             duration: 500
-        }
-    }
-
-    // Flames
-    Item {
-        anchors.fill: parent
-        id: explosion
-        visible: false
-
-        Image {
-            x: 0
-            y: -64
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-        Image {
-            x: 0
-            y: -128
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-        Image {
-            x: 0
-            y: 64
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-        Image {
-            x: 0
-            y: 128
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-        Image {
-            x: -64
-            y: 0
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-
-        Image {
-            x: -128
-            y: 0
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-
-        Image {
-            x: 64
-            y: 0
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
-        }
-
-        Image {
-            x: 128
-            y: 0
-            width: 64; height: 64; smooth: false; source: "qrc:/sprites/explosion/flame-" + Math.floor(Math.random() * 5) + ".png"
         }
     }
 }

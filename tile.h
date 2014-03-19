@@ -33,6 +33,7 @@ public:
 
 signals:
     void typeChanged();
+    void exploded();
 
 public slots:
 

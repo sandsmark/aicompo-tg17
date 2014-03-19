@@ -38,4 +38,5 @@ void Tile::explode()
     if (m_type == Tile::Stone) {
         setType(Tile::Debris);
     }
+    emit exploded();
 }

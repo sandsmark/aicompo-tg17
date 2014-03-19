@@ -20,6 +20,10 @@ Grid {
             height: playingField.height / (playingField.rows + 1)
             width: height
             type: model.modelData.type
+            Connections {
+                target: model.modelData
+                onExploded: explode()
+            }
         }
     }
 

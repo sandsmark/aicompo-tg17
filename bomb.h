@@ -7,7 +7,7 @@
 class QQuickItem;
 class QQuickView;
 
-#define BOMB_STATES 14
+#define BOMB_STATES 13
 #define BOMB_TIME 1000
 
 class Bomb : public QObject
