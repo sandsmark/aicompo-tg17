@@ -37,7 +37,7 @@ void NetworkClient::sendString(QByteArray string)
 void NetworkClient::sendDead()
 {
     if (m_json) {
-        sendString("{\n  type: \"dead\"\n}\n");
+        sendString("{ \"type\": \"dead\" }\n");
     } else {
         sendString("DEAD\n");
     }
