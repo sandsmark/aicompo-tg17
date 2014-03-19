@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    app.setOrganizationDomain("gathering.org");
+    app.setApplicationName("Drop da Bass");
     qmlRegisterType<Tile>("com.iskrembilen.bomb", 1, 0, "Tile");
     QQuickView view;
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));

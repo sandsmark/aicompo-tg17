@@ -39,20 +39,6 @@ Rectangle {
         opacity: humanPlayerCheckbox.opacity
     }
 
-    Checkbox {
-        id: debugCheckbox
-        anchors.verticalCenter: address.verticalCenter
-        anchors.topMargin: 10
-        anchors.right: parent.right
-        anchors.rightMargin: 30
-        opacity: (players.length < map.maxPlayers || checked) ? 1 : 0
-        enabled: players.length < map.maxPlayers || checked
-        onClicked: {
-            checked = !checked
-            game.setDebugMode(checked)
-        }
-    }
-
     Text {
         anchors.right: debugCheckbox.left
         anchors.verticalCenter: debugCheckbox.verticalCenter
@@ -61,6 +47,42 @@ Rectangle {
         font.pixelSize: 20
         color: "white"
     }
+
+    Checkbox {
+        id: debugCheckbox
+        anchors.verticalCenter: address.verticalCenter
+        anchors.topMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 30
+
+        onClicked: {
+            checked = !checked
+            game.setDebugMode(checked)
+        }
+    }
+
+
+    Text {
+        anchors.right: soundCheckbox.left
+        anchors.verticalCenter: soundCheckbox.verticalCenter
+        anchors.rightMargin: 10
+        text: "Enable sound:"
+        font.pixelSize: 20
+        color: "white"
+    }
+
+    Checkbox {
+        id: soundCheckbox
+        anchors.top: humanPlayerCheckbox.bottom
+        anchors.topMargin: 15
+        anchors.right: parent.right
+        anchors.rightMargin: 30
+        checked: game.soundEnabled
+        onClicked: {
+            game.soundEnabled = !game.soundEnabled
+        }
+    }
+
 
 /*
     Rectangle {
@@ -148,7 +170,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: startButton.top
-        anchors.margins: 20
+        anchors.margins: 30
+        anchors.topMargin: 60
         border.color: "white"
         Column {
             anchors.fill: parent

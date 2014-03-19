@@ -16,6 +16,7 @@
 #include <QQmlComponent>
 #include <QTcpSocket>
 #include <QFileSystemWatcher>
+#include <QSettings>
 
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_map(0), m_view(view), m_roundsPlayed(0)
@@ -53,9 +54,11 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/drumloop2.wav"));
     m_backgroundLoop.setVolume(0.25f);
     m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
-    m_backgroundLoop.play();
     m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
     m_death.setVolume(0.25f);
+
+    QSettings setting("sound");
+    setSoundEnabled(setting.value("enabled", false).toBool());
 }
 
 GameManager::~GameManager()
@@ -66,6 +69,25 @@ GameManager::~GameManager()
             disconnect(client, SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
         }
     }
+}
+
+void GameManager::setSoundEnabled(bool enabled)
+{
+    if (enabled == m_soundEnabled) return;
+
+    QSettings setting("sound");
+    setting.setValue("enabled", enabled);
+
+    if (enabled) {
+        m_backgroundLoop.play();
+    } else {
+        m_backgroundLoop.stop();
+        m_explosion.stop();
+        m_death.stop();
+    }
+    m_soundEnabled = enabled;
+
+    emit soundEnabledChanged();
 }
 
 QStringList GameManager::maps()
@@ -123,14 +145,18 @@ void GameManager::loadMap(const QString &path)
 
 void GameManager::playBombSound()
 {
-    m_explosion.play();
+    if (m_soundEnabled) {
+        m_explosion.play();
+    }
 }
 
 void GameManager::explosionAt(const QPoint &position)
 {
     for (int i=0; i<playerCount(); i++) {
         if (player(i)->position() == position) {
-            m_death.play();
+            if (m_soundEnabled) {
+                m_death.play();
+            }
             player(i)->setAlive(false);
             if (m_clients[i]) {
                 m_clients[i]->sendDead();

@@ -21,6 +21,7 @@ class GameManager : public QObject
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
     Q_PROPERTY(QString address READ address() CONSTANT)
     Q_PROPERTY(QStringList maps READ maps() NOTIFY mapsChanged())
+    Q_PROPERTY(bool soundEnabled READ soundEnabled WRITE setSoundEnabled NOTIFY soundEnabledChanged)
 
 public:
     explicit GameManager(QQuickView *parent);
@@ -40,8 +41,9 @@ public:
     QQuickView *view() { return m_view; }
 
     QStringList maps();
-
     Q_INVOKABLE QString version() { return /*QLatin1String(APP_VERSION) + " // build time: " +*/ QLatin1String(__TIME__) + ' ' + QLatin1String(__DATE__); }
+    bool soundEnabled() { return m_soundEnabled; }
+    void setSoundEnabled(bool enabled);
 
 public slots:
     void explosionAt(const QPoint &position);
@@ -58,6 +60,7 @@ signals:
     void roundsPlayedChanged();
     void mapsChanged();
     void tick();
+    void soundEnabledChanged();
 
 private slots:
     void gameTick();
@@ -74,6 +77,7 @@ private:
     QString m_currentMap;
     int m_roundsPlayed;
 
+    bool m_soundEnabled;
     QSoundEffect m_backgroundLoop;
     QSoundEffect m_explosion;
     QSoundEffect m_death;
