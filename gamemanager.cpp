@@ -239,7 +239,7 @@ void GameManager::gameTick()
             if (player(i)->isAlive())
                 players.append(player(i));
         }
-        for (int i=0; i<playerCount(); i++) {
+        for (int i=0; i<players.length(); i++) {
             if (!m_clients[i]) continue;
 
             QList<Player*> list = players;
