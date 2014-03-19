@@ -33,7 +33,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
 
     // Set up gametick timer
-    m_timer.setInterval(100); // 10 times a second
+    m_timer.setInterval(250); // 10 times a second
     m_timer.setSingleShot(false);
 
     m_server.listen(QHostAddress::Any, 54321);

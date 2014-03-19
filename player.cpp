@@ -74,6 +74,11 @@ void Player::setName(QString name)
 void Player::setCommand(QString command)
 {
     if (m_alive) {
-        m_command = command;
+        if (command.startsWith("SAY ")) {
+            m_message = command.remove(0, 4);
+            emit messageReceived();
+        } else {
+            m_command = command;
+        }
     }
 }

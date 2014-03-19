@@ -14,6 +14,7 @@ class Player : public QObject
     Q_PROPERTY(QString lastCommand READ lastCommand() NOTIFY lastCommandChanged())
     Q_PROPERTY(QString name READ name() NOTIFY nameChanged())
     Q_PROPERTY(int wins READ wins() NOTIFY winsChanged())
+    Q_PROPERTY(QString message READ message NOTIFY messageReceived())
 
 public:
     explicit Player(QObject *parent, int id);
@@ -37,6 +38,9 @@ public:
     void removeActiveBomb() { m_availableBombs++; }
     bool canBomb() { return m_availableBombs > 0; }
 
+    QString message() { return m_message; }
+    void setMessage(QString message) { m_message = message; emit messageReceived(); }
+
 public slots:
     void setCommand(QString command);
     void setName(QString name);
@@ -48,6 +52,7 @@ signals:
     void idChanged();
     void nameChanged();
     void winsChanged();
+    void messageReceived();
 
 private:
     QPoint m_position;
@@ -55,6 +60,7 @@ private:
     bool m_alive;
     QString m_name;
     int m_wins;
+    QString m_message;
 
     QString m_lastCommand;
     QString m_command;

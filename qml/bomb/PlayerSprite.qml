@@ -75,6 +75,7 @@ Image {
             }
         }
     }
+
     Text {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -82,5 +83,39 @@ Image {
         text: name
         font.bold: true
         style: Text.Outline
+    }
+
+
+    Rectangle {
+        id: messagebox
+        anchors.top: parent.bottom
+        anchors.topMargin: -30
+        anchors.horizontalCenter: parent.horizontalCenter
+        color: "#af000000"
+        radius: 5
+        width: 100
+        height: 50
+        opacity: 0
+        NumberAnimation on opacity {
+            id: messageboxFade
+            running: false
+            easing.type: "InQuint"
+            from: 0.75
+            to: 0
+            duration: 5000
+        }
+
+        Text {
+            anchors.fill: parent
+            anchors.margins: 5
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            color: "white"
+            text: message
+            font.bold: true
+            onTextChanged: if(text !== "") messageboxFade.restart()
+            elide: Text.ElideRight
+            wrapMode: Text.Wrap
+        }
     }
 }
