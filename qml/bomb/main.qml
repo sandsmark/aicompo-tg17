@@ -12,7 +12,7 @@ Rectangle {
     Keys.onSpacePressed: userMove("BOMB")
     Keys.onPressed: {
         if (event.key === Qt.Key_F5) {
-            game.restartGame();
+            game.endRound();
             return true;
         }
         return false;
