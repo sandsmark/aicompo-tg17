@@ -30,16 +30,7 @@ Image {
         NumberAnimation {
             id: xAnimation
             easing { type: Easing.OutQuad; amplitude: 1.0; period: 0.9 }
-            duration: 150
-            onRunningChanged: {
-                if (running) {
-                    animTimer.start()
-                    yAnimation.complete()
-                } else {
-                    animTimer.stop()
-                    walkCycle = 0
-                }
-            }
+            duration: 275
         }
     }
 
@@ -47,16 +38,7 @@ Image {
         NumberAnimation {
             id: yAnimation
             easing { type: Easing.OutQuad; amplitude: 1.0; period: 0.9 }
-            duration: 150
-            onRunningChanged: {
-                if (running) {
-                    animTimer.start()
-                    xAnimation.complete()
-                } else {
-                    animTimer.stop()
-                    walkCycle = 0
-                }
-            }
+            duration: 275
         }
     }
 
@@ -64,9 +46,9 @@ Image {
     Timer {
         property int count: 0
         id: animTimer
-        interval: 50
+        interval: 100
         repeat: true
-        running: false
+        running: xAnimation.running || yAnimation.running
         onTriggered: {
             if (walkCycle >= 3) {
                 walkCycle = 0
@@ -74,6 +56,7 @@ Image {
                 walkCycle += 1
             }
         }
+        onRunningChanged: if (!running) walkCycle = 0
     }
 
     Text {
