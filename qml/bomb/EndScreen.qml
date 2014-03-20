@@ -84,7 +84,8 @@ Rectangle {
                 return
             }
             endScreen.opacity = 0
-            game.restartGame()
+            startScreen.opacity = 1
+            //game.restartGame()
         }
         text: "Restart"
     }

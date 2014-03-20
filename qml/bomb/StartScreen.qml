@@ -8,6 +8,13 @@ Rectangle {
     color: "#cc000000"
     border.color: "white"
 
+    Behavior on opacity {
+        NumberAnimation {
+            easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
+            duration: 1000
+        }
+    }
+
     Checkbox {
         id: humanPlayerCheckbox
         anchors.verticalCenter: topLabel.verticalCenter
@@ -201,7 +208,7 @@ Rectangle {
             if (players.length < 1) {
                 return
             }
-            startScreen.visible = false
+            startScreen.opacity = 0
             game.startRound()
         }
     }

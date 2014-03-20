@@ -43,6 +43,7 @@ Rectangle {
     }
 
     StartScreen {
+        id: startScreen
     }
 
     Text {

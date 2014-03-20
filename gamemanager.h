@@ -49,7 +49,6 @@ public slots:
     void explosionAt(const QPoint &position);
     void endRound();
     void startRound();
-    void restartGame();
     void playBombSound();
 
     int roundsPlayed() { return m_roundsPlayed; }

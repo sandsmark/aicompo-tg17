@@ -188,6 +188,7 @@ void GameManager::endRound()
         if (endScreen) {
             endScreen->setProperty("opacity", 1.0);
         }
+        m_roundsPlayed = 0;
     }
 }
 
@@ -208,16 +209,6 @@ void GameManager::startRound()
         client->disconnect(SIGNAL(nameChanged(QString)));
     }
     m_timer.start();
-}
-
-void GameManager::restartGame()
-{
-    foreach(NetworkClient *client, m_clients) {
-        if (!client) continue;
-        client->sendEndOfRound();
-    }
-    m_roundsPlayed = 0;
-    startRound();
 }
 
 void GameManager::gameTick()
