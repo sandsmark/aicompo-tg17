@@ -1,8 +1,6 @@
 Drop da Bomb
 ============
 
----
-
 ### Default protocol 
 
 **Don't know this, someone else must fix**
