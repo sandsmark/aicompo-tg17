@@ -104,6 +104,14 @@ When you are playing, the map looks a bit different. All walkable tiles have bee
 
 ---
 
+### The bombs
+
+Watch out! They sting!
+
+On a serious note though, not too much about them except for the `state` property. This tells you how many ticks the bomb has left to live. At a state of 0, the bomb will explode in a horizontal and vertical direction, covering the total of 5 tiles vertically and horizontally creating a + sign.
+
+---
+
 ### Playing the game!
 
 When first connecting to the server, you have the possibility to emit the message `JSON\n`. This will make the server emit all the data in JSON-format.   
