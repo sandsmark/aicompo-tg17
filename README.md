@@ -117,7 +117,7 @@ On a serious note though, not too much special about them except for the `state`
 When first connecting to the server, you have the possibility to emit the message `JSON\n`. This will make the server emit all the data in JSON-format.   
 Next is setting your name, this is done by emitting `NAME RandomBot\n` to the server.
 
-When you have joine a game you have the possibility to interact in 5 ways; navigating in 4 directions, and **dropping da bomb**!
+When you have joined a game you have the possibility to interact in 5 ways; navigating in 4 directions, and **dropping da bomb**!
 
 ```
 "LEFT\n"
