@@ -108,7 +108,7 @@ When you are playing, the map looks a bit different. All walkable tiles have bee
 
 Watch out! They sting!
 
-On a serious note though, not too much about them except for the `state` property. This tells you how many ticks the bomb has left to live. At a state of 0, the bomb will explode in a horizontal and vertical direction, covering the total of 5 tiles vertically and horizontally creating a + sign.
+On a serious note though, not too much special about them except for the `state` property. This tells you how many ticks the bomb has left to live. At a state of 0, the bomb will explode in a horizontal and vertical direction, covering the total of 5 tiles vertically and horizontally creating a + sign.
 
 ---
 
