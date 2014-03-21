@@ -149,7 +149,7 @@ $ The server emits the JSON-package
 $ The server emits the JSON-package
 > "LEFT\N"
 $ The server emits the JSON-package
-> Nothing is sent
+> "SAY I'm just gonna hang out here for a bit...\n"
 $ { "type": "dead" }
 ```
 
