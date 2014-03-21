@@ -9,6 +9,8 @@ Drop da Bomb
 
 ### JSON Protocol
 
+After connecting, emit `JSON\n` to receive JSON objects instead of TEXT mode. The latter will require you to write your own parser - wich can be a good and a bad thing, depending on you :)
+
 On each game tick the server emits one or more JSON-objects, depending on what happened the last tick.
 
 `status update` - Contains all essential information your player will need to interact with the surroundings.
@@ -114,8 +116,7 @@ On a serious note though, not too much special about them except for the `state`
 
 ### Playing the game!
 
-When first connecting to the server, you have the possibility to emit the message `JSON\n`. This will make the server emit all the data in JSON-format.   
-Next is setting your name, this is done by emitting `NAME RandomBot\n` to the server.
+When you are connected to the server, you most likely wan to set your bots name. This is done by emitting `NAME RandomBot\n` to the server.
 
 When you have joined a game you have the possibility to interact in 5 ways; navigating in 4 directions, and **dropping da bomb**!
 
@@ -130,5 +131,26 @@ When you have joined a game you have the possibility to interact in 5 ways; navi
 Easy, right? :)
 
 Last but not least, the bots can throw shit at each other! For instance `SAY Puny humans!\n`
+
+---
+
+### Example of a connection
+
+```
+> - you
+$ - server
+
+You connect to the server
+> "JSON\n"
+> "NAME RandomAI\n"
+Game starts
+$ The server emits the JSON-package
+> "BOMB\n"
+$ The server emits the JSON-package
+> "LEFT\N"
+$ The server emits the JSON-package
+> Nothing is sent
+$ { "type": "dead" }
+```
 
 **Remember:** Always end a command with `\n`
