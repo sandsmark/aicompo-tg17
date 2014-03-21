@@ -151,6 +151,8 @@ $ The server emits the JSON-package
 $ The server emits the JSON-package
 > "SAY I'm just gonna hang out here for a bit...\n"
 $ { "type": "dead" }
+
+Now make your own bot, and try to make it do a better job than ours :)
 ```
 
 **Remember:** Always end a command with `\n`
