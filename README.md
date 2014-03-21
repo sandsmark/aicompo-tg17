@@ -65,6 +65,45 @@ On each game tick the server emits one or more JSON-objects, depending on what h
 
 ---
 
+### The map
+
+This example map can you add into the maps-folder in your game-folder. It'll be parsed automatically and you can use it to play on. Be creative, and test as many map combinations as possible to be sure your AI can cover all kinds of resistance! :)
+
+```
+8x8     Mapsize in XxY
+2       Number of spawns
+1,1     Spawn coordinates in X,Y
+6,6     Spawn coordinates in X,Y
+++++++++
++_.####+
++.#####+
++######+
++######+
++#####.+
++####._+
+++++++++
+
++     Walls that can not be destroyed
+#     Walls that can be destroyed
+.     Grass
+_     Spawn(s)
+```
+
+When you are playing, the map looks a bit different. All walkable tiles have been converted to a dot (`.`), so the map above would now look like the one below, really not much of a difference.
+
+```
+++++++++
++..####+
++.#####+
++######+
++######+
++#####.+
++####..+
+++++++++
+```
+
+---
+
 ### Playing the game!
 
 When first connecting to the server, you have the possibility to emit the message `JSON\n`. This will make the server emit all the data in JSON-format.   
