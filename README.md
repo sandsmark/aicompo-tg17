@@ -11,7 +11,7 @@ Drop da Bomb
 
 On each game tick the server emits one or more JSON-objects, depending on what happened the last tick.
 
-`status update` - Contains all essential information for your player
+`status update` - Contains all essential information your player will need to interact with the surroundings.
 
 ```JSON
 {
