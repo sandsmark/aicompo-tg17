@@ -125,7 +125,7 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
                 mapLine += '.';
                 break;
             case Tile::Floor:
-                mapLine += '_';
+                mapLine += '.';
                 break;
             case Tile::Wall:
                 mapLine += '+';
@@ -134,10 +134,10 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
                 mapLine += '#';
                 break;
             case Tile::Debris:
-                mapLine += ' ';
+                mapLine += '.';
                 break;
             case Tile::Invalid:
-                mapLine += 'x';
+                mapLine += '#';
                 break;
             }
         }
