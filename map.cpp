@@ -30,34 +30,10 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
         return;
     }
 
-    int players = file.readLine().trimmed().toInt();
-    if (players < 2) {
-        qWarning() << "Map: Unable to read a valid number of players for map:" << mapName;
-        return;
-    }
-
-    for (int i = 0; i < players; i++) {
-        line = file.readLine();
-        QList<QByteArray> coordinates = line.trimmed().split(',');
-        if (coordinates.size() != 2) {
-            qWarning() << "Map: Unable to read starting coordinates for map:" << mapName;
-            return;
-        }
-
-        QPoint position;
-        position.setX(coordinates[0].toInt());
-        position.setY(coordinates[1].toInt());
-        m_startingPositions.append(position);
-    }
-
-    int c=0;
-    // Read in the map itself
-    while (!file.atEnd()) {
-        c++;
-        line = file.readLine();
-
-        foreach(const char type, line) {
-            switch(type) {
+    for (int y=0; y<m_height; y++) {
+        line = file.readLine().trimmed();
+        for (int x=0; x<m_width; x++) {
+            switch(line[x]) {
             case '.':
                 m_tiles.append(new Tile(this, Tile::Grass));
                 break;
@@ -70,10 +46,12 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
             case '#':
                 m_tiles.append(new Tile(this, Tile::Stone));
                 break;
-            case '\n':
+            case 'p':
+                m_startingPositions.append(QPoint(x, y));
+                m_tiles.append(new Tile(this, Tile::Floor));
                 break;
             default:
-                qWarning() << "Map: Illegal tile type";
+                qWarning() << "Map: Illegal tile type:" << line[x];
             }
         }
     }
