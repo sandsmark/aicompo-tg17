@@ -73,9 +73,6 @@ This example map can you add into the maps-folder in your game-folder. It'll be 
 
 ```
 8x8     Mapsize in XxY
-2       Number of spawns
-1,1     Spawn coordinates in X,Y
-6,6     Spawn coordinates in X,Y
 ++++++++
 +p__###+
 +.#####+
