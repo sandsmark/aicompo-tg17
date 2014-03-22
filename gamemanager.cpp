@@ -1,5 +1,6 @@
 #include "gamemanager.h"
 
+#include "bomb.h"
 #include "tile.h"
 #include "map.h"
 #include "player.h"
@@ -236,7 +237,25 @@ void GameManager::gameTick()
             continue;
         }
 
-        if (m_map->isValidPosition(position)) {
+
+        bool canWalk = m_map->isValidPosition(position);
+
+        if (canWalk) {
+            for (int j=0; j<playerCount(); j++) {
+                if (player(j)->position() == position) {
+                    canWalk = false;
+                }
+            }
+        }
+        if (canWalk) {
+            foreach(const Bomb *bomb, m_map->bombs()) {
+                if (bomb->position() == position) {
+                    canWalk = false;
+                }
+            }
+        }
+
+        if (canWalk) {
             player(i)->setPosition(position);
         }
     }
