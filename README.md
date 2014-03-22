@@ -157,3 +157,15 @@ Now make your own bot, and try to make it do a better job than ours :)
 ```
 
 **Remember:** Always end a command with `\n`
+
+---
+
+### Keymap
+
+```
+f5     Restarts round
+space  Pause
+esc    Stop game 
+
+Arrowkeys for controlling the human player, and backspace for dropping bombs.
+```
