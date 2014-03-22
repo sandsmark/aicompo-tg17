@@ -30,7 +30,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     }
 
     // Add QML objects
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    exportPlayerList();
     m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
 
     // Set up gametick timer
@@ -137,7 +137,7 @@ void GameManager::loadMap(const QString &path)
         player(i)->setId(i);
     }
 
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    exportPlayerList();
     m_view->rootContext()->setContextProperty("map", map);
 
     connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
@@ -315,8 +315,7 @@ void GameManager::clientDisconnected()
     for (int i=0; i<playerCount(); i++) {
         player(i)->setId(i);
     }
-    // We need to reset the property, the qobjectlist model doesn't automatically update
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    exportPlayerList();
 }
 
 Player *GameManager::player(int id)
@@ -349,7 +348,7 @@ void GameManager::addPlayer(NetworkClient *client)
     }
 
     // We need to reset the property, the qobjectlist model doesn't automatically update
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    exportPlayerList();
 }
 
 void GameManager::removeHumanPlayers()
@@ -363,7 +362,7 @@ void GameManager::removeHumanPlayers()
     for (int i=0; i<playerCount(); i++) {
         player(i)->setId(i);
     }
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(m_players));
+    exportPlayerList();
 }
 
 QString GameManager::address()
@@ -384,4 +383,15 @@ void GameManager::stopGame()
 {
     endRound();
     m_roundsPlayed = 0;
+}
+
+void GameManager::exportPlayerList()
+{
+    QList<QObject*> playerList;
+    foreach(Player *playerObject, m_players) {
+        playerList.append(playerObject);
+    }
+
+    // We need to reset the property, the qobjectlist model doesn't automatically update
+    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(playerList));
 }

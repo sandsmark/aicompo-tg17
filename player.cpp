@@ -15,12 +15,12 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) :
 {
     if (networkClient) {
         networkClient->setParent(this); // automatically delete
-    }
 
-    connect(networkClient, SIGNAL(nameChanged(QString)), SLOT(setName(QString)));
-    connect(networkClient, SIGNAL(commandReceived(QString)), SLOT(setCommand(QString)));
-    connect(networkClient, SIGNAL(clientDisconnected()), SLOT(setDisconnected()));
-    connect(networkClient, SIGNAL(clientDisconnected()), SIGNAL(clientDisconnected()));
+        connect(networkClient, SIGNAL(nameChanged(QString)), SLOT(setName(QString)));
+        connect(networkClient, SIGNAL(commandReceived(QString)), SLOT(setCommand(QString)));
+        connect(networkClient, SIGNAL(clientDisconnected()), SLOT(setDisconnected()));
+        connect(networkClient, SIGNAL(clientDisconnected()), SIGNAL(clientDisconnected()));
+    }
 }
 
 QPoint Player::position() const

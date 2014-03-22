@@ -2,15 +2,16 @@
 #define MAPLOADER_H
 
 #include <QObject>
+#include <QPointer>
 #include <QList>
 #include <QString>
 #include <QTimer>
 #include <QTcpServer>
 #include <QSoundEffect>
+#include <player.h>
 
 class Map;
 class QQuickView;
-class Player;
 class QQmlComponent;
 class NetworkClient;
 
@@ -69,9 +70,11 @@ private slots:
     void clientDisconnected();
 
 private:
+    void exportPlayerList();
+
     Map *m_map;
     QQuickView *m_view;
-    QList<QObject*> m_players;
+    QList<QPointer<Player> > m_players;
     QTimer m_timer;
     QTcpServer m_server;
     QString m_currentMap;
