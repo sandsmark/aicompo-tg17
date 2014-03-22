@@ -9,12 +9,22 @@ Rectangle {
     Keys.onUpPressed: userMove("UP")
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
-    Keys.onSpacePressed: userMove("BOMB")
+    Keys.onBackPressed: userMove("BOMB")
+    Keys.onEscapePressed: {
+        game.stopGame();
+        startScreen.opacity = 1
+    }
+    Keys.onSpacePressed: game.togglePause()
+
     Keys.onPressed: {
         if (event.key === Qt.Key_F5) {
             game.endRound();
             return true;
+        } else if (event.key == Qt.Key_Backspace) {
+            userMove("BOMB")
+            return true;
         }
+
         return false;
     }
 

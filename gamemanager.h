@@ -50,6 +50,8 @@ public slots:
     void endRound();
     void startRound();
     void playBombSound();
+    void stopGame();
+    void togglePause();
 
     int roundsPlayed() { return m_roundsPlayed; }
 

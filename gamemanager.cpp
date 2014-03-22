@@ -360,3 +360,18 @@ QString GameManager::address()
 {
     return m_server.serverAddress().toString() + QLatin1Char(':') + QString::number(m_server.serverPort());
 }
+
+void GameManager::togglePause()
+{
+    if (m_timer.isActive()) {
+        m_timer.stop();
+    } else {
+        m_timer.start();
+    }
+}
+
+void GameManager::stopGame()
+{
+    endRound();
+    m_roundsPlayed = 0;
+}
