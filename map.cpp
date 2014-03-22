@@ -22,7 +22,6 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
 
     // Read in size
     QByteArray line = file.readLine();
-    m_mapData.append(line);
     line = line.trimmed();
     m_height = line.split('x').first().toInt();
     m_width = line.split('x').last().toInt();
@@ -56,7 +55,6 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
     while (!file.atEnd()) {
         c++;
         line = file.readLine();
-        m_mapData.append(line);
 
         foreach(const char type, line) {
             switch(type) {
@@ -124,11 +122,6 @@ bool Map::isWithinBounds(const QPoint &position) const
         return false;
 
     return true;
-}
-
-QByteArray Map::mapData() const
-{
-    return m_mapData;
 }
 
 QString Map::name() const
