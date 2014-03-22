@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QPoint>
+class NetworkClient;
 
 class Player : public QObject
 {
@@ -17,7 +18,7 @@ class Player : public QObject
     Q_PROPERTY(QString message READ message NOTIFY messageReceived())
 
 public:
-    explicit Player(QObject *parent, int id);
+    explicit Player(QObject *parent, int id, NetworkClient *networkClient = 0);
     virtual ~Player() {}
     QPoint position() const;
     void setPosition(const QPoint &position);
@@ -41,7 +42,8 @@ public:
     QString message() { return m_message; }
     void setMessage(QString message) { m_message = message; emit messageReceived(); }
 
-    void setDisconnected();
+    NetworkClient *networkClient() { return m_networkClient; }
+
 
 public slots:
     void setCommand(QString command);
@@ -55,6 +57,10 @@ signals:
     void nameChanged();
     void winsChanged();
     void messageReceived();
+    void clientDisconnected();
+
+private slots:
+    void setDisconnected();
 
 private:
     QPoint m_position;
@@ -68,6 +74,8 @@ private:
     QString m_command;
     int m_availableBombs;
     bool m_disconnected;
+
+    NetworkClient *m_networkClient;
 };
 
 #endif // PLAYER_H

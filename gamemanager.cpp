@@ -65,9 +65,9 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
 GameManager::~GameManager()
 {
     // Ensure we don't crash because we delete stuff before it disconnects
-    foreach(NetworkClient *client, m_clients) {
-        if (client) {
-            disconnect(client, SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
+    for (int i=0; i<playerCount(); i++) {
+        if (player(i)->networkClient()) {
+            disconnect(player(i)->networkClient(), SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
         }
     }
 }
@@ -126,10 +126,9 @@ void GameManager::loadMap(const QString &path)
         if (playerCount() <= m_map->startingPositions().count()) {
             break;
         }
-        if (!m_clients[i]) continue; // Don't kick out human player
+        if (!player(i)->networkClient()) continue; // Don't kick out human player
 
         m_players.takeAt(i)->deleteLater();
-        m_clients.takeAt(i)->deleteLater();
     }
 
     // Update positions and id
@@ -159,9 +158,6 @@ void GameManager::explosionAt(const QPoint &position)
                 m_death.play();
             }
             player(i)->setAlive(false);
-            if (m_clients[i]) {
-                m_clients[i]->sendDead();
-            }
         }
     }
 }
@@ -170,9 +166,9 @@ void GameManager::endRound()
 {
     m_timer.stop();
 
-    foreach(NetworkClient *client, m_clients) {
-        if (!client) continue;
-        client->sendEndOfRound();
+    for (int i=0; i<playerCount(); i++) {
+        if (!player(i)->networkClient()) continue;
+        player(i)->networkClient()->sendEndOfRound();
     }
 
     if (m_roundsPlayed < 5) {
@@ -206,8 +202,8 @@ void GameManager::startRound()
     loadMap(m_map->name());
 
     // Do not allow to change name after game has started
-    foreach(NetworkClient *client, m_clients) {
-        client->disconnect(SIGNAL(nameChanged(QString)));
+    for (int i=0; i<playerCount(); i++) {
+        player(i)->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
     }
     m_timer.start();
 }
@@ -236,7 +232,6 @@ void GameManager::gameTick()
         } else {
             continue;
         }
-
 
         bool canWalk = m_map->isValidPosition(position);
 
@@ -276,11 +271,11 @@ void GameManager::gameTick()
                 players.append(player(i));
         }
         for (int i=0; i<players.length(); i++) {
-            if (!m_clients[i]) continue;
+            if (!player(i)->networkClient()) continue;
 
             QList<Player*> list = players;
             list.takeAt(i);
-            m_clients[i]->sendState(list, m_map, players[i]);
+            player(i)->networkClient()->sendState(list, m_map, players[i]);
         }
     }
 }
@@ -300,22 +295,22 @@ void GameManager::clientConnect()
 
 void GameManager::clientDisconnected()
 {
-    NetworkClient *client = qobject_cast<NetworkClient*>(sender());
-    if (!client) {
+    if (m_timer.isActive()) {
+        return;
+    }
+
+    // FIXME fix this shit
+    Player *playerObject = qobject_cast<Player*>(sender());
+    if (!playerObject) {
         qWarning() << "GameManager: invalid sender for disconnect signal";
         return;
     }
-    int index = m_clients.indexOf(client);
+    int index = m_players.indexOf(playerObject);
     if (index < 0) {
         qWarning() << "GameManager: unable to find disconnecting client.";
         return;
     }
-    if (m_timer.isActive()) {
-        player(index)->setDisconnected();
-        return;
-    }
 
-    m_clients.takeAt(index)->deleteLater();
     m_players.takeAt(index)->deleteLater();
     for (int i=0; i<playerCount(); i++) {
         player(i)->setId(i);
@@ -341,19 +336,16 @@ void GameManager::addPlayer(NetworkClient *client)
         return;
     }
 
-    Player *player = new Player(this, playerCount());
+    Player *player = new Player(this, playerCount(), client);
     player->setPosition(m_map->startingPositions().at(player->id()));
     m_players.append(player);
-    m_clients.append(client);
 
     if (!client) {
         connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
         player->setName("Local user");
     } else {
         player->setName(client->remoteName());
-        connect(client, SIGNAL(nameChanged(QString)), player, SLOT(setName(QString)));
-        connect(client, SIGNAL(commandReceived(QString)), player, SLOT(setCommand(QString)));
-        connect(client, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
+        connect(player, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
     }
 
     // We need to reset the property, the qobjectlist model doesn't automatically update
@@ -363,8 +355,7 @@ void GameManager::addPlayer(NetworkClient *client)
 void GameManager::removeHumanPlayers()
 {
     for (int i=0; i<playerCount(); i++) {
-        if (!m_clients[i]) {
-            m_clients.takeAt(i)->deleteLater();
+        if (!player(i)->networkClient()) {
             m_players.takeAt(i)->deleteLater();
             break;
         }

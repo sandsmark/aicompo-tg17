@@ -1,10 +1,26 @@
 #include "player.h"
 
+#include "networkclient.h"
+
 #include <QDebug>
 
-Player::Player(QObject *parent, int id) :
-    QObject(parent), m_id(id), m_alive(true), m_wins(0), m_availableBombs(1), m_disconnected(false)
+Player::Player(QObject *parent, int id, NetworkClient *networkClient) :
+    QObject(parent),
+    m_id(id),
+    m_alive(true),
+    m_wins(0),
+    m_availableBombs(1),
+    m_disconnected(false),
+    m_networkClient(networkClient)
 {
+    if (networkClient) {
+        networkClient->setParent(this); // automatically delete
+    }
+
+    connect(networkClient, SIGNAL(nameChanged(QString)), SLOT(setName(QString)));
+    connect(networkClient, SIGNAL(commandReceived(QString)), SLOT(setCommand(QString)));
+    connect(networkClient, SIGNAL(clientDisconnected()), SLOT(setDisconnected()));
+    connect(networkClient, SIGNAL(clientDisconnected()), SIGNAL(clientDisconnected()));
 }
 
 QPoint Player::position() const
@@ -34,6 +50,10 @@ void Player::setAlive(bool alive)
 {
     if (m_disconnected) {
         alive = false;
+    }
+
+    if (!alive) {
+        m_networkClient->sendDead();
     }
 
     m_alive = alive;
@@ -95,3 +115,5 @@ void Player::setDisconnected()
     m_disconnected = true;
     setAlive(false);
 }
+
+
