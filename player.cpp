@@ -7,10 +7,10 @@
 Player::Player(QObject *parent, int id, NetworkClient *networkClient) :
     QObject(parent),
     m_id(id),
-    m_alive(true),
     m_wins(0),
     m_availableBombs(1),
     m_disconnected(false),
+    m_lives(1),
     m_networkClient(networkClient)
 {
     if (networkClient) {
@@ -46,26 +46,23 @@ void Player::setId(int id)
     emit idChanged();
 }
 
-void Player::setAlive(bool alive)
+void Player::takeLife()
 {
-    if (m_disconnected) {
-        alive = false;
+    m_lives--;
+
+    if (m_lives > 0) {
+        return;
     }
 
-    if (!alive) {
+    if (m_networkClient) {
         m_networkClient->sendDead();
     }
-
-    m_alive = alive;
     emit aliveChanged();
 }
 
 bool Player::isAlive()
 {
-    if (m_disconnected) {
-        return false;
-    }
-    return m_alive;
+    return (!m_disconnected && m_lives > 0);
 }
 
 
@@ -100,7 +97,7 @@ void Player::setName(QString name)
 
 void Player::setCommand(QString command)
 {
-    if (m_alive) {
+    if (m_lives > 0) {
         if (command.startsWith("SAY ")) {
             m_message = command.remove(0, 4);
             emit messageReceived();
@@ -113,7 +110,6 @@ void Player::setCommand(QString command)
 void Player::setDisconnected()
 {
     m_disconnected = true;
-    setAlive(false);
 }
 
 
