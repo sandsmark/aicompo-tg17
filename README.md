@@ -77,30 +77,31 @@ This example map can you add into the maps-folder in your game-folder. It'll be 
 1,1     Spawn coordinates in X,Y
 6,6     Spawn coordinates in X,Y
 ++++++++
-+_.####+
++p__###+
 +.#####+
 +######+
 +######+
 +#####.+
-+####._+
++###__p+
 ++++++++
 
 +     Walls that can not be destroyed
 #     Walls that can be destroyed
 .     Grass
-_     Spawn(s)
+_     Floor
+p     Player spawn
 ```
 
 When you are playing, the map looks a bit different. All walkable tiles have been converted to a dot (`.`), so the map above would now look like the one below, really not much of a difference.
 
 ```
 ++++++++
-+..####+
++...###+
 +.#####+
 +######+
 +######+
 +#####.+
-+####..+
++###...+
 ++++++++
 ```
 
