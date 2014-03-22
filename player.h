@@ -41,6 +41,8 @@ public:
     QString message() { return m_message; }
     void setMessage(QString message) { m_message = message; emit messageReceived(); }
 
+    void setDisconnected();
+
 public slots:
     void setCommand(QString command);
     void setName(QString name);
@@ -65,6 +67,7 @@ private:
     QString m_lastCommand;
     QString m_command;
     int m_availableBombs;
+    bool m_disconnected;
 };
 
 #endif // PLAYER_H

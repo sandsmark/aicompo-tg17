@@ -3,7 +3,7 @@
 #include <QDebug>
 
 Player::Player(QObject *parent, int id) :
-    QObject(parent), m_id(id), m_alive(true), m_wins(0), m_availableBombs(1)
+    QObject(parent), m_id(id), m_alive(true), m_wins(0), m_availableBombs(1), m_disconnected(false)
 {
 }
 
@@ -32,12 +32,19 @@ void Player::setId(int id)
 
 void Player::setAlive(bool alive)
 {
+    if (m_disconnected) {
+        alive = false;
+    }
+
     m_alive = alive;
     emit aliveChanged();
 }
 
 bool Player::isAlive()
 {
+    if (m_disconnected) {
+        return false;
+    }
     return m_alive;
 }
 
@@ -81,4 +88,10 @@ void Player::setCommand(QString command)
             m_command = command;
         }
     }
+}
+
+void Player::setDisconnected()
+{
+    m_disconnected = true;
+    setAlive(false);
 }

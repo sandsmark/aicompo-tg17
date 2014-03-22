@@ -300,11 +300,6 @@ void GameManager::clientConnect()
 
 void GameManager::clientDisconnected()
 {
-    if (m_timer.isActive()) {
-        emit gameOver();
-        return;
-    }
-
     NetworkClient *client = qobject_cast<NetworkClient*>(sender());
     if (!client) {
         qWarning() << "GameManager: invalid sender for disconnect signal";
@@ -315,6 +310,11 @@ void GameManager::clientDisconnected()
         qWarning() << "GameManager: unable to find disconnecting client.";
         return;
     }
+    if (m_timer.isActive()) {
+        player(index)->setDisconnected();
+        return;
+    }
+
     m_clients.takeAt(index)->deleteLater();
     m_players.takeAt(index)->deleteLater();
     for (int i=0; i<playerCount(); i++) {
