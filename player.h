@@ -24,6 +24,7 @@ public:
     void setPosition(const QPoint &position);
     int id();
     void setId(int id);
+    void setAlive(bool alive);
     bool isAlive();
 
     QString lastCommand();
@@ -42,9 +43,7 @@ public:
     void setMessage(QString message) { m_message = message; emit messageReceived(); }
 
     NetworkClient *networkClient() { return m_networkClient; }
-    void resetLives() { m_lives = 1; emit aliveChanged(); }
-    void takeLife();
-    void addLife() { m_lives++; }
+
 
 public slots:
     void setCommand(QString command);
@@ -66,6 +65,7 @@ private slots:
 private:
     QPoint m_position;
     int m_id;
+    bool m_alive;
     QString m_name;
     int m_wins;
     QString m_message;
@@ -74,7 +74,6 @@ private:
     QString m_command;
     int m_availableBombs;
     bool m_disconnected;
-    int m_lives;
 
     NetworkClient *m_networkClient;
 };

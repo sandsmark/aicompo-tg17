@@ -157,7 +157,7 @@ void GameManager::explosionAt(const QPoint &position)
             if (m_soundEnabled) {
                 m_death.play();
             }
-            player(i)->takeLife();
+            player(i)->setAlive(false);
         }
     }
 }
@@ -196,7 +196,7 @@ void GameManager::startRound()
     }
 
     for (int i=0; i<playerCount(); i++) {
-        player(i)->resetLives();
+        player(i)->setAlive(true);
         player(i)->setPosition(m_map->startingPositions()[i]);
     }
     loadMap(m_map->name());
