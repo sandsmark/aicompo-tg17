@@ -267,15 +267,16 @@ void GameManager::gameTick()
     } else {
         QList<Player*> players;
         for (int i=0; i<playerCount(); i++) {
-            if (player(i)->isAlive())
+            if (player(i)->isAlive()) {
                 players.append(player(i));
+            }
         }
         for (int i=0; i<players.length(); i++) {
             if (!player(i)->networkClient()) continue;
 
             QList<Player*> list = players;
             list.takeAt(i);
-            player(i)->networkClient()->sendState(list, m_map, players[i]);
+            player(i)->networkClient()->sendState(list, m_map, player(i));
         }
     }
 }
