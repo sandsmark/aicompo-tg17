@@ -26,6 +26,7 @@ public:
     void setId(int id);
     void setAlive(bool alive);
     bool isAlive();
+    bool isDisconnected() { return m_disconnected; }
 
     QString lastCommand();
     QString command();
