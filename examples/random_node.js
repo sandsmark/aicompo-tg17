@@ -46,11 +46,13 @@ client.on('data', function(data) {
                 "BOMB\n"
             ];
             
+            // Write our random move to server
             client.write(moves[Math.floor(Math.random() * 5)]);
         }
     }
 });
 
+// Triggered when connection closes
 client.on('close', function(error) {
     client.destroy();
     if (error == true)
