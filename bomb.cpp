@@ -10,7 +10,8 @@ Bomb::Bomb(QObject *parent, QQuickView *view, QPoint position, Player *player) :
 {
     static QQmlComponent *bombComponent = 0;
 
-    player->addActiveBomb();
+    if (player)
+        player->addActiveBomb();
 
     if (!bombComponent) {
         bombComponent = new QQmlComponent(view->engine(), QUrl("qrc:/qml/bomb/BombSprite.qml"), QQmlComponent::PreferSynchronous);
@@ -40,7 +41,9 @@ Bomb::Bomb(QObject *parent, QQuickView *view, QPoint position, Player *player) :
 
 Bomb::~Bomb()
 {
-    m_player->removeActiveBomb();
+    if (m_player)
+        m_player->removeActiveBomb();
+
     QTimer::singleShot(500, m_sprite, SLOT(deleteLater()));
 }
 

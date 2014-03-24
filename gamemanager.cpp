@@ -20,7 +20,7 @@
 #include <QSettings>
 
 GameManager::GameManager(QQuickView *view) : QObject(view),
-    m_map(0), m_view(view), m_roundsPlayed(0)
+    m_map(0), m_view(view), m_roundsPlayed(0), m_ticksLeft(-1)
 {
     loadMap(":/maps/default.map");
 
@@ -34,13 +34,13 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
 
     // Set up gametick timer
-    m_timer.setInterval(250); // 10 times a second
-    m_timer.setSingleShot(false);
+    m_tickTimer.setInterval(250); // 10 times a second
+    m_tickTimer.setSingleShot(false);
 
     m_server.listen(QHostAddress::Any, 54321);
 
-    connect(&m_timer, SIGNAL(timeout()), SLOT(gameTick()));
-    connect(&m_timer, SIGNAL(timeout()), SIGNAL(tick()));
+    connect(&m_tickTimer, SIGNAL(timeout()), SLOT(gameTick()));
+    connect(&m_tickTimer, SIGNAL(timeout()), SIGNAL(tick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(gameOver()), SLOT(endRound()));
 
@@ -164,7 +164,7 @@ void GameManager::explosionAt(const QPoint &position)
 
 void GameManager::endRound()
 {
-    m_timer.stop();
+    m_tickTimer.stop();
 
     for (int i=0; i<m_players.count(); i++) {
         if (!m_players[i]->networkClient()) continue;
@@ -205,11 +205,22 @@ void GameManager::startRound()
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
     }
-    m_timer.start();
+
+    m_ticksLeft = m_map->maxTicks();
+    m_tickTimer.start();
 }
 
 void GameManager::gameTick()
 {
+    m_ticksLeft--;
+    if (m_ticksLeft == 0) {
+        m_map->explodeEverything();
+    } else if (m_ticksLeft < 0) {
+        int factor = 160 / (m_ticksLeft ? m_ticksLeft : 1);
+        if (m_ticksLeft % (factor ? factor : 1) == 0)
+            m_map->addRandomBomb();
+    }
+
     QList<QPointer<Player> > players = m_players;
     for (int index = players.count() - 1; index > 0; --index) {
         qSwap(players[index], players[qrand() % (index + 1)]);
@@ -290,7 +301,7 @@ void GameManager::clientConnect()
 {
     QTcpSocket *socket = m_server.nextPendingConnection();
 
-    if (m_players.count() >= m_map->startingPositions().count() || m_timer.isActive()) {
+    if (m_players.count() >= m_map->startingPositions().count() || m_tickTimer.isActive()) {
         socket->disconnect();
         socket->deleteLater();
         return;
@@ -301,7 +312,7 @@ void GameManager::clientConnect()
 
 void GameManager::clientDisconnected()
 {
-    if (m_timer.isActive()) {
+    if (m_tickTimer.isActive()) {
         return;
     }
 
@@ -367,10 +378,10 @@ QString GameManager::address()
 
 void GameManager::togglePause()
 {
-    if (m_timer.isActive()) {
-        m_timer.stop();
+    if (m_tickTimer.isActive()) {
+        m_tickTimer.stop();
     } else {
-        m_timer.start();
+        m_tickTimer.start();
     }
 }
 

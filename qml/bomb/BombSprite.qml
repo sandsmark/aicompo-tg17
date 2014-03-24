@@ -10,7 +10,7 @@ Image {
     property int bombY
     x: bombX * width;
     y: bombY * height
-    source: bombData == null ? "" : "qrc:/sprites/bomb/bomb-" + bombData.state + ".png"
+    source: bombData == null ? "" : "qrc:/sprites/bomb/bomb-" + (bombData.state + 8) + ".png"
 
 
     Behavior on opacity {

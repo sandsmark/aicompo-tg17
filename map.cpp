@@ -19,6 +19,8 @@ Map::Map(GameManager *game, const QString &mapName) : QObject(game),
         qWarning() << "Map: Unable to open file:" << mapName;
         return;
     }
+    // Read in tick count for a round
+    m_maxTicks = file.readLine().trimmed().toInt();
 
     // Read in size
     QByteArray line = file.readLine();
@@ -151,7 +153,7 @@ bool Map::explodeTile(const QPoint &position)
 
 void Map::addBomb(const QPoint &position, Player *player)
 {
-    if (!player->canBomb()) return;
+    if (player && !player->canBomb()) return;
 
     foreach (const Bomb *bomb, m_bombs) {
         if (bomb->position() == position) return;
@@ -185,4 +187,43 @@ void Map::detonateBomb(const QPoint &center)
     if (explodeTile(QPoint(center.x(), center.y() - 1))) {
         explodeTile(QPoint(center.x(), center.y() - 2));
     }
+}
+
+void Map::explodeEverything()
+{
+    for (int x=0; x<width(); x++) {
+        for (int y=0; y<height(); y++) {
+            if (tileAt(QPoint(x, y))->type() == Tile::Stone) {
+                explodeTile(QPoint(x, y));
+            }
+        }
+    }
+}
+
+void Map::addRandomBomb()
+{
+    QPoint position;
+    bool valid;
+    for (int i=0; i<1000; i++) {
+        valid = true;
+        position.setX(qrand() % width());
+        position.setY(qrand() % height());
+        foreach(Bomb *bomb, m_bombs) {
+            if (bomb->position() == position) {
+                valid = false;
+                break;
+            }
+        }
+        if (!valid) continue;
+        foreach(QPointer<Player> player, m_game->players()) {
+            if (!player) continue;
+            if (player->position() == position) {
+                valid = false;
+                break;
+            }
+        }
+        if (valid) break;
+    }
+    if (!valid) return;
+    addBomb(position, 0);
 }

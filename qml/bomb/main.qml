@@ -26,6 +26,18 @@ Rectangle {
         opacity: 0
     }
 
+    Text {
+        id: timeRemaining
+        anchors.top: parent.top
+        anchors.left: parent.left
+        text: game.ticksLeft > 0 ? Math.ceil(game.ticksLeft/4) + "s" : "SUDDEN DEATH"
+        color: (game.ticksLeft > 40) ? "white" : "red"
+        font.bold: true
+        font.pointSize: 20
+        opacity: 1
+        visible: game.ticksLeft != -1
+    }
+
     Keys.onPressed: {
         if (event.key === Qt.Key_F5) {
             game.endRound();
@@ -71,6 +83,6 @@ Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         color: "white"
-        text: "version: " + game.version()
+        text: "build time: " + game.version()
     }
 }

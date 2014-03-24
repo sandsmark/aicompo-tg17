@@ -38,6 +38,7 @@ public:
     bool isWithinBounds(const QPoint &position) const;
 
     QString name() const;
+    int maxTicks() const { return m_maxTicks; }
 
     int maxPlayers() const;
 
@@ -46,6 +47,10 @@ public:
     QList<Bomb*> bombs() const { return m_bombs; }
 
     Tile *tileAt(const QPoint &position) const;
+
+    // For sudden death
+    void explodeEverything();
+    void addRandomBomb();
 
 public slots:
     void detonateBomb(const QPoint &position);
@@ -58,6 +63,7 @@ private:
 
     int m_width;
     int m_height;
+    int m_maxTicks;
     QList<QObject*> m_tiles;
     QList<QPoint> m_startingPositions;
     QString m_name;

@@ -23,6 +23,7 @@ class GameManager : public QObject
     Q_PROPERTY(QString address READ address() CONSTANT)
     Q_PROPERTY(QStringList maps READ maps() NOTIFY mapsChanged())
     Q_PROPERTY(bool soundEnabled READ soundEnabled WRITE setSoundEnabled NOTIFY soundEnabledChanged)
+    Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
 
 public:
     explicit GameManager(QQuickView *parent);
@@ -32,7 +33,7 @@ public:
     Q_INVOKABLE void addPlayer(NetworkClient *client = 0);
     Q_INVOKABLE void removeHumanPlayers();
 
-    Q_INVOKABLE void setDebugMode(bool debug) { m_timer.setInterval(debug ? 1000 : 100); qDebug() << m_timer.interval(); }
+    Q_INVOKABLE void setDebugMode(bool debug) { m_tickTimer.setInterval(debug ? 1000 : 100); qDebug() << m_tickTimer.interval(); }
 
     QString address();
 
@@ -42,6 +43,9 @@ public:
     Q_INVOKABLE QString version() { return /*QLatin1String(APP_VERSION) + " // build time: " +*/ QLatin1String(__TIME__) + ' ' + QLatin1String(__DATE__); }
     bool soundEnabled() { return m_soundEnabled; }
     void setSoundEnabled(bool enabled);
+    int ticksLeft() const { return m_ticksLeft; }
+
+    QList<QPointer<Player> > players() const { return m_players; }
 
 public slots:
     void explosionAt(const QPoint &position);
@@ -72,7 +76,7 @@ private:
     Map *m_map;
     QQuickView *m_view;
     QList<QPointer<Player> > m_players;
-    QTimer m_timer;
+    QTimer m_tickTimer;
     QTcpServer m_server;
     QString m_currentMap;
     int m_roundsPlayed;
@@ -81,6 +85,7 @@ private:
     QSoundEffect m_backgroundLoop;
     QSoundEffect m_explosion;
     QSoundEffect m_death;
+    int m_ticksLeft;
 };
 
 #endif // MAPLOADER_H
