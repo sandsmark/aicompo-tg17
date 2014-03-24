@@ -55,6 +55,7 @@ public slots:
     void stopGame();
     void togglePause();
     void kick(int index);
+    void resetScores();
 
     int roundsPlayed() { return m_roundsPlayed; }
 

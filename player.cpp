@@ -11,6 +11,7 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) :
     m_wins(0),
     m_availableBombs(1),
     m_disconnected(false),
+    m_score(0),
     m_networkClient(networkClient)
 {
     if (networkClient) {
@@ -89,7 +90,7 @@ QString Player::command()
 
 QString Player::name()
 {
-    return m_name + " (" + QString::number(m_id) + ')';
+    return QString::number(m_id) + ": " + m_name;
 }
 
 void Player::setName(QString name)

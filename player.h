@@ -16,6 +16,7 @@ class Player : public QObject
     Q_PROPERTY(QString name READ name() NOTIFY nameChanged())
     Q_PROPERTY(int wins READ wins() NOTIFY winsChanged())
     Q_PROPERTY(QString message READ message NOTIFY messageReceived())
+    Q_PROPERTY(int score READ score NOTIFY scoreChanged)
 
 public:
     explicit Player(QObject *parent, int id, NetworkClient *networkClient = 0);
@@ -45,6 +46,9 @@ public:
 
     NetworkClient *networkClient() { return m_networkClient; }
 
+    void addScore(int score) { m_score += score; emit scoreChanged();}
+    int score() const { return m_score; }
+    void resetScore() { m_score = 0; }
 
 public slots:
     void setCommand(QString command);
@@ -60,6 +64,7 @@ signals:
     void winsChanged();
     void messageReceived();
     void clientDisconnected();
+    void scoreChanged();
 
 private slots:
     void setDisconnected();
@@ -76,6 +81,8 @@ private:
     QString m_command;
     int m_availableBombs;
     bool m_disconnected;
+
+    int m_score;
 
     NetworkClient *m_networkClient;
 };

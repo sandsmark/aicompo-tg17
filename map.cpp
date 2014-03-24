@@ -168,24 +168,46 @@ void Map::addBomb(const QPoint &position, Player *player)
 
 void Map::detonateBomb(const QPoint &center)
 {
-    m_bombs.removeAll(qobject_cast<Bomb*>(sender()));
-    sender()->deleteLater();
+    Bomb *bomb = qobject_cast<Bomb*>(sender());
+    Player *player = bomb->player();
+    int score = 0;
+    m_bombs.removeAll(bomb);
+    bomb->deleteLater();
 
     explodeTile(QPoint(center.x(), center.y()));
 
     if (explodeTile(QPoint(center.x() + 1, center.y()))) {
-        explodeTile(QPoint(center.x() + 2, center.y()));
+        score += 10;
+        if (explodeTile(QPoint(center.x() + 2, center.y()))) {
+            score += 10;
+        }
     }
     if (explodeTile(QPoint(center.x() - 1, center.y()))) {
-        explodeTile(QPoint(center.x() - 2, center.y()));
+        score += 10;
+        if (explodeTile(QPoint(center.x() - 2, center.y()))) {
+            score += 10;
+        }
     }
 
     if (explodeTile(QPoint(center.x(), center.y() + 1))) {
-        explodeTile(QPoint(center.x(), center.y() + 2));
+        score += 10;
+        if (explodeTile(QPoint(center.x(), center.y() + 2))) {
+            score += 10;
+        }
     }
     if (explodeTile(QPoint(center.x(), center.y() - 1))) {
-        explodeTile(QPoint(center.x(), center.y() - 2));
+        score += 10;
+        if (explodeTile(QPoint(center.x(), center.y() - 2))) {
+            score += 10;
+        }
     }
+    qDebug() << score;
+
+    if (player) {
+        player->addScore(score);
+    }
+
+
 }
 
 void Map::explodeEverything()

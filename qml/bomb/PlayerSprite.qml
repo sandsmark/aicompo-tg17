@@ -63,7 +63,7 @@ Image {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         color: "white"
-        text: name
+        text: name + " <" + score + ">"
         font.bold: true
         style: Text.Outline
     }

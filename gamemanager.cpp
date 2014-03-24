@@ -212,6 +212,13 @@ void GameManager::startRound()
     m_tickTimer.start();
 }
 
+void GameManager::resetScores()
+{
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->resetScore();
+    }
+}
+
 void GameManager::gameTick()
 {
     m_ticksLeft--;

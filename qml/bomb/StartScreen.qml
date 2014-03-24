@@ -222,6 +222,7 @@ Rectangle {
             if (players.length < 1) {
                 return
             }
+            game.resetScores()
             startScreen.opacity = 0
             game.startRound()
         }
