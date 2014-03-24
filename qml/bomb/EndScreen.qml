@@ -83,9 +83,9 @@ Rectangle {
             if (players.length < 1) {
                 return
             }
+            game.stopGame()
             endScreen.opacity = 0
             startScreen.opacity = 1
-            //game.restartGame()
         }
         text: "Restart"
     }

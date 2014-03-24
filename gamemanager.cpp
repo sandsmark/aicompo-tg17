@@ -179,6 +179,7 @@ void GameManager::endRound()
             }
         }
         m_roundsPlayed++;
+        emit roundsPlayedChanged();
         QTimer::singleShot(1000, this, SLOT(startRound()));
     } else {
         QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
@@ -186,6 +187,7 @@ void GameManager::endRound()
             endScreen->setProperty("opacity", 1.0);
         }
         m_roundsPlayed = 0;
+        emit roundsPlayedChanged();
     }
 }
 
@@ -387,8 +389,7 @@ void GameManager::togglePause()
 
 void GameManager::stopGame()
 {
-    endRound();
-    m_roundsPlayed = 0;
+    m_tickTimer.stop();
 }
 
 void GameManager::exportPlayerList()
