@@ -242,7 +242,7 @@ void GameManager::gameTick()
 
         if (canWalk) {
             for (int j=0; j<players.count(); j++) {
-                if (players[j]->position() == position) {
+                if (players[j]->isAlive() && players[j]->position() == position) {
                     canWalk = false;
                 }
             }
