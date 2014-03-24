@@ -171,7 +171,6 @@ void Map::detonateBomb(const QPoint &center)
     m_bombs.removeAll(qobject_cast<Bomb*>(sender()));
     sender()->deleteLater();
 
-
     explodeTile(QPoint(center.x(), center.y()));
 
     if (explodeTile(QPoint(center.x() + 1, center.y()))) {
@@ -221,6 +220,9 @@ void Map::addRandomBomb()
                 valid = false;
                 break;
             }
+        }
+        if (tileAt(position)->type() == Tile::Wall) {
+            valid = false;
         }
         if (valid) break;
     }
