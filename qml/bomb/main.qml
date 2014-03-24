@@ -3,6 +3,9 @@ import QtQuick 2.0
 Rectangle {
     color: "black"
 
+    height: 650
+    width: 850
+
     signal userMove(string direction)
 
     Keys.onDownPressed: userMove("DOWN")
