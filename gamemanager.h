@@ -29,9 +29,6 @@ public:
     ~GameManager();
     Q_INVOKABLE void loadMap(const QString &path);
 
-    Player *player(int id);
-    int playerCount();
-
     Q_INVOKABLE void addPlayer(NetworkClient *client = 0);
     Q_INVOKABLE void removeHumanPlayers();
 

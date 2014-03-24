@@ -65,9 +65,9 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
 GameManager::~GameManager()
 {
     // Ensure we don't crash because we delete stuff before it disconnects
-    for (int i=0; i<playerCount(); i++) {
-        if (player(i)->networkClient()) {
-            disconnect(player(i)->networkClient(), SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
+    for (int i=0; i<m_players.count(); i++) {
+        if (m_players[i]->networkClient()) {
+            disconnect(m_players[i]->networkClient(), SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
         }
     }
 }
@@ -122,19 +122,19 @@ void GameManager::loadMap(const QString &path)
 
 
     // Kick out players if too many
-    for (int i=playerCount()-1; i>=0; --i) {
-        if (playerCount() <= m_map->startingPositions().count()) {
+    for (int i=m_players.count()-1; i>=0; --i) {
+        if (m_players.count() <= m_map->startingPositions().count()) {
             break;
         }
-        if (!player(i)->networkClient()) continue; // Don't kick out human player
+        if (!m_players[i]->networkClient()) continue; // Don't kick out human player
 
         m_players.takeAt(i)->deleteLater();
     }
 
     // Update positions and id
-    for (int i=0; i<playerCount(); i++) {
-        player(i)->setPosition(m_map->startingPositions()[i]);
-        player(i)->setId(i);
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setPosition(m_map->startingPositions()[i]);
+        m_players[i]->setId(i);
     }
 
     exportPlayerList();
@@ -152,12 +152,12 @@ void GameManager::playBombSound()
 
 void GameManager::explosionAt(const QPoint &position)
 {
-    for (int i=0; i<playerCount(); i++) {
-        if (player(i)->position() == position) {
+    for (int i=0; i<m_players.count(); i++) {
+        if (m_players[i]->position() == position) {
             if (m_soundEnabled) {
                 m_death.play();
             }
-            player(i)->setAlive(false);
+            m_players[i]->setAlive(false);
         }
     }
 }
@@ -166,15 +166,15 @@ void GameManager::endRound()
 {
     m_timer.stop();
 
-    for (int i=0; i<playerCount(); i++) {
-        if (!player(i)->networkClient()) continue;
-        player(i)->networkClient()->sendEndOfRound();
+    for (int i=0; i<m_players.count(); i++) {
+        if (!m_players[i]->networkClient()) continue;
+        m_players[i]->networkClient()->sendEndOfRound();
     }
 
     if (m_roundsPlayed < 5) {
-        for (int i=0; i<playerCount(); i++) {
-            if (player(i)->isAlive()) {
-                player(i)->addWin();
+        for (int i=0; i<m_players.count(); i++) {
+            if (m_players[i]->isAlive()) {
+                m_players[i]->addWin();
                 break;
             }
         }
@@ -195,28 +195,33 @@ void GameManager::startRound()
         return;
     }
 
-    for (int i=0; i<playerCount(); i++) {
-        player(i)->setAlive(true);
-        player(i)->setPosition(m_map->startingPositions()[i]);
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setAlive(true);
+        m_players[i]->setPosition(m_map->startingPositions()[i]);
     }
     loadMap(m_map->name());
 
     // Do not allow to change name after game has started
-    for (int i=0; i<playerCount(); i++) {
-        player(i)->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
     }
     m_timer.start();
 }
 
 void GameManager::gameTick()
 {
-    for (int i=0; i<playerCount(); i++) {
-        QString command = player(i)->command();
+    QList<QPointer<Player> > players = m_players;
+    for (int index = players.count() - 1; index > 0; --index) {
+        qSwap(players[index], players[qrand() % (index + 1)]);
+    }
+
+    for (int i=0; i<players.count(); i++) {
+        QString command = players[i]->command();
         if (command.isEmpty()) {
             continue;
         }
 
-        QPoint position = player(i)->position();
+        QPoint position = players[i]->position();
 
         if (command == "UP") {
             position.setY(position.y() - 1);
@@ -227,7 +232,7 @@ void GameManager::gameTick()
         } else if (command == "RIGHT") {
             position.setX(position.x() + 1);
         } else if (command == "BOMB") {
-            m_map->addBomb(position, player(i));
+            m_map->addBomb(position, players[i]);
             continue;
         } else {
             continue;
@@ -236,8 +241,8 @@ void GameManager::gameTick()
         bool canWalk = m_map->isValidPosition(position);
 
         if (canWalk) {
-            for (int j=0; j<playerCount(); j++) {
-                if (player(j)->position() == position) {
+            for (int j=0; j<players.count(); j++) {
+                if (players[j]->position() == position) {
                     canWalk = false;
                 }
             }
@@ -251,32 +256,32 @@ void GameManager::gameTick()
         }
 
         if (canWalk) {
-            player(i)->setPosition(position);
+            players[i]->setPosition(position);
         }
     }
 
     int dead = 0;
-    for(int i=0; i<playerCount(); i++) {
-        if (!player(i)->isAlive()) {
+    for(int i=0; i<players.count(); i++) {
+        if (!players[i]->isAlive()) {
             dead++;
         }
     }
 
-    if (dead > 0 && m_players.size() - dead < 2) {
+    if (dead > 0 && players.size() - dead < 2) {
         emit gameOver();
     } else {
         QList<Player*> players;
-        for (int i=0; i<playerCount(); i++) {
-            if (player(i)->isAlive()) {
-                players.append(player(i));
+        for (int i=0; i<players.count(); i++) {
+            if (players[i]->isAlive()) {
+                players.append(players[i]);
             }
         }
         for (int i=0; i<players.length(); i++) {
-            if (!player(i)->networkClient()) continue;
+            if (!players[i]->networkClient()) continue;
 
             QList<Player*> list = players;
             list.takeAt(i);
-            player(i)->networkClient()->sendState(list, m_map, player(i));
+            players[i]->networkClient()->sendState(list, m_map, players[i]);
         }
     }
 }
@@ -285,7 +290,7 @@ void GameManager::clientConnect()
 {
     QTcpSocket *socket = m_server.nextPendingConnection();
 
-    if (playerCount() >= m_map->startingPositions().count()) {
+    if (m_players.count() >= m_map->startingPositions().count()) {
         socket->disconnect();
         socket->deleteLater();
         return;
@@ -313,30 +318,19 @@ void GameManager::clientDisconnected()
     }
 
     m_players.takeAt(index)->deleteLater();
-    for (int i=0; i<playerCount(); i++) {
-        player(i)->setId(i);
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setId(i);
     }
     exportPlayerList();
 }
 
-Player *GameManager::player(int id)
-{
-    if (id > m_players.size()) return NULL;
-    return qobject_cast<Player*>(m_players[id]);
-}
-
-int GameManager::playerCount()
-{
-    return m_players.size();
-}
-
 void GameManager::addPlayer(NetworkClient *client)
 {
-    if (playerCount() >= m_map->startingPositions().count()) {
+    if (m_players.count() >= m_map->startingPositions().count()) {
         return;
     }
 
-    Player *player = new Player(this, playerCount(), client);
+    Player *player = new Player(this, m_players.count(), client);
     player->setPosition(m_map->startingPositions().at(player->id()));
     m_players.append(player);
 
@@ -354,14 +348,14 @@ void GameManager::addPlayer(NetworkClient *client)
 
 void GameManager::removeHumanPlayers()
 {
-    for (int i=0; i<playerCount(); i++) {
-        if (!player(i)->networkClient()) {
+    for (int i=0; i<m_players.count(); i++) {
+        if (!m_players[i]->networkClient()) {
             m_players.takeAt(i)->deleteLater();
             break;
         }
     }
-    for (int i=0; i<playerCount(); i++) {
-        player(i)->setId(i);
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setId(i);
     }
     exportPlayerList();
 }
