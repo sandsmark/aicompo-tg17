@@ -8,7 +8,7 @@
 #include <QTimer>
 #include <QTcpServer>
 #include <QSoundEffect>
-#include <player.h>
+#include "player.h"
 
 class Map;
 class QQuickView;
