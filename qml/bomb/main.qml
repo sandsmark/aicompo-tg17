@@ -9,19 +9,30 @@ Rectangle {
     Keys.onUpPressed: userMove("UP")
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
-    Keys.onBackPressed: userMove("BOMB")
+    Keys.onSpacePressed: userMove("BOMB")
     Keys.onEscapePressed: {
         game.stopGame();
         startScreen.opacity = 1
     }
-    Keys.onSpacePressed: game.togglePause()
+
+    Text {
+        id: pauseText
+        anchors.top: parent.top
+        anchors.right: parent.right
+        text: "PAUSED"
+        color: "white"
+        font.bold: true
+        font.pointSize: 20
+        opacity: 0
+    }
 
     Keys.onPressed: {
         if (event.key === Qt.Key_F5) {
             game.endRound();
             return true;
-        } else if (event.key == Qt.Key_Backspace) {
-            userMove("BOMB")
+        } else if (event.key == Qt.Key_P) {
+            game.togglePause()
+            pauseText.opacity = 1 - pauseText.opacity
             return true;
         }
 
