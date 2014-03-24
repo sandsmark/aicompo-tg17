@@ -271,9 +271,9 @@ void GameManager::gameTick()
         emit gameOver();
     } else {
         QList<Player*> players;
-        for (int i=0; i<players.count(); i++) {
-            if (players[i]->isAlive()) {
-                players.append(players[i]);
+        for (int i=0; i<m_players.count(); i++) {
+            if (m_players[i]->isAlive()) {
+                players.append(m_players[i]);
             }
         }
         for (int i=0; i<players.length(); i++) {
