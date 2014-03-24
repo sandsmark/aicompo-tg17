@@ -290,7 +290,7 @@ void GameManager::clientConnect()
 {
     QTcpSocket *socket = m_server.nextPendingConnection();
 
-    if (m_players.count() >= m_map->startingPositions().count()) {
+    if (m_players.count() >= m_map->startingPositions().count() || m_timer.isActive()) {
         socket->disconnect();
         socket->deleteLater();
         return;
