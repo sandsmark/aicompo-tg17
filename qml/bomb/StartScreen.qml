@@ -91,7 +91,7 @@ Rectangle {
     }
 
 
-/*
+    /*
     Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
@@ -181,14 +181,28 @@ Rectangle {
         anchors.topMargin: 60
         border.color: "white"
         Column {
+            id: userListColumn
             anchors.fill: parent
             anchors.margins: 20
             Repeater {
                 model: players
-                delegate: Text {
-                    color: "white"
-                    font.pixelSize: 15
-                    text: model.modelData.name
+                delegate: Item {
+                    height: 35
+                    width: userListColumn.width
+                    Text {
+                        anchors.left: parent.left
+                        color: "white"
+                        font.pixelSize: 20
+                        text: model.modelData.name
+                    }
+                    Button {
+                        visible: model.modelData.isHuman()
+                        anchors.right: parent.right
+                        width: 60
+                        height: 30
+                        text: "Kick"
+                        onClicked: game.kick(index)
+                    }
                 }
             }
         }

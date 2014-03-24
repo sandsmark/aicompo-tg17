@@ -21,6 +21,11 @@ QString NetworkClient::remoteName()
     return m_name;
 }
 
+void NetworkClient::kick()
+{
+    m_socket->disconnectFromHost();
+}
+
 void NetworkClient::sendString(QByteArray string)
 {
     if (m_isWebSocket) {

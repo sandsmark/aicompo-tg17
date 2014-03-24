@@ -358,6 +358,15 @@ void GameManager::addPlayer(NetworkClient *client)
     // We need to reset the property, the qobjectlist model doesn't automatically update
     exportPlayerList();
 }
+void GameManager::kick(int index)
+{
+    if (m_players.at(index)->networkClient()) {
+        m_players.at(index)->networkClient()->kick();
+    } else {
+        m_players.takeAt(index)->deleteLater();
+    }
+    exportPlayerList();
+}
 
 void GameManager::removeHumanPlayers()
 {

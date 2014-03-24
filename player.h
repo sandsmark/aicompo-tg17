@@ -49,6 +49,7 @@ public:
 public slots:
     void setCommand(QString command);
     void setName(QString name);
+    bool isHuman() { return m_networkClient != 0; }
 
 signals:
     void positionChanged();

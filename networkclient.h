@@ -19,6 +19,7 @@ public:
     void sendState(QList<Player*> players, const Map *map, const Player *self);
     void sendEndOfRound();
     void sendDead();
+    void kick();
 
 signals:
     void commandReceived(const QString command);

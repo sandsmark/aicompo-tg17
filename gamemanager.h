@@ -54,6 +54,7 @@ public slots:
     void playBombSound();
     void stopGame();
     void togglePause();
+    void kick(int index);
 
     int roundsPlayed() { return m_roundsPlayed; }
 
