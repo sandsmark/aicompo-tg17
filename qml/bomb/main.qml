@@ -30,7 +30,7 @@ Rectangle {
         if (event.key === Qt.Key_F5) {
             game.endRound();
             return true;
-        } else if (event.key == Qt.Key_P) {
+        } else if (event.key === Qt.Key_P) {
             game.togglePause()
             pauseText.opacity = 1 - pauseText.opacity
             return true;

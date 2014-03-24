@@ -52,7 +52,7 @@ void Player::setAlive(bool alive)
         alive = false;
     }
 
-    if (!alive) {
+    if (!alive && m_networkClient) {
         m_networkClient->sendDead();
     }
 
