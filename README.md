@@ -72,7 +72,7 @@ On each game tick the server emits one or more JSON-objects, depending on what h
 This example map can you add into the maps-folder in your game-folder. It'll be parsed automatically and you can use it to play on. Be creative, and test as many map combinations as possible to be sure your AI can cover all kinds of resistance! :)
 
 ```
-480     Number og ticks
+480     Number of ticks
 8x8     Mapsize in XxY
 ++++++++
 +p__###+
