@@ -194,3 +194,7 @@ esc    Stop game
 
 Arrowkeys for controlling the human player, and backspace for dropping bombs.
 ```
+
+---
+
+If you feel you need to test your bot, you can download a testbot created by Patrick Tørresvold [here](software.2rsvold.com/DemoMiner.zip).
