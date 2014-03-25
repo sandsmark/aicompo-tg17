@@ -3,7 +3,34 @@ Drop da Bomb
 
 ### Default protocol 
 
-**Don't know this, someone else must fix**
+```
+PLAYERS
+0 1,1 // ID x,y
+2 3,9 // ID x,y
+ENDPLAYERS
+BOMBS
+5,8 7 // x,y ticks left before kaboom
+ENDBOMBS
+X 15 // Your x-coordinate
+Y 1 // Your y-coordinate
+HEIGHT 13 // Map-height
+WIDTH 17 // Map-width
+MAP
++++++++++++++++++
++.....+###+.#...+
++++##...++.##.+++
++######.#.##....+
++##++.+.#.+.++#.+
++.#+.#.#++#.#+#.+
+++.##.+...#.###++
++#++#++#+++#.++#+
++##...##+..#####+
++...+.#..###+...+
++.+#..#++..##.+.+
++.+###+##.+...+.+
++++++++++++++++++
+ENDMAP
+```
 
 ---
 
