@@ -84,5 +84,6 @@
     <qresource prefix="/maps">
         <file>default.map</file>
         <file>Arena.map</file>
+        <file>HugeArena.map</file>
     </qresource>
 </RCC>

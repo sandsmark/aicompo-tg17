@@ -96,7 +96,8 @@ QStringList GameManager::maps()
     QStringList ret;
 
     ret << ":/maps/default.map"
-        << ":/maps/Arena.map";
+        << ":/maps/Arena.map"
+        << ":/maps/HugeArena.map";
 
     QDir mapDir("maps/");
     foreach (const QString file, mapDir.entryList(QDir::Files)) {
