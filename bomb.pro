@@ -42,4 +42,5 @@ OTHER_FILES += \
     qml/bomb/PlayerSprite.qml \
     qml/bomb/PlayingField.qml \
     qml/bomb/StartScreen.qml \
-    qml/bomb/Checkbox.qml
+    qml/bomb/Checkbox.qml \
+    HugeArena.map
