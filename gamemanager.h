@@ -33,7 +33,7 @@ public:
     Q_INVOKABLE void addPlayer(NetworkClient *client = 0);
     Q_INVOKABLE void removeHumanPlayers();
 
-    Q_INVOKABLE void setDebugMode(bool debug) { m_tickTimer.setInterval(debug ? 80 : 100); qDebug() << m_tickTimer.interval(); }
+    Q_INVOKABLE void setDebugMode(bool debug) { m_tickTimer.setInterval(debug ? 80 : 250); qDebug() << m_tickTimer.interval(); }
 
     QString address();
 
