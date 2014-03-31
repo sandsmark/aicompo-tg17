@@ -1,6 +1,15 @@
 Drop da Bomb
 ============
 
+## How to build
+
+On linux, in the folder where the source is:
+```
+qmake && make
+```
+
+On windows, download the Qt SDK, launch QtCreator, and open the "bomb.pro" file in the project, and click the pretty play button to the left.
+
 ### Default protocol 
 
 ```
