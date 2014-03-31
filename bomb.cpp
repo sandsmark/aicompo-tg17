@@ -49,10 +49,11 @@ Bomb::~Bomb()
 
 void Bomb::tick()
 {
+    m_state++;
     if (m_state == BOMB_STATES) {
         emit boom(m_position);
     } else if (m_state < BOMB_STATES) {
-        m_state++;
+
     } else if (m_state == BOMB_STATES - 2) {
         emit aboutToBlow();
     }
@@ -63,7 +64,7 @@ void Bomb::tick()
 void Bomb::blow()
 {
     m_state = BOMB_STATES;
-    tick();
+    emit boom(m_position);
 }
 
 int Bomb::state()
