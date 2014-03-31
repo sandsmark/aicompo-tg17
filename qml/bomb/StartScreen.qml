@@ -50,7 +50,7 @@ Rectangle {
         anchors.right: debugCheckbox.left
         anchors.verticalCenter: debugCheckbox.verticalCenter
         anchors.rightMargin: 10
-        text: "Enable debug mode:"
+        text: "Enable turbo mode:"
         font.pixelSize: 20
         color: "white"
     }
