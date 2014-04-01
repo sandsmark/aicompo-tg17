@@ -36,7 +36,8 @@ client.on('data', function(data) {
     // Loop through datastrings
     for (var i = 0; i < d.length; i++)
     {
-        if (d[i].type == "status update") {
+        var obj = JSON.parse(d[i]);
+        if (obj.type == "status update") {
             // Define available
             var moves = [
                 "UP\n",
