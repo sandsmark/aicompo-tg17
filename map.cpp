@@ -201,7 +201,6 @@ void Map::detonateBomb(const QPoint &center)
             score += 10;
         }
     }
-    qDebug() << score;
 
     if (player) {
         player->addScore(score);
