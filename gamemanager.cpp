@@ -172,25 +172,26 @@ void GameManager::endRound()
         m_players[i]->networkClient()->sendEndOfRound();
     }
 
-    if (m_roundsPlayed < 5) {
-        for (int i=0; i<m_players.count(); i++) {
-            m_players[i]->setCommand(QString());
-            if (m_players[i]->isAlive()) {
-                m_players[i]->addWin();
-                break;
-            }
-        }
-        m_roundsPlayed++;
-        emit roundsPlayedChanged();
-        QTimer::singleShot(1000, this, SLOT(startRound()));
-    } else {
+    if (m_roundsPlayed >= 5) {
         QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
         if (endScreen) {
             endScreen->setProperty("opacity", 1.0);
         }
         m_roundsPlayed = 0;
         emit roundsPlayedChanged();
+        return;
     }
+
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setCommand(QString());
+        if (m_players[i]->isAlive()) {
+            m_players[i]->addWin();
+            break;
+        }
+    }
+    m_roundsPlayed++;
+    emit roundsPlayedChanged();
+    QTimer::singleShot(1000, this, SLOT(startRound()));
 }
 
 void GameManager::startRound()
