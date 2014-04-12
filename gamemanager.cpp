@@ -174,6 +174,7 @@ void GameManager::endRound()
 
     if (m_roundsPlayed < 5) {
         for (int i=0; i<m_players.count(); i++) {
+            m_players[i]->setCommand(QString());
             if (m_players[i]->isAlive()) {
                 m_players[i]->addWin();
                 break;
