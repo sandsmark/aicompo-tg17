@@ -85,7 +85,7 @@ private:
 
     bool m_soundEnabled;
     QSoundEffect m_backgroundLoop;
-    QSoundEffect m_explosion;
+    QVector<QSoundEffect*> m_explosions;
     QSoundEffect m_death;
     int m_ticksLeft;
 };

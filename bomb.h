@@ -33,7 +33,6 @@ public:
 signals:
     void boom(const QPoint &position);
     void stateChanged();
-    void aboutToBlow();
 
 private slots:
     void tick();

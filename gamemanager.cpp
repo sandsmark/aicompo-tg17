@@ -50,13 +50,17 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(watcher, SIGNAL(directoryChanged(QString)), SIGNAL(mapsChanged()));
 
     // Set up sound effects
-    m_explosion.setSource(QUrl::fromLocalFile("sound/explosion.wav"));
-    m_explosion.setVolume(0.25f);
-    m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/drumloop2.wav"));
-    m_backgroundLoop.setVolume(0.25f);
+    for(int i=0; i<8; i++) {
+        QSoundEffect *explosion = new QSoundEffect(this);
+        explosion->setSource(QUrl::fromLocalFile("sound/explosion0" + QString::number(i+1) + ".wav"));
+        explosion->setVolume(1.0f);
+        m_explosions.append(explosion);
+    }
+    m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/bgm.wav"));
+    m_backgroundLoop.setVolume(0.9f);
     m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
     m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
-    m_death.setVolume(0.25f);
+    m_death.setVolume(1.0f);
 
     QSettings setting("sound");
     setSoundEnabled(setting.value("enabled", false).toBool());
@@ -83,7 +87,9 @@ void GameManager::setSoundEnabled(bool enabled)
         m_backgroundLoop.play();
     } else {
         m_backgroundLoop.stop();
-        m_explosion.stop();
+        for(int i=0; i<8; i++) {
+            m_explosions[i]->stop();
+        }
         m_death.stop();
     }
     m_soundEnabled = enabled;
@@ -147,7 +153,7 @@ void GameManager::loadMap(const QString &path)
 void GameManager::playBombSound()
 {
     if (m_soundEnabled) {
-        m_explosion.play();
+        m_explosions[qrand() % 8]->play();
     }
 }
 

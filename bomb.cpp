@@ -52,10 +52,6 @@ void Bomb::tick()
     m_state++;
     if (m_state == BOMB_STATES) {
         emit boom(m_position);
-    } else if (m_state < BOMB_STATES) {
-
-    } else if (m_state == BOMB_STATES - 2) {
-        emit aboutToBlow();
     }
 
     emit stateChanged();
