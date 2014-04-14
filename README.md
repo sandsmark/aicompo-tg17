@@ -98,7 +98,7 @@ On each game tick the server emits one or more JSON-objects, depending on what h
 `end round` - There's only one player left (for your sake I hope it's you)
 
 ```JSON
-{ "type": "end round" }
+{ "type": "round end" }
 ```
 
 ---
