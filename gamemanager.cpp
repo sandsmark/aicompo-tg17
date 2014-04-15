@@ -19,6 +19,8 @@
 #include <QFileSystemWatcher>
 #include <QSettings>
 
+#define VOLUME 0.5f
+
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_map(0), m_view(view), m_roundsPlayed(0), m_ticksLeft(-1)
 {
@@ -53,14 +55,14 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     for(int i=0; i<8; i++) {
         QSoundEffect *explosion = new QSoundEffect(this);
         explosion->setSource(QUrl::fromLocalFile("sound/explosion0" + QString::number(i+1) + ".wav"));
-        explosion->setVolume(1.0f);
+        explosion->setVolume(VOLUME);
         m_explosions.append(explosion);
     }
     m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/bgm.wav"));
-    m_backgroundLoop.setVolume(1.0f);
+    m_backgroundLoop.setVolume(VOLUME);
     m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
     m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
-    m_death.setVolume(1.0f);
+    m_death.setVolume(VOLUME);
 
     QSettings setting("sound");
     setSoundEnabled(setting.value("enabled", false).toBool());
@@ -237,12 +239,14 @@ void GameManager::resetScores()
 void GameManager::gameTick()
 {
     m_ticksLeft--;
+
+    // Sudden death
     if (m_ticksLeft == 0) {
         m_map->explodeEverything();
     } else if (m_ticksLeft < 0) {
-        int factor = 160 / (m_ticksLeft ? m_ticksLeft : 1);
-        if (m_ticksLeft % (factor ? factor : 1) == 0)
+        for (int i=m_ticksLeft/4; i<0; i++) {
             m_map->addRandomBomb();
+        }
     }
 
     QList<QPointer<Player> > players = m_players;
