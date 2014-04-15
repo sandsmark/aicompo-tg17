@@ -57,7 +57,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
         m_explosions.append(explosion);
     }
     m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/bgm.wav"));
-    m_backgroundLoop.setVolume(0.9f);
+    m_backgroundLoop.setVolume(1.0f);
     m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
     m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
     m_death.setVolume(1.0f);
@@ -138,9 +138,16 @@ void GameManager::loadMap(const QString &path)
         m_players.takeAt(i)->deleteLater();
     }
 
+
+    // Get a randomized list of unoccupied starting positions
+    QList<QPoint> startPositions = m_map->startingPositions();
+    for (int index = startPositions.count() - 1; index > 0; --index) {
+        qSwap(startPositions[index], startPositions[qrand() % (index + 1)]);
+    }
+
     // Update positions and id
     for (int i=0; i<m_players.count(); i++) {
-        m_players[i]->setPosition(m_map->startingPositions()[i]);
+        m_players[i]->setPosition(startPositions[i]);
         m_players[i]->setId(i);
     }
 
@@ -208,7 +215,6 @@ void GameManager::startRound()
 
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setAlive(true);
-        m_players[i]->setPosition(m_map->startingPositions()[i]);
     }
     loadMap(m_map->name());
 
@@ -360,7 +366,16 @@ void GameManager::addPlayer(NetworkClient *client)
     }
 
     Player *player = new Player(this, m_players.count(), client);
-    player->setPosition(m_map->startingPositions().at(player->id()));
+
+    // Get a list of unoccupied starting positions
+    QList<QPoint> freePositions = m_map->startingPositions();
+    foreach(Player *player, m_players) {
+        freePositions.removeAll(player->position());
+    }
+
+    // Add player to a random starting position
+    player->setPosition(freePositions.at(qrand() % freePositions.size()));
+
     m_players.append(player);
 
     if (!client) {
