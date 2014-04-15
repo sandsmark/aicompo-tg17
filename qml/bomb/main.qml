@@ -23,7 +23,7 @@ Rectangle {
             return true;
         } else if (event.key === Qt.Key_P) {
             game.togglePause()
-            pauseText.opacity = 1 - pauseText.opacity
+            pauseText.visible = !pauseText.visible
             return true;
         }
 
@@ -38,7 +38,9 @@ Rectangle {
         color: "white"
         font.bold: true
         font.pointSize: 40
-        opacity: 0
+        opacity: 0.7
+        visible: false
+        z: 10
     }
 
     Text {
@@ -49,6 +51,8 @@ Rectangle {
         color: "white"
         font.bold: true
         font.pointSize: 40
+        z: 10
+        opacity: 0.7
     }
 
     Text {
@@ -59,8 +63,9 @@ Rectangle {
         color: (game.ticksLeft > 40) ? "white" : "red"
         font.bold: true
         font.pointSize: 40
-        opacity: 1
+        opacity: 0.7
         visible: game.ticksLeft != -1
+        z: 10
     }
 
 
@@ -93,9 +98,20 @@ Rectangle {
     }
 
     Text {
+        id: aboutText
+        anchors.bottom: buildId.top
         anchors.right: parent.right
+        color: "white"
+        text: "code:martin^lgndr//sound:ferris^yup"
+        opacity: 0.5
+    }
+
+    Text {
+        id: buildId
+        anchors.left: aboutText.left
         anchors.bottom: parent.bottom
         color: "white"
         text: "build time: " + game.version()
+        opacity: 0.3
     }
 }
