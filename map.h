@@ -59,7 +59,7 @@ signals:
     void explosionAt(QPoint position);
 
 private:
-    bool explodeTile(const QPoint &position);
+    bool explodeTile(const QPoint &position, Player *exploder);
 
     int m_width;
     int m_height;

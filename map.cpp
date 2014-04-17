@@ -129,13 +129,17 @@ Tile *Map::tileAt(const QPoint &position) const
     return qobject_cast<Tile*>(m_tiles[index]);
 }
 
-bool Map::explodeTile(const QPoint &position)
+bool Map::explodeTile(const QPoint &position, Player *exploder)
 {
     if (!isWithinBounds(position)) {
         return false;
     }
 
     bool ret = isValidPosition(position);
+
+    if (exploder) {
+        if (tileAt(position)->type() == Tile::Stone) exploder->addScore(10);
+    }
 
     tileAt(position)->explode();
 
@@ -170,43 +174,24 @@ void Map::detonateBomb(const QPoint &center)
 {
     Bomb *bomb = qobject_cast<Bomb*>(sender());
     Player *player = bomb->player();
-    int score = 0;
     m_bombs.removeAll(bomb);
     bomb->deleteLater();
 
-    explodeTile(QPoint(center.x(), center.y()));
+    explodeTile(QPoint(center.x(), center.y()), player);
 
-    if (explodeTile(QPoint(center.x() + 1, center.y()))) {
-        score += 10;
-        if (explodeTile(QPoint(center.x() + 2, center.y()))) {
-            score += 10;
-        }
+    if (explodeTile(QPoint(center.x() + 1, center.y()), player)) {
+        explodeTile(QPoint(center.x() + 2, center.y()), player);
     }
-    if (explodeTile(QPoint(center.x() - 1, center.y()))) {
-        score += 10;
-        if (explodeTile(QPoint(center.x() - 2, center.y()))) {
-            score += 10;
-        }
+    if (explodeTile(QPoint(center.x() - 1, center.y()), player)) {
+        explodeTile(QPoint(center.x() - 2, center.y()), player);
     }
 
-    if (explodeTile(QPoint(center.x(), center.y() + 1))) {
-        score += 10;
-        if (explodeTile(QPoint(center.x(), center.y() + 2))) {
-            score += 10;
-        }
+    if (explodeTile(QPoint(center.x(), center.y() + 1), player)) {
+        explodeTile(QPoint(center.x(), center.y() + 2), player);
     }
-    if (explodeTile(QPoint(center.x(), center.y() - 1))) {
-        score += 10;
-        if (explodeTile(QPoint(center.x(), center.y() - 2))) {
-            score += 10;
-        }
+    if (explodeTile(QPoint(center.x(), center.y() - 1), player)) {
+        explodeTile(QPoint(center.x(), center.y() - 2), player);
     }
-
-    if (player) {
-        player->addScore(score);
-    }
-
-
 }
 
 void Map::explodeEverything()
@@ -214,7 +199,7 @@ void Map::explodeEverything()
     for (int x=0; x<width(); x++) {
         for (int y=0; y<height(); y++) {
             if (tileAt(QPoint(x, y))->type() == Tile::Stone) {
-                explodeTile(QPoint(x, y));
+                explodeTile(QPoint(x, y), 0);
             }
         }
     }
