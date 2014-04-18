@@ -48,7 +48,7 @@ public:
 
     void addScore(int score) { m_score += score; emit scoreChanged();}
     int score() const { return m_score; }
-    void resetScore() { m_score = 0; }
+    void resetScore() { m_score = 0; m_wins = 0; emit scoreChanged(); emit winsChanged(); }
 
 public slots:
     void setCommand(QString command);
