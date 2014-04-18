@@ -33,7 +33,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: quitButton.top
         anchors.margins: 20
-        width: 600
+        anchors.left: parent.left
+        anchors.right: parent.right
         border.color: "white"
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -43,10 +44,10 @@ Rectangle {
                 model: players
                 delegate: Text {
                     horizontalAlignment: Text.AlignHCenter
-                    color: model.modelData.alive ? "green" : "red"
+                    color: "white"
                     font.pixelSize: 45
                     font.bold: true
-                    text: model.modelData.name + ": " + model.modelData.wins + " wins"
+                    text: model.modelData.name + ": " + model.modelData.wins + " wins" + " (points: " + model.modelData.score + ")"
                 }
             }
         }
