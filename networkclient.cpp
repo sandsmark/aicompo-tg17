@@ -78,7 +78,7 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
             if (!bomb) continue;
             sendString(" { \"x\": " + QByteArray::number(bomb->position().x()) + ", \"y\":" +
                        QByteArray::number(bomb->position().y()) + ", \"state\":" +
-                       QByteArray::number(BOMB_STATES - bomb->state()) + " }");
+                       QByteArray::number(BOMB_STATES - bomb->state() - 1) + " }");
             if (bomb != map->bombs().last()) {
                 sendString(",");
             }
