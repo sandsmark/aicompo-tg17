@@ -90,7 +90,7 @@ QString Player::command()
 
 QString Player::name()
 {
-    return QString::number(m_id) + ": " + m_name;
+    return m_name;
 }
 
 void Player::setName(QString name)
