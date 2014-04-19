@@ -8,18 +8,12 @@ Image {
     property int walkCycle: 0
     property string direction: "s"
     property string command: lastCommand
+    z: alive ? 0: 0
 
-    HueSaturation {
-        anchors.fill: parent
-        source: parent
-        hue: Math.sin(modelData.id)
-        smooth: false
-    }
-
-    /*source: alive ?
-                "qrc:/sprites/character" + ((playerId % 2)+1)  + "/character-" + direction + "-" + walkCycle + ".png" :
-                "qrc:/sprites/blood.png"*/
-    source: alive ? "qrc:/sprites/character1" + "/character-" + direction + "-" + walkCycle + ".png" : "qrc:/sprites/blood.png"
+    source: alive ?
+                "qrc:/sprites/character" + ((playerId % 4   )+1)  + "/character-" + direction + "-" + walkCycle + ".png" :
+                "qrc:/sprites/blood.png"
+    //source: alive ? "qrc:/sprites/character1" + "/character-" + direction + "-" + walkCycle + ".png" : "qrc:/sprites/blood.png"
 
 
     onCommandChanged: {

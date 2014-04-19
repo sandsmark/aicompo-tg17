@@ -80,6 +80,38 @@
         <file>qml/bomb/StartScreen.qml</file>
         <file>qml/bomb/Button.qml</file>
         <file>qml/bomb/Checkbox.qml</file>
+        <file>sprites/character3/character-e-0.png</file>
+        <file>sprites/character3/character-e-1.png</file>
+        <file>sprites/character3/character-e-2.png</file>
+        <file>sprites/character3/character-e-3.png</file>
+        <file>sprites/character3/character-n-0.png</file>
+        <file>sprites/character3/character-n-1.png</file>
+        <file>sprites/character3/character-n-2.png</file>
+        <file>sprites/character3/character-n-3.png</file>
+        <file>sprites/character3/character-s-0.png</file>
+        <file>sprites/character3/character-s-1.png</file>
+        <file>sprites/character3/character-s-2.png</file>
+        <file>sprites/character3/character-s-3.png</file>
+        <file>sprites/character3/character-w-0.png</file>
+        <file>sprites/character3/character-w-1.png</file>
+        <file>sprites/character3/character-w-2.png</file>
+        <file>sprites/character3/character-w-3.png</file>
+        <file>sprites/character4/character-e-0.png</file>
+        <file>sprites/character4/character-e-1.png</file>
+        <file>sprites/character4/character-e-2.png</file>
+        <file>sprites/character4/character-e-3.png</file>
+        <file>sprites/character4/character-n-0.png</file>
+        <file>sprites/character4/character-n-1.png</file>
+        <file>sprites/character4/character-n-2.png</file>
+        <file>sprites/character4/character-n-3.png</file>
+        <file>sprites/character4/character-s-0.png</file>
+        <file>sprites/character4/character-s-1.png</file>
+        <file>sprites/character4/character-s-2.png</file>
+        <file>sprites/character4/character-s-3.png</file>
+        <file>sprites/character4/character-w-0.png</file>
+        <file>sprites/character4/character-w-1.png</file>
+        <file>sprites/character4/character-w-2.png</file>
+        <file>sprites/character4/character-w-3.png</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

@@ -5,7 +5,10 @@ Rectangle {
     property string text
     color: "#50000000"
     border.color: "white"
+    enabled: visible
+    visible: opacity > 0
     MouseArea {
+        enabled: parent.enabled
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: MouseArea.PointingHandCursor
