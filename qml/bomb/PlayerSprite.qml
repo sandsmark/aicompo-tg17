@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 
 Image {
     property int playerId
@@ -8,9 +9,17 @@ Image {
     property string direction: "s"
     property string command: lastCommand
 
-    source: alive ?
+    HueSaturation {
+        anchors.fill: parent
+        source: parent
+        hue: Math.sin(modelData.id)
+        smooth: false
+    }
+
+    /*source: alive ?
                 "qrc:/sprites/character" + ((playerId % 2)+1)  + "/character-" + direction + "-" + walkCycle + ".png" :
-                "qrc:/sprites/blood.png"
+                "qrc:/sprites/blood.png"*/
+    source: alive ? "qrc:/sprites/character1" + "/character-" + direction + "-" + walkCycle + ".png" : "qrc:/sprites/blood.png"
 
 
     onCommandChanged: {
