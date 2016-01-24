@@ -8,8 +8,8 @@ Missile::Missile(QPointF startPosition, int startRotation, int owner, QObject *p
     m_owner(owner)
 {
     m_rotation = (startRotation * M_PI * 2) / 360.0;
-    m_velocityX = cos(m_rotation) / 35.0;
-    m_velocityY = sin(m_rotation) / 35.0;
+    m_velocityX = cos(m_rotation) * 0.03;
+    m_velocityY = sin(m_rotation) * 0.03;
     m_energy = 1000;
 }
 
@@ -26,15 +26,15 @@ void Missile::doMove()
     }
 
     if (m_energy > 1) {
-        m_velocityX += cos(m_rotation) * 0.001;
-        m_velocityY += sin(m_rotation) * 0.001;
+        m_velocityX += cos(m_rotation) * 0.05;
+        m_velocityY += sin(m_rotation) * 0.05;
 
         m_energy-= 10;
         emit energyChanged();
     }
     if (m_energy < 1) m_energy = 1;
 
-    const qreal force = distance / m_energy;
+    const qreal force = distance / 100;
     const qreal angle = atan2(y, x);
     m_velocityX -= cos(angle) * force;
     m_velocityY -= sin(angle) * force;

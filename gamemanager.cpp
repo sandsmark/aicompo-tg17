@@ -73,6 +73,8 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     QTimer::singleShot(250, this, SLOT(addPlayer()));
     QTimer::singleShot(250, this, SLOT(addPlayer()));
     QTimer::singleShot(100, this, SLOT(addPlayer()));
+    QTimer::singleShot(250, this, SLOT(addPlayer()));
+    //QTimer::singleShot(100, this, SLOT(addPlayer()));
     QTimer::singleShot(200, this, SLOT(startRound()));
 }
 

@@ -144,7 +144,7 @@ Rectangle {
                     emitRate: 1000
                     lifeSpan: 2000
                     size: 20
-                    sizeVariation: 15
+                    sizeVariation: 5
                     endSize: 0
                     //! [0]
                     shape: EllipseShape {fill: false}

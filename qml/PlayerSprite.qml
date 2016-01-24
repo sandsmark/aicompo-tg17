@@ -57,6 +57,16 @@ Item {
             width: parent.width / 2
             height: parent.height /2
         }
+
+
+        Rectangle {
+            anchors.fill: parent
+            radius: width/2
+            color: "transparent"
+            border.width: modelData.energy / 50
+            border.color: playerColors[playerId]
+            //opacity: modelData.energy / 1000
+        }
     }
 
     ParticleSystem {
@@ -117,14 +127,5 @@ Item {
             deathEmitter.pulse(500);
             blurAnimation.restart()
         }
-    }
-
-    Rectangle {
-        anchors.fill: parent
-        radius: width/2
-        color: "transparent"
-        border.width: modelData.energy / 100
-        border.color: playerColors[playerId]
-        //opacity: modelData.energy / 1000
     }
 }
