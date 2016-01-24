@@ -1,23 +1,26 @@
 import QtQuick 2.0
 
 Rectangle {
+    id: button
     signal clicked
     property string text
+    property bool active: true
+    property int fontSize: 20
+
     color: "#50000000"
     border.color: "white"
-    enabled: visible
+    enabled: visible && active
     visible: opacity > 0
     MouseArea {
+        id: mouseArea
         enabled: parent.enabled
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: MouseArea.PointingHandCursor
         onEntered: {
-            startButtonText.color = "black"
             parent.color = "white"
         }
         onExited: {
-            startButtonText.color = "white"
             parent.color = "#50000000"
         }
         onClicked: parent.clicked()
@@ -26,7 +29,7 @@ Rectangle {
         id: startButtonText
         anchors.centerIn: parent
         text: parent.text
-        color: "white"
-        font.pointSize: 20
+        color: button.active ? (mouseArea.containsMouse ? "black" : "white") : "gray"
+        font.pointSize: button.fontSize
     }
 }

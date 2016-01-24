@@ -1,16 +1,19 @@
 #include "player.h"
 
 #include "networkclient.h"
+#include "parameters.h"
 
 #include <QDebug>
+#include <cmath>
 
-Player::Player(QObject *parent, int id, NetworkClient *networkClient) :
-    QObject(parent),
+Player::Player(QObject *parent, int id, NetworkClient *networkClient) : QObject(parent),
     m_id(id),
-    m_alive(true),
     m_wins(0),
-    m_availableBombs(1),
     m_disconnected(false),
+    m_alive(true),
+    m_energy(START_ENERGY),
+    m_velocityX(0),
+    m_velocityY(0),
     m_score(0),
     m_networkClient(networkClient)
 {
@@ -19,21 +22,12 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) :
 
         connect(networkClient, SIGNAL(nameChanged(QString)), SLOT(setName(QString)));
         connect(networkClient, SIGNAL(commandReceived(QString)), SLOT(setCommand(QString)));
-        connect(networkClient, SIGNAL(clientDisconnected()), SLOT(setDisconnected()));
+        connect(networkClient, SIGNAL(clientDisconnected()), SLOT(onDisconnected()));
         connect(networkClient, SIGNAL(clientDisconnected()), SIGNAL(clientDisconnected()));
     }
-}
 
-QPoint Player::position() const
-{
-    return m_position;
-}
-
-void Player::setPosition(const QPoint &position)
-{
-    m_position = position;
-
-    emit positionChanged();
+    m_spritePath = "qrc:/sprites/players/player" + QString::number(id) + ".png";
+    emit spritePathChanged();
 }
 
 int Player::id()
@@ -45,30 +39,10 @@ void Player::setId(int id)
 {
     m_id = id;
     emit idChanged();
+
+    m_spritePath = "qrc:/sprites/players/player" + QString::number(id) + ".png";
+    emit spritePathChanged();
 }
-
-void Player::setAlive(bool alive)
-{
-    if (m_disconnected) {
-        alive = false;
-    }
-
-    if (!alive && m_networkClient) {
-        m_networkClient->sendDead();
-    }
-
-    m_alive = alive;
-    emit aliveChanged();
-}
-
-bool Player::isAlive()
-{
-    if (m_disconnected) {
-        return false;
-    }
-    return m_alive;
-}
-
 
 QString Player::lastCommand()
 {
@@ -77,15 +51,15 @@ QString Player::lastCommand()
 
 QString Player::command()
 {
-    if (m_command.isEmpty()) {
-        return m_command;
-    }
-
-    m_lastCommand = m_command;
+    QString command = m_command;
     m_command.clear();
 
-    emit lastCommandChanged();
-    return m_lastCommand;
+    if (m_lastCommand != command) {
+        m_lastCommand = command;
+        emit lastCommandChanged();
+    }
+
+    return command;
 }
 
 QString Player::name()
@@ -101,20 +75,162 @@ void Player::setName(QString name)
 
 void Player::setCommand(QString command)
 {
-    if (m_alive) {
-        if (command.startsWith("SAY ")) {
-            m_message = command.remove(0, 4);
-            emit messageReceived();
-        } else {
-            m_command = command;
-        }
+    if (!isAlive()) {
+        return;
+    }
+
+    if (command.startsWith("SAY ")) {
+        m_message = command.remove(0, 4);
+        emit messageReceived();
+    } else {
+        m_command = command;
     }
 }
 
-void Player::setDisconnected()
+void Player::onDisconnected()
 {
     m_disconnected = true;
     setAlive(false);
 }
 
+void Player::setAlive(bool alive)
+{
+    if (alive == m_alive) {
+        return;
+    }
 
+    m_alive = alive;
+    emit aliveChanged();
+
+    if (!isAlive() && m_networkClient) {
+        m_networkClient->sendDead();
+    }
+}
+
+bool Player::isAlive()
+{
+    if (m_disconnected) {
+        return false;
+    }
+
+    return m_alive;
+}
+
+void Player::setRotation(int rotation)
+{
+    m_rotation = rotation;
+    emit rotationChanged();
+}
+
+void Player::setPosition(QPointF position)
+{
+    qreal velocityAngle = atan2(position.y(), position.x()) + M_PI_2;
+    m_velocityX = cos(velocityAngle) / 35.0;
+    m_velocityY = sin(velocityAngle) / 35.0;
+
+    m_position = position;
+    emit positionChanged();
+
+    m_rotation = velocityAngle * 360 / (M_PI * 2.0);
+    emit rotationChanged();
+}
+
+void Player::decreaseEnergy(int amount)
+{
+    if (m_energy <= 0) {
+        return;
+    }
+
+    m_energy -= amount;
+    if (m_energy < 0) m_energy = 0;
+
+    emit energyChanged();
+
+    if (m_energy == 0 && m_alive) {
+        setAlive(false);
+    }
+}
+
+void Player::increaseEnergy(int amount)
+{
+    if (m_energy <= 0) {
+        return;
+    }
+
+    m_energy += amount;
+    emit energyChanged();
+}
+
+void Player::rotate(int amount)
+{
+    if (m_energy <= 0) {
+        return;
+    }
+
+    decreaseEnergy(ROTATE_COST);
+    m_rotation += amount;
+
+    emit rotationChanged();
+}
+
+void Player::setEnergy(int energy)
+{
+    if (energy == m_energy) {
+        return;
+    }
+
+    m_energy = energy;
+    emit energyChanged();
+}
+
+void Player::accelerate()
+{
+    if (m_energy <= 0) {
+        return;
+    }
+
+    qreal angle = m_rotation * M_PI * 2.0 / 360.0;
+    m_velocityX += cos(angle) * ACCELERATION_FORCE;
+    m_velocityY += sin(angle) * ACCELERATION_FORCE;
+    decreaseEnergy(ACCELERATION_COST);
+}
+
+void Player::doMove()
+{
+    if (m_energy <= 0) {
+        return;
+    }
+
+    qreal x = m_position.x();
+    qreal y = m_position.y();
+
+    const qreal angle = atan2(y, x);
+    const qreal distance = hypot(x, y);
+
+    if (distance < 0.1) {
+        m_alive = false;
+        emit aliveChanged();
+        return;
+    }
+
+    const qreal force = distance / m_energy;
+    m_velocityX -= cos(angle) * force;
+    m_velocityY -= sin(angle) * force;
+
+    if (m_velocityX > 0.05) m_velocityX = 0.05;
+    if (m_velocityY > 0.05) m_velocityY = 0.05;
+    if (m_velocityX < -0.05) m_velocityX = -0.05;
+    if (m_velocityY < -0.05) m_velocityY = -0.05;
+
+    x += m_velocityX;
+    y += m_velocityY;
+
+    if (x > 1.0) { x = -1.0; }
+    if (y > 1.0) { y = -1.0; }
+    if (x < -1.0) { x = 1.0; }
+    if (y < -1.0) { y = 1.0; }
+
+    m_position.setX(x);
+    m_position.setY(y);
+    emit positionChanged();
+}

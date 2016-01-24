@@ -60,10 +60,6 @@
         <file>sprites/bomb/bomb-11.png</file>
         <file>sprites/bomb/bomb-12.png</file>
         <file>sprites/bomb/bomb-13.png</file>
-        <file>qml/bomb/BombSprite.qml</file>
-        <file>qml/bomb/main.qml</file>
-        <file>qml/bomb/MapSprite.qml</file>
-        <file>qml/bomb/PlayerSprite.qml</file>
         <file>sprites/explosion/flame-0.png</file>
         <file>sprites/explosion/flame-1.png</file>
         <file>sprites/explosion/flame-2.png</file>
@@ -75,11 +71,6 @@
         <file>sprites/blood.png</file>
         <file>sprites/tiles/pebbles/pebbles-0.png</file>
         <file>sprites/tiles/pebbles/pebbles-1.png</file>
-        <file>qml/bomb/EndScreen.qml</file>
-        <file>qml/bomb/PlayingField.qml</file>
-        <file>qml/bomb/StartScreen.qml</file>
-        <file>qml/bomb/Button.qml</file>
-        <file>qml/bomb/Checkbox.qml</file>
         <file>sprites/character3/character-e-0.png</file>
         <file>sprites/character3/character-e-1.png</file>
         <file>sprites/character3/character-e-2.png</file>
@@ -112,6 +103,30 @@
         <file>sprites/character4/character-w-1.png</file>
         <file>sprites/character4/character-w-2.png</file>
         <file>sprites/character4/character-w-3.png</file>
+        <file>qml/BombSprite.qml</file>
+        <file>qml/Button.qml</file>
+        <file>qml/Checkbox.qml</file>
+        <file>qml/EndScreen.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/MapSprite.qml</file>
+        <file>qml/PlayerSprite.qml</file>
+        <file>qml/PlayingField.qml</file>
+        <file>qml/StartScreen.qml</file>
+        <file>sprites/sun.svg</file>
+        <file>sprites/player0.svg</file>
+        <file>sprites/player1.svg</file>
+        <file>sprites/starfield.jpg</file>
+        <file>sprites/star.png</file>
+        <file>sprites/players/player0.png</file>
+        <file>sprites/players/player1.png</file>
+        <file>sprites/players/player2.png</file>
+        <file>sprites/players/player3.png</file>
+        <file>sprites/afterburner.png</file>
+        <file>qml/MissileSprite.qml</file>
+        <file>Aldrich_Regular.ttf</file>
+        <file>sprites/missile-empty.png</file>
+        <file>sprites/missile-full.png</file>
+        <file>sprites/missile-half.png</file>
     </qresource>
     <qresource prefix="/maps">
         <file>default.map</file>

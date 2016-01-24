@@ -8,7 +8,11 @@
 #include <QTimer>
 #include <QTcpServer>
 #include <QSoundEffect>
+
+#include "missile.h"
 #include "player.h"
+#include "parameters.h"
+
 
 class Map;
 class QQuickView;
@@ -20,32 +24,39 @@ class GameManager : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
-    Q_PROPERTY(QString address READ address() CONSTANT)
     Q_PROPERTY(QStringList maps READ maps() NOTIFY mapsChanged())
     Q_PROPERTY(bool soundEnabled READ soundEnabled WRITE setSoundEnabled NOTIFY soundEnabledChanged)
     Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
+    Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
+    Q_PROPERTY(QList<QObject*> missiles READ missiles NOTIFY missilesChanged)
+    Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
+    Q_PROPERTY(int maxRounds READ maxRounds CONSTANT)
 
 public:
     explicit GameManager(QQuickView *parent);
     ~GameManager();
     Q_INVOKABLE void loadMap(const QString &path);
 
-    Q_INVOKABLE void addPlayer(NetworkClient *client = 0);
     Q_INVOKABLE void removeHumanPlayers();
 
-    Q_INVOKABLE void setDebugMode(bool debug) { m_tickTimer.setInterval(debug ? 80 : 250); }
-
-    QString address();
+    Q_INVOKABLE void setDebugMode(bool debug);
 
     QQuickView *view() { return m_view; }
 
     QStringList maps();
-    Q_INVOKABLE QString version() { return /*QLatin1String(APP_VERSION) + " // build time: " +*/ QLatin1String(__TIME__) + ' ' + QLatin1String(__DATE__); }
+
+    Q_INVOKABLE QString version();
+
     bool soundEnabled() { return m_soundEnabled; }
     void setSoundEnabled(bool enabled);
     int ticksLeft() const { return m_ticksLeft; }
 
-    QList<QPointer<Player> > players() const { return m_players; }
+    QList<QObject *> players() const;
+    QList<QObject *> missiles() const;
+
+    void humanMoved(QString move);
+    int maxPlayerCount() { return MAX_PLAYERS; }
+    int maxRounds() { return MAX_ROUNDS; }
 
 public slots:
     void explosionAt(const QPoint &position);
@@ -54,18 +65,22 @@ public slots:
     void playBombSound();
     void stopGame();
     void togglePause();
+    void addPlayer(NetworkClient *client = 0);
     void kick(int index);
     void resetScores();
 
     int roundsPlayed() { return m_roundsPlayed; }
 
 signals:
-    void gameOver();
+    void roundOver();
     void clientConnected();
     void roundsPlayedChanged();
     void mapsChanged();
     void tick();
     void soundEnabledChanged();
+    void playersChanged();
+    void missilesChanged();
+    void explosion(QPointF position);
 
 private slots:
     void gameTick();
@@ -73,11 +88,12 @@ private slots:
     void clientDisconnected();
 
 private:
-    void exportPlayerList();
+    void resetPositions();
 
     Map *m_map;
     QQuickView *m_view;
-    QList<QPointer<Player> > m_players;
+    QList<QPointer<Player>> m_players;
+    QList<Missile*> m_missiles;
     QTimer m_tickTimer;
     QTcpServer m_server;
     QString m_currentMap;

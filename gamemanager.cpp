@@ -18,6 +18,9 @@
 #include <QTcpSocket>
 #include <QFileSystemWatcher>
 #include <QSettings>
+#include <QTimer>
+
+#include <cmath>
 
 #define VOLUME 0.5f
 
@@ -32,11 +35,10 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     }
 
     // Add QML objects
-    exportPlayerList();
-    m_view->rootContext()->setContextProperty("game", QVariant::fromValue(this));
+    m_view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(this));
 
     // Set up gametick timer
-    m_tickTimer.setInterval(250); // 10 times a second
+    m_tickTimer.setInterval(TICKLENGTH);
     m_tickTimer.setSingleShot(false);
 
     m_server.listen(QHostAddress::Any, 54321);
@@ -44,7 +46,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(&m_tickTimer, SIGNAL(timeout()), SLOT(gameTick()));
     connect(&m_tickTimer, SIGNAL(timeout()), SIGNAL(tick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
-    connect(this, SIGNAL(gameOver()), SLOT(endRound()));
+    connect(this, SIGNAL(roundOver()), SLOT(endRound()));
 
     // Watch filesystem for map changes
     QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
@@ -54,18 +56,24 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     // Set up sound effects
     for(int i=0; i<8; i++) {
         QSoundEffect *explosion = new QSoundEffect(this);
-        explosion->setSource(QUrl::fromLocalFile("sound/explosion0" + QString::number(i+1) + ".wav"));
+        //explosion->setSource(QUrl::fromLocalFile("sound/explosion0" + QString::number(i+1) + ".wav"));
         explosion->setVolume(VOLUME);
         m_explosions.append(explosion);
     }
-    m_backgroundLoop.setSource(QUrl::fromLocalFile("sound/bgm.wav"));
+    m_backgroundLoop.setSource(QUrl::fromLocalFile("/home/sandsmark/src/turnonme/loop.wav"));
     m_backgroundLoop.setVolume(VOLUME);
     m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
-    m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
+    //m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
     m_death.setVolume(VOLUME);
 
     QSettings setting("sound");
     setSoundEnabled(setting.value("enabled", false).toBool());
+
+//    QTimer::singleShot(250, this, SLOT(addPlayer()));
+    QTimer::singleShot(250, this, SLOT(addPlayer()));
+    QTimer::singleShot(250, this, SLOT(addPlayer()));
+    QTimer::singleShot(100, this, SLOT(addPlayer()));
+    QTimer::singleShot(200, this, SLOT(startRound()));
 }
 
 GameManager::~GameManager()
@@ -99,6 +107,26 @@ void GameManager::setSoundEnabled(bool enabled)
     emit soundEnabledChanged();
 }
 
+QList<QObject*> GameManager::players() const
+{
+    QList<QObject*> playerList;
+    foreach(Player *playerObject, m_players) {
+        playerList.append(playerObject);
+    }
+
+    return playerList;
+}
+
+QList<QObject *> GameManager::missiles() const
+{
+    QList<QObject*> missileList;
+    foreach(Missile *missileObject, m_missiles) {
+        missileList.append(missileObject);
+    }
+
+    return missileList;
+}
+
 QStringList GameManager::maps()
 {
     QStringList ret;
@@ -113,6 +141,18 @@ QStringList GameManager::maps()
     }
 
     return ret;
+}
+
+QString GameManager::version()
+{
+    QString versionString;
+
+#ifdef APP_VERSION
+    versionString += QStringLiteral(APP_VERSION);
+#endif
+
+    versionString += " // build time: " + QLatin1String(__TIME__) + ' ' + QLatin1String(__DATE__);
+    return versionString;
 }
 
 void GameManager::loadMap(const QString &path)
@@ -149,12 +189,9 @@ void GameManager::loadMap(const QString &path)
 
     // Update positions and id
     for (int i=0; i<m_players.count(); i++) {
-        m_players[i]->setPosition(startPositions[i]);
+        //m_players[i]->setPosition(startPositions[i]);
         m_players[i]->setId(i);
     }
-
-    exportPlayerList();
-    m_view->rootContext()->setContextProperty("map", map);
 
     connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
 }
@@ -182,6 +219,12 @@ void GameManager::endRound()
 {
     m_tickTimer.stop();
 
+    for (int i=0; i<m_missiles.count(); i++) {
+        m_missiles[i]->deleteLater();
+    }
+    m_missiles.clear();
+    emit missilesChanged();
+
     for (int i=0; i<m_players.count(); i++) {
         if (!m_players[i]->networkClient()) continue;
         m_players[i]->networkClient()->sendEndOfRound();
@@ -194,19 +237,12 @@ void GameManager::endRound()
         }
     }
 
-    if (m_roundsPlayed >= 5) {
-        QQuickItem *endScreen = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("endScreen"));
-        if (endScreen) {
-            endScreen->setProperty("opacity", 1.0);
-        }
-        m_roundsPlayed = 0;
-        emit roundsPlayedChanged();
-        return;
-    }
-
     m_roundsPlayed++;
     emit roundsPlayedChanged();
-    QTimer::singleShot(1000, this, SLOT(startRound()));
+
+    if (m_roundsPlayed < MAX_ROUNDS) {
+        QTimer::singleShot(5000, this, SLOT(startRound()));
+    }
 }
 
 void GameManager::startRound()
@@ -215,13 +251,21 @@ void GameManager::startRound()
         return;
     }
 
+    resetPositions();
+
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setAlive(true);
+        m_players[i]->setEnergy(START_ENERGY);
     }
+
     loadMap(m_map->name());
 
     // Do not allow to change name after game has started
     for (int i=0; i<m_players.count(); i++) {
+        if (!m_players[i]->networkClient()) {
+            continue;
+        }
+
         m_players[i]->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
     }
 
@@ -240,15 +284,46 @@ void GameManager::gameTick()
 {
     m_ticksLeft--;
 
-    // Sudden death
-    if (m_ticksLeft == 0) {
-        m_map->explodeEverything();
-    } else if (m_ticksLeft < 0) {
-        for (int i=m_ticksLeft/4; i<0; i++) {
-            m_map->addRandomBomb();
+    bool missilesRemoved = false;
+    QMutableListIterator<Missile*> missileIterator(m_missiles);
+    while (missileIterator.hasNext()) {
+        Missile *missile = missileIterator.next();
+
+        missile->doMove();
+
+        if (!missile->isAlive()) {
+            emit explosion(missile->position());
+            missile->deleteLater();
+            missileIterator.remove();
+            missilesRemoved = true;
+            continue;
+        }
+
+        for(int i=0; i<m_players.count(); i++) {
+            if (missile->owner() == m_players[i]->id()) {
+                continue;
+            }
+
+            const qreal dx = m_players[i]->position().x() - missile->position().x();
+            const qreal dy = m_players[i]->position().y() - missile->position().y();
+            if (hypot(dx, dy) < 0.1) {
+                m_players[i]->decreaseEnergy(100);
+                m_players[missile->owner()]->increaseEnergy(100);
+                emit explosion(missile->position());
+                missile->deleteLater();
+                missileIterator.remove();
+                missilesRemoved = true;
+                break;
+            }
         }
     }
 
+    if (missilesRemoved) {
+        emit missilesChanged();
+    }
+
+
+    // Randomize the order we process players in
     QList<QPointer<Player> > players = m_players;
     for (int index = players.count() - 1; index > 0; --index) {
         qSwap(players[index], players[qrand() % (index + 1)]);
@@ -256,46 +331,26 @@ void GameManager::gameTick()
 
     for (int i=0; i<players.count(); i++) {
         QString command = players[i]->command();
+        Player *player = m_players[i];
+        player->doMove();
+        player->decreaseEnergy(1);
         if (command.isEmpty()) {
             continue;
         }
 
-        QPoint position = players[i]->position();
-
-        if (command == "UP") {
-            position.setY(position.y() - 1);
-        } else if (command == "DOWN") {
-            position.setY(position.y() + 1);
+        if (command == "ACCELERATE") {
+            player->accelerate();
         } else if (command == "LEFT") {
-            position.setX(position.x() - 1);
+            player->rotate(-ROTATE_AMOUNT);
         } else if (command == "RIGHT") {
-            position.setX(position.x() + 1);
+            player->rotate(ROTATE_AMOUNT);
         } else if (command == "BOMB") {
-            m_map->addBomb(position, players[i]);
-            continue;
+            player->decreaseEnergy(20);
+            Missile *missile = new Missile(player->position(), player->rotation(), player->id(), this);
+            m_missiles.append(missile);
+            emit missilesChanged();
         } else {
             continue;
-        }
-
-        bool canWalk = m_map->isValidPosition(position);
-
-        if (canWalk) {
-            for (int j=0; j<players.count(); j++) {
-                if (players[j]->isAlive() && players[j]->position() == position) {
-                    canWalk = false;
-                }
-            }
-        }
-        if (canWalk) {
-            foreach(const Bomb *bomb, m_map->bombs()) {
-                if (bomb->position() == position) {
-                    canWalk = false;
-                }
-            }
-        }
-
-        if (canWalk) {
-            players[i]->setPosition(position);
         }
     }
 
@@ -307,7 +362,7 @@ void GameManager::gameTick()
     }
 
     if (dead > 0 && players.size() - dead < 2) {
-        emit gameOver();
+        emit roundOver();
     } else {
         QList<Player*> players;
         for (int i=0; i<m_players.count(); i++) {
@@ -360,27 +415,21 @@ void GameManager::clientDisconnected()
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setId(i);
     }
-    exportPlayerList();
+
+    emit playersChanged();
 }
 
 void GameManager::addPlayer(NetworkClient *client)
 {
-    if (m_players.count() >= m_map->startingPositions().count()) {
+    if (m_players.count() >= MAX_PLAYERS) {
         return;
     }
 
     Player *player = new Player(this, m_players.count(), client);
 
-    // Get a list of unoccupied starting positions
-    QList<QPoint> freePositions = m_map->startingPositions();
-    foreach(Player *player, m_players) {
-        freePositions.removeAll(player->position());
-    }
-
-    // Add player to a random starting position
-    player->setPosition(freePositions.at(qrand() % freePositions.size()));
-
     m_players.append(player);
+
+    resetPositions();
 
     if (!client) {
         connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
@@ -390,8 +439,7 @@ void GameManager::addPlayer(NetworkClient *client)
         connect(player, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
     }
 
-    // We need to reset the property, the qobjectlist model doesn't automatically update
-    exportPlayerList();
+    emit playersChanged();
 }
 void GameManager::kick(int index)
 {
@@ -400,7 +448,7 @@ void GameManager::kick(int index)
     } else {
         m_players.takeAt(index)->deleteLater();
     }
-    exportPlayerList();
+    emit playersChanged();
 }
 
 void GameManager::removeHumanPlayers()
@@ -414,12 +462,13 @@ void GameManager::removeHumanPlayers()
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setId(i);
     }
-    exportPlayerList();
+
+    emit playersChanged();
 }
 
-QString GameManager::address()
+void GameManager::setDebugMode(bool debug)
 {
-    return m_server.serverAddress().toString() + QLatin1Char(':') + QString::number(m_server.serverPort());
+    m_tickTimer.setInterval(debug ? TICKLENGTH_DEBUG : TICKLENGTH);
 }
 
 void GameManager::togglePause()
@@ -434,21 +483,21 @@ void GameManager::togglePause()
 void GameManager::stopGame()
 {
     m_tickTimer.stop();
+
     foreach(QPointer<Player> player, m_players) {
         if (player->isDisconnected()) {
             player->deleteLater();
         }
     }
-    exportPlayerList();
+
+    emit playersChanged();
 }
 
-void GameManager::exportPlayerList()
+void GameManager::resetPositions()
 {
-    QList<QObject*> playerList;
-    foreach(Player *playerObject, m_players) {
-        playerList.append(playerObject);
+    int playerCount = m_players.count();
+    for (int i=0; i<playerCount; i++) {
+        qreal angle = i * M_PI * 2.0 / playerCount;
+        m_players[i]->setPosition(QPointF(cos(angle) * 0.5, sin(angle) * 0.5));
     }
-
-    // We need to reset the property, the qobjectlist model doesn't automatically update
-    m_view->rootContext()->setContextProperty("players", QVariant::fromValue(playerList));
 }

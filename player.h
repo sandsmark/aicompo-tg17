@@ -1,32 +1,33 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <QUrl>
 #include <QObject>
-#include <QPoint>
+#include <QPointF>
+
 class NetworkClient;
 
 class Player : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QPoint position READ position() NOTIFY positionChanged())
     Q_PROPERTY(int id READ id() NOTIFY idChanged())
-    Q_PROPERTY(bool alive READ isAlive() NOTIFY aliveChanged())
     Q_PROPERTY(QString lastCommand READ lastCommand() NOTIFY lastCommandChanged())
     Q_PROPERTY(QString name READ name() NOTIFY nameChanged())
     Q_PROPERTY(int wins READ wins() NOTIFY winsChanged())
     Q_PROPERTY(QString message READ message NOTIFY messageReceived())
     Q_PROPERTY(int score READ score NOTIFY scoreChanged)
+    Q_PROPERTY(QUrl spritePath MEMBER m_spritePath NOTIFY spritePathChanged())
+    Q_PROPERTY(bool alive READ isAlive() NOTIFY aliveChanged())
+    Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
+    Q_PROPERTY(int energy READ energy NOTIFY energyChanged)
+    Q_PROPERTY(int rotation READ rotation NOTIFY rotationChanged)
 
 public:
     explicit Player(QObject *parent, int id, NetworkClient *networkClient = 0);
     virtual ~Player() {}
-    QPoint position() const;
-    void setPosition(const QPoint &position);
     int id();
     void setId(int id);
-    void setAlive(bool alive);
-    bool isAlive();
     bool isDisconnected() { return m_disconnected; }
 
     QString lastCommand();
@@ -37,10 +38,6 @@ public:
     void addWin() { m_wins++; emit winsChanged(); }
     int wins() { return m_wins; }
 
-    void addActiveBomb() { m_availableBombs--; }
-    void removeActiveBomb() { m_availableBombs++; }
-    bool canBomb() { return m_availableBombs > 0; }
-
     QString message() { return m_message; }
     void setMessage(QString message) { m_message = message; emit messageReceived(); }
 
@@ -50,14 +47,32 @@ public:
     int score() const { return m_score; }
     void resetScore() { m_score = 0; m_wins = 0; emit scoreChanged(); emit winsChanged(); }
 
+    void doMove();
+
+    void setAlive(bool alive);
+    bool isAlive();
+
+    void setRotation(int rotation);
+    void rotate(int amount);
+    int rotation() { return m_rotation; }
+
+    int energy() { return m_energy; }
+    void setEnergy(int energy);
+    void decreaseEnergy(int amount);
+    void increaseEnergy(int amount);
+    void accelerate();
+
+    QPointF position() const { return m_position; }
+    void setPosition(QPointF position);
+
+    void setVelocity(qreal vx, qreal vy);
+
 public slots:
     void setCommand(QString command);
     void setName(QString name);
-    bool isHuman() { return m_networkClient != 0; }
+    bool isHuman() { return m_networkClient == 0; }
 
 signals:
-    void positionChanged();
-    void aliveChanged();
     void lastCommandChanged();
     void idChanged();
     void nameChanged();
@@ -65,22 +80,32 @@ signals:
     void messageReceived();
     void clientDisconnected();
     void scoreChanged();
+    void spritePathChanged();
+    void aliveChanged();
+    void energyChanged();
+    void positionChanged();
+    void rotationChanged();
 
 private slots:
-    void setDisconnected();
+    void onDisconnected();
 
 private:
-    QPoint m_position;
     int m_id;
-    bool m_alive;
     QString m_name;
     int m_wins;
     QString m_message;
 
     QString m_lastCommand;
     QString m_command;
-    int m_availableBombs;
     bool m_disconnected;
+    QUrl m_spritePath;
+
+    bool m_alive;
+    int m_energy;
+    int m_rotation;
+    QPointF m_position;
+    qreal m_velocityX;
+    qreal m_velocityY;
 
     int m_score;
 

@@ -3,7 +3,7 @@ import QtQuick 2.0
 Image {
     id: image
     smooth: false
-    width: (parent == null || parent.rows === 0) ? 0 : parent.height / (parent.rows + 1)
+    width: (parent == null || parent.scaleSize === 0) ? 0 : parent.height / (parent.rows + 1)
     height: width
     property QtObject bombData
     property int bombX

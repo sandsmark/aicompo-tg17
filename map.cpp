@@ -157,7 +157,7 @@ bool Map::explodeTile(const QPoint &position, Player *exploder)
 
 void Map::addBomb(const QPoint &position, Player *player)
 {
-    if (player && !player->canBomb()) return;
+    //if (player && !player->canBomb()) return;
 
     foreach (const Bomb *bomb, m_bombs) {
         if (bomb->position() == position) return;
@@ -220,13 +220,13 @@ void Map::addRandomBomb()
             }
         }
         if (!valid) continue;
-        foreach(QPointer<Player> player, m_game->players()) {
+        /*foreach(QPointer<Player> player, m_game->players()) {
             if (!player) continue;
             if (player->position() == position) {
                 valid = false;
                 break;
             }
-        }
+        }*/
         if (tileAt(position)->type() == Tile::Wall) {
             valid = false;
         }

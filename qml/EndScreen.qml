@@ -4,6 +4,7 @@ Rectangle {
     id: endScreen
     anchors.fill: parent
     enabled: opacity > 0.1 ? true : false
+    visible: opacity > 0
 
     Behavior on opacity {
         NumberAnimation {
@@ -33,15 +34,15 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: quitButton.top
         anchors.margins: 20
-        anchors.left: parent.left
-        anchors.right: parent.right
+        //anchors.left: parent.left
+        //anchors.right: parent.right
         border.color: "white"
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.margins: 20
             Repeater {
-                model: players
+                model: GameManager.players
                 delegate: Text {
                     horizontalAlignment: Text.AlignHCenter
                     color: "white"
@@ -78,13 +79,13 @@ Rectangle {
         anchors.leftMargin: 10
         width: 200
         height: 50
-        visible: players.length > 0
+        visible: GameManager.players.length > 0
 
         onClicked: {
-            if (players.length < 1) {
+            if (GameManager.players.length < 1) {
                 return
             }
-            game.stopGame()
+            GameManager.stopGame()
             endScreen.opacity = 0
             startScreen.opacity = 1
         }

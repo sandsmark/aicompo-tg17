@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import com.iskrembilen.bomb 1.0
+import com.iskrembilen.turnonme 1.0
 
 Grid {
     id: playingField
