@@ -7,7 +7,7 @@ Rectangle {
     property bool active: true
     property int fontSize: 20
 
-    color: "#50000000"
+    color: "#7f000000"
     border.color: "white"
     enabled: visible && active
     visible: opacity > 0
@@ -21,7 +21,7 @@ Rectangle {
             parent.color = "white"
         }
         onExited: {
-            parent.color = "#50000000"
+            parent.color = "#7f000000"
         }
         onClicked: parent.clicked()
     }

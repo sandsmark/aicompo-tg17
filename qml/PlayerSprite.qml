@@ -65,6 +65,7 @@ Item {
             color: "transparent"
             border.width: modelData.energy / 50
             border.color: playerColors[playerId]
+            opacity: 0.5
             //opacity: modelData.energy / 1000
         }
     }

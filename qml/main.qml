@@ -13,10 +13,10 @@ Rectangle {
     property int scaleSize: (width < height) ? width : height
 
     property var playerColors: [
-        "#80ff400f", // red
-        "#80400fff", // blue
-        "#8040ff0f", // green
-        "#80f0ff40"  // yellow
+        "#c0ff400f", // red
+        "#c0400fff", // blue
+        "#c040ff0f", // green
+        "#c0f0ff40"  // yellow
     ]
 
     signal userMove(string direction)
@@ -106,8 +106,10 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             text: "round: " + GameManager.roundsPlayed + "/" + GameManager.maxRounds
-            color: "white"
+            color: "#7f000000"
             font.bold: true
+            style: Text.Outline
+            styleColor: "white"
             font.pointSize: 40
             z: 10
             opacity: 0.7
@@ -117,8 +119,8 @@ Rectangle {
             ColorAnimation on color {
                 id: roundColorAnim
                 from: "red"
-                to: "white"
-                duration: 2000
+                to: "#7f000000"
+                duration: 5000
             }
         }
 
@@ -230,8 +232,18 @@ Rectangle {
                 model: GameManager.players
                 delegate: Image {
                     source: modelData.spritePath
-                    height: 30
+                    height: 45
                     width: height
+
+
+                    Rectangle {
+                        anchors.left: parent.right
+                        anchors.top: parent.top
+                        anchors.bottom: parent.bottom
+                        color: playerColors[modelData.id]
+                        opacity: modelData.energy / 2000 + 0.5
+                        width: 350 * modelData.energy / 1000
+                    }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.right
@@ -240,6 +252,8 @@ Rectangle {
                         style: Text.Outline
                         styleColor: "black"
                         font.family: "Aldrich"
+                        font.pointSize: 20
+                        font.strikeout: !modelData.alive
                     }
                 }
             }
@@ -259,18 +273,20 @@ Rectangle {
     }
 
     BrightnessContrast {
+        id: gameFilter
         source: gameBlur
         anchors.fill: gameBlur
-        visible: opacity > 0
+        //visible: opacity > 0
         opacity: 0
         NumberAnimation on opacity {
+            running: false
             id: blurAnimation
             duration: 500
             from: 1
             to: 0
         }
-        brightness: 1
-        contrast: 0.5
+        brightness: 0.9
+        contrast: 0.4
     }
 
     focus: true
@@ -283,7 +299,8 @@ Rectangle {
 
     StartScreen {
         id: startScreen
-        opacity: 0
+        opacity: 1
+        //onOpacityChanged: gameFilter.opacity = opacity
     }
 
     Text {

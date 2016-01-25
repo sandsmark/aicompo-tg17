@@ -9,7 +9,7 @@ Item {
     Behavior on opacity {
         NumberAnimation {
             easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
-            duration: 1000
+            duration: 2000
         }
     }
 
@@ -19,9 +19,11 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         verticalAlignment: Text.AlignVCenter
         text: "TURN ON ME"
-        color: "white"
+        color: "#7f000000"
         font.pointSize: 30
         font.bold: true
+        style: Text.Outline
+        styleColor: "white"
     }
 
     Rectangle {
@@ -38,7 +40,7 @@ Item {
 
         border.width: 1
         border.color: "white"
-        color: "transparent"
+        color: "#7f000000"
 
         Checkbox {
             id: humanPlayerCheckbox
@@ -126,7 +128,7 @@ Item {
         }
         height: 40
         //width: 250
-        color: "transparent"
+        color: "#7f000000"
         border.width: 1
         border.color: "white"
 
@@ -145,7 +147,7 @@ Item {
     // List of players
     Rectangle {
         id: playerList
-        color: "transparent";
+        color: "#7f000000"
         anchors.centerIn: parent
         width: 800
         height: 600
