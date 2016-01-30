@@ -1,6 +1,9 @@
-
 #include "missile.h"
+
+#include "parameters.h"
+
 #include <QDebug>
+
 
 Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner, QObject *parent) : QObject(parent),
     m_type(type),
@@ -14,16 +17,20 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
         m_velocityX = cos(m_rotation) * 0.005;
         m_velocityY = sin(m_rotation) * 0.005;
         m_energy = 5000;
-    } else {
-        m_rotation = (startRotation * M_PI * 2) / 360.0;
-
-        m_velocityX = cos(m_rotation) * 0.05;
-        m_velocityY = sin(m_rotation) * 0.05;
-
-        m_energy = 1000;
+        return;
     }
 
+    m_rotation = (startRotation * M_PI * 2) / 360.0;
 
+    if (type == Normal) {
+        m_velocityX = cos(m_rotation) * 0.05;
+        m_velocityY = sin(m_rotation) * 0.05;
+    } else if (type == Seeking) {
+        m_velocityX = cos(m_rotation) * 0.03;
+        m_velocityY = sin(m_rotation) * 0.03;
+    }
+
+        m_energy = 1000;
 }
 
 void Missile::doMove()
@@ -36,6 +43,13 @@ void Missile::doMove()
         m_alive = false;
         emit aliveChanged();
         return;
+    }
+
+    qreal velocityMagnitude = hypot(m_velocityX, m_velocityY);
+    if (velocityMagnitude > MISSILE_MAX_SPEED) {
+        qreal velocityAngle = atan2(m_velocityY, m_velocityX);
+        m_velocityX = cos(velocityAngle) * MISSILE_MAX_SPEED;
+        m_velocityY = sin(velocityAngle) * MISSILE_MAX_SPEED;
     }
 
     const qreal force = distance / 1000;
@@ -63,21 +77,25 @@ void Missile::doMove()
         return;
     }
 
-    switch(m_type) {
-    case Normal:
-        m_rotation = atan2(m_velocityY, m_velocityX);
-        emit rotationChanged();
-        m_velocityX += cos(m_rotation) * (m_energy / 1000000.0);
-        m_velocityY += sin(m_rotation) * (m_energy / 1000000.0);
-        m_energy-= 50;
-        emit energyChanged();
-        break;
-    case Mine:
+    if (m_type == Mine) {
         m_velocityX += cos(m_rotation) * 0.0005;
         m_velocityY += sin(m_rotation) * 0.0005;
         m_energy-= 1;
         emit energyChanged();
-        break;
+        return;
+    }
+
+    m_energy-= 50;
+
+    if (m_type == Normal) {
+        m_velocityX += cos(m_rotation) * (m_energy / 1000000.0);
+        m_velocityY += sin(m_rotation) * (m_energy / 1000000.0);
+        m_rotation = atan2(m_velocityY, m_velocityX);
+        emit rotationChanged();
+        return;
+    } else if (m_type == Seeking) {
+        m_velocityX += cos(m_rotation) * (m_energy / 100000.0);
+        m_velocityY += sin(m_rotation) * (m_energy / 100000.0);
     }
 }
 

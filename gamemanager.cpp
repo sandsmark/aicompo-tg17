@@ -60,9 +60,9 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     QSettings setting("sound");
     setSoundEnabled(setting.value("enabled", false).toBool());
 
-//    QTimer::singleShot(250, this, SLOT(addPlayer()));
     QTimer::singleShot(250, this, SLOT(addPlayer()));
-//    QTimer::singleShot(250, this, SLOT(addPlayer()));
+    QTimer::singleShot(250, this, SLOT(addPlayer()));
+    QTimer::singleShot(250, this, SLOT(addPlayer()));
 //    QTimer::singleShot(100, this, SLOT(addPlayer()));
 //    QTimer::singleShot(250, this, SLOT(addPlayer()));
     //QTimer::singleShot(100, this, SLOT(addPlayer()));
@@ -232,7 +232,14 @@ void GameManager::gameTick()
             continue;
         }
 
+        Player *closest = nullptr;
+        qreal closestDX;
+        qreal closestDY;
         for(int i=0; i<m_players.count(); i++) {
+            if (!m_players[i]->isAlive()) {
+                continue;
+            }
+
             if (missile->owner() == m_players[i]->id()) {
                 continue;
             }
@@ -248,6 +255,18 @@ void GameManager::gameTick()
                 missilesRemoved = true;
                 break;
             }
+
+            // For seeking missiles
+            if (!closest || hypot(dx, dy) < hypot(closestDX, closestDY)) {
+                closest = m_players[i];
+                closestDX = dx;
+                closestDY = dy;
+                continue;
+            }
+        }
+
+        if (missile->type() == Missile::Seeking && closest) {
+            missile->setRotation(atan2(closestDY, closestDX));
         }
     }
 
@@ -286,6 +305,11 @@ void GameManager::gameTick()
         } else if (command == "MISSILE") {
             player->decreaseEnergy(20);
             Missile *missile = new Missile(Missile::Normal, player->position(), player->rotation(), player->id(), this);
+            m_missiles.append(missile);
+            emit missilesChanged();
+        } else if (command == "SEEKING") {
+            player->decreaseEnergy(20);
+            Missile *missile = new Missile(Missile::Seeking, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missilesChanged();
         } else if (command == "MINE") {

@@ -33,6 +33,7 @@ Rectangle {
     }
 
     Keys.onPressed: {
+        console.log(event.key)
         if (event.key === Qt.Key_F5) {
             GameManager.endRound();
             return true;

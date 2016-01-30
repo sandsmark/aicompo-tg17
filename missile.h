@@ -25,12 +25,15 @@ public:
 
 
     QPointF position() { return m_position; }
+
     int rotation() { return (m_rotation * 360 / (M_PI * 2)); }
+    void setRotation(qreal rotation) { m_rotation = rotation; emit rotationChanged(); }
 
     void doMove();
     int energy() { return m_energy; }
 
     bool isAlive() { return m_alive; }
+    Type type() { return m_type; }
 
     Q_INVOKABLE int owner() { return m_owner; }
 
