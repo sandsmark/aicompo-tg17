@@ -30,11 +30,6 @@ void Missile::doMove()
     m_velocityX -= cos(angle) * force;
     m_velocityY -= sin(angle) * force;
 
-//    if (m_velocityX > 0.05) m_velocityX = 0.05;
-//    if (m_velocityY > 0.05) m_velocityY = 0.05;
-//    if (m_velocityX < -0.05) m_velocityX = -0.05;
-//    if (m_velocityY < -0.05) m_velocityY = -0.05;
-
     x += m_velocityX;
     y += m_velocityY;
 
@@ -51,11 +46,11 @@ void Missile::doMove()
     emit rotationChanged();
 
 
-    if (m_energy > 1) {
-        m_velocityX += cos(m_rotation) * 0.0001;
-        m_velocityY += sin(m_rotation) * 0.0001;
+    if (m_energy > 50) {
+        m_velocityX += cos(m_rotation) * (m_energy / 1000000.0);
+        m_velocityY += sin(m_rotation) * (m_energy / 1000000.0);
 
-        m_energy-= 10;
+        m_energy-= 50;
         emit energyChanged();
     }
     if (m_energy < 1) m_energy = 1;
