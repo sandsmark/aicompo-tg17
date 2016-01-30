@@ -13,8 +13,7 @@ SOURCES += main.cpp tile.cpp \
     bomb.cpp \
     userplayer.cpp \
     networkclient.cpp \
-    missile.cpp \
-    movable.cpp
+    missile.cpp
 
 HEADERS += tile.h \
     player.h \
@@ -23,8 +22,7 @@ HEADERS += tile.h \
     userplayer.h \
     networkclient.h \
     parameters.h \
-    missile.h \
-    movable.h
+    missile.h
 
 RESOURCES += \
     resources.qrc

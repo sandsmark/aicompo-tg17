@@ -285,7 +285,12 @@ void GameManager::gameTick()
             player->rotate(ROTATE_AMOUNT);
         } else if (command == "MISSILE") {
             player->decreaseEnergy(20);
-            Missile *missile = new Missile(player->position(), player->rotation(), player->id(), this);
+            Missile *missile = new Missile(Missile::Normal, player->position(), player->rotation(), player->id(), this);
+            m_missiles.append(missile);
+            emit missilesChanged();
+        } else if (command == "MINE") {
+            player->decreaseEnergy(20);
+            Missile *missile = new Missile(Missile::Mine, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missilesChanged();
         }

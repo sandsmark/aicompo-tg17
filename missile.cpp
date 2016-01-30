@@ -2,15 +2,28 @@
 #include "missile.h"
 #include <QDebug>
 
-Missile::Missile(QPointF startPosition, int startRotation, int owner, QObject *parent) : QObject(parent),
+Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner, QObject *parent) : QObject(parent),
+    m_type(type),
     m_position(startPosition),
     m_alive(true),
     m_owner(owner)
 {
-    m_rotation = (startRotation * M_PI * 2) / 360.0;
-    m_velocityX = cos(m_rotation) * 0.05;
-    m_velocityY = sin(m_rotation) * 0.05;
-    m_energy = 1000;
+    if (type == Mine) {
+        m_rotation = atan2(startPosition.y(), startPosition.x());
+
+        m_velocityX = cos(m_rotation) * 0.005;
+        m_velocityY = sin(m_rotation) * 0.005;
+        m_energy = 5000;
+    } else {
+        m_rotation = (startRotation * M_PI * 2) / 360.0;
+
+        m_velocityX = cos(m_rotation) * 0.05;
+        m_velocityY = sin(m_rotation) * 0.05;
+
+        m_energy = 1000;
+    }
+
+
 }
 
 void Missile::doMove()
@@ -42,18 +55,30 @@ void Missile::doMove()
     m_position.setY(y);
     emit positionChanged();
 
-    m_rotation = atan2(m_velocityY, m_velocityX);
-    emit rotationChanged();
 
+    // Just fall into the sun
+    if (m_energy < 10) {
+        m_velocityX /= 1.01;
+        m_velocityY /= 1.01;
+        return;
+    }
 
-    if (m_energy > 50) {
+    switch(m_type) {
+    case Normal:
+        m_rotation = atan2(m_velocityY, m_velocityX);
+        emit rotationChanged();
         m_velocityX += cos(m_rotation) * (m_energy / 1000000.0);
         m_velocityY += sin(m_rotation) * (m_energy / 1000000.0);
-
         m_energy-= 50;
         emit energyChanged();
+        break;
+    case Mine:
+        m_velocityX += cos(m_rotation) * 0.0005;
+        m_velocityY += sin(m_rotation) * 0.0005;
+        m_energy-= 1;
+        emit energyChanged();
+        break;
     }
-    if (m_energy < 1) m_energy = 1;
 }
 
 QJsonObject Missile::serialize()
@@ -66,6 +91,13 @@ QJsonObject Missile::serialize()
     missileObject["velocityY"] = m_velocityY;
     missileObject["rotation"] = m_rotation;
     missileObject["energy"] = m_energy;
+    if (m_type == Mine) {
+        missileObject["type"] = "MINE";
+    } else if (m_type == Normal) {
+        missileObject["type"] = "NORMAL";
+    } else if (m_type == Seeking) {
+        missileObject["type"] = "SEEKING";
+    }
 
     return missileObject;
 }

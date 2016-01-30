@@ -15,7 +15,14 @@ class Missile : public QObject
     Q_PROPERTY(bool alive READ isAlive NOTIFY aliveChanged)
 
 public:
-    explicit Missile(QPointF startPosition, int startRotation, int owner, QObject *parent = 0);
+    enum Type {
+        Normal,
+        Mine,
+        Seeking
+    };
+
+    explicit Missile(Type type, QPointF startPosition, int startRotation, int owner, QObject *parent = 0);
+
 
     QPointF position() { return m_position; }
     int rotation() { return (m_rotation * 360 / (M_PI * 2)); }
@@ -37,6 +44,7 @@ signals:
 
 public slots:
 private:
+    Type m_type;
     QPointF m_position;
     qreal m_rotation;
     qreal m_velocityX;

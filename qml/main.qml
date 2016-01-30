@@ -26,6 +26,7 @@ Rectangle {
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
     Keys.onSpacePressed: userMove("MISSILE")
+    Keys.onTabPressed: userMove("MINE")
     Keys.onEscapePressed: {
         GameManager.stopGame();
         startScreen.opacity = 1
