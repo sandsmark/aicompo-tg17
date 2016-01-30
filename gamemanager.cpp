@@ -262,11 +262,17 @@ void GameManager::gameTick()
         qSwap(players[index], players[qrand() % (index + 1)]);
     }
 
-    for (int i=0; i<players.count(); i++) {
-        QString command = players[i]->command();
-        Player *player = m_players[i];
+    int dead = 0;
+    foreach(Player *player, players) {
+        if (!player->isAlive()) {
+            dead++;
+            continue;
+        }
+
         player->doMove();
         player->decreaseEnergy(1);
+
+        QString command = player->command();
         if (command.isEmpty()) {
             continue;
         }
@@ -277,20 +283,11 @@ void GameManager::gameTick()
             player->rotate(-ROTATE_AMOUNT);
         } else if (command == "RIGHT") {
             player->rotate(ROTATE_AMOUNT);
-        } else if (command == "BOMB") {
+        } else if (command == "MISSILE") {
             player->decreaseEnergy(20);
             Missile *missile = new Missile(player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missilesChanged();
-        } else {
-            continue;
-        }
-    }
-
-    int dead = 0;
-    for(int i=0; i<players.count(); i++) {
-        if (!players[i]->isAlive()) {
-            dead++;
         }
     }
 

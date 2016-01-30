@@ -25,7 +25,7 @@ Rectangle {
     Keys.onUpPressed: userMove("ACCELERATE")
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
-    Keys.onSpacePressed: userMove("BOMB")
+    Keys.onSpacePressed: userMove("MISSILE")
     Keys.onEscapePressed: {
         GameManager.stopGame();
         startScreen.opacity = 1
@@ -43,6 +43,22 @@ Rectangle {
         }
 
         return false;
+    }
+
+
+    ColorAnimation on color {
+        id: backgroundColorAnimation
+        from: "red"
+        to: "black"
+        duration: 5000
+        running: false
+    }
+
+    Connections {
+        target: GameManager
+        onRoundOver: {
+            backgroundColorAnimation.restart()
+        }
     }
 
     Item {
@@ -113,15 +129,6 @@ Rectangle {
             font.pointSize: 40
             z: 10
             opacity: 0.7
-
-            onTextChanged: roundColorAnim.restart()
-
-            ColorAnimation on color {
-                id: roundColorAnim
-                from: "red"
-                to: "#7f000000"
-                duration: 5000
-            }
         }
 
         Image {
