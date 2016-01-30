@@ -35,11 +35,12 @@ class GameManager : public QObject
 public:
     explicit GameManager(QQuickView *parent);
     ~GameManager();
+
     Q_INVOKABLE void loadMap(const QString &path);
 
     Q_INVOKABLE void removeHumanPlayers();
 
-    Q_INVOKABLE void setDebugMode(bool debug);
+    Q_INVOKABLE void setTickInterval(int interval);
 
     QQuickView *view() { return m_view; }
 

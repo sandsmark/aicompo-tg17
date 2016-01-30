@@ -38,7 +38,7 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(this));
 
     // Set up gametick timer
-    m_tickTimer.setInterval(TICKLENGTH);
+    m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
     m_tickTimer.setSingleShot(false);
 
     m_server.listen(QHostAddress::Any, 54321);
@@ -468,9 +468,9 @@ void GameManager::removeHumanPlayers()
     emit playersChanged();
 }
 
-void GameManager::setDebugMode(bool debug)
+void GameManager::setTickInterval(int interval)
 {
-    m_tickTimer.setInterval(debug ? TICKLENGTH_DEBUG : TICKLENGTH);
+    m_tickTimer.setInterval(interval);
 }
 
 void GameManager::togglePause()

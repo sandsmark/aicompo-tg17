@@ -81,7 +81,7 @@ Item {
 
             onClicked: {
                 checked = !checked
-                GameManager.setDebugMode(checked)
+                GameManager.setTickInterval(checked ? 10 : 50)
             }
 
             Text {
