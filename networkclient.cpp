@@ -3,7 +3,6 @@
 #include <QHostAddress>
 #include <QCryptographicHash>
 #include "player.h"
-#include "map.h"
 #include "bomb.h"
 
 NetworkClient::NetworkClient(QTcpSocket *socket) :
@@ -57,7 +56,7 @@ void NetworkClient::sendEndOfRound()
     }
 }
 
-void NetworkClient::sendState(QList<Player *> players, const Map *map, const Player *self)
+void NetworkClient::sendState(QList<Player *> players, const Player *self)
 {
     if (m_json) {
         sendString("{ \"type\": \"status update\",  \"players\": [");
@@ -73,16 +72,6 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
         }
         sendString("  ], ");
 
-        sendString("  \"bombs\": [ ");
-        foreach(Bomb *bomb, map->bombs()) {
-            if (!bomb) continue;
-            sendString(" { \"x\": " + QByteArray::number(bomb->position().x()) + ", \"y\":" +
-                       QByteArray::number(bomb->position().y()) + ", \"state\":" +
-                       QByteArray::number(BOMB_STATES - bomb->state() - 1) + " }");
-            if (bomb != map->bombs().last()) {
-                sendString(",");
-            }
-        }
         sendString(" ], ");
     } else {
         sendString("PLAYERS\n");
@@ -95,72 +84,16 @@ void NetworkClient::sendState(QList<Player *> players, const Map *map, const Pla
         sendString("ENDPLAYERS\n");
 
         sendString("BOMBS\n");
-        foreach(Bomb *bomb, map->bombs()) {
-            if (!bomb) continue;
-            sendString(QByteArray::number(bomb->position().x()) + ',' +
-                       QByteArray::number(bomb->position().y()) + ' ' +
-                       QByteArray::number(BOMB_STATES - bomb->state()) + '\n');
-        }
+
         sendString("ENDBOMBS\n");
     }
 
     if (m_json) {
         sendString("  \"x\": " + QByteArray::number(self->position().x()) + ", ");
         sendString("  \"y\": " + QByteArray::number(self->position().y()) + ", ");
-        sendString("  \"height\": " + QByteArray::number(map->height()) + ", ");
-        sendString("  \"width\": " + QByteArray::number(map->width()) + ", ");
     } else {
         sendString("X " + QByteArray::number(self->position().x()) + "\n");
         sendString("Y " + QByteArray::number(self->position().y()) + "\n");
-        sendString("HEIGHT " + QByteArray::number(map->height()) + "\n");
-        sendString("WIDTH " + QByteArray::number(map->width()) + "\n");
-    }
-
-    if (m_json) {
-        sendString(" \"map\": [ ");
-    } else {
-        sendString("MAP\n");
-    }
-
-    for (int y=0; y<map->height(); y++) {
-        QByteArray mapLine;
-        for (int x=0; x<map->width(); x++) {
-            switch (map->tileAt(QPoint(x, y))->type()) {
-            case Tile::Grass:
-                mapLine += '.';
-                break;
-            case Tile::Floor:
-                mapLine += '.';
-                break;
-            case Tile::Wall:
-                mapLine += '+';
-                break;
-            case Tile::Stone:
-                mapLine += '#';
-                break;
-            case Tile::Debris:
-                mapLine += '.';
-                break;
-            case Tile::Invalid:
-                mapLine += '#';
-                break;
-            }
-        }
-        if (m_json) {
-            if (y > map->height() - 2) {
-                sendString(" \"" + mapLine + "\" ");
-            } else {
-                sendString(" \"" + mapLine + "\", ");
-            }
-        } else {
-            sendString(mapLine + '\n');
-        }
-    }
-
-    if (m_json) {
-        sendString(" ] }\n");
-    } else {
-        sendString("ENDMAP\n");
     }
 }
 

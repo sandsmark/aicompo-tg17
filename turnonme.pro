@@ -8,7 +8,6 @@ linux: QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp tile.cpp \
-    map.cpp \
     player.cpp \
     gamemanager.cpp \
     bomb.cpp \
@@ -18,7 +17,6 @@ SOURCES += main.cpp tile.cpp \
     movable.cpp
 
 HEADERS += tile.h \
-    map.h \
     player.h \
     gamemanager.h \
     bomb.h \
@@ -33,12 +31,10 @@ RESOURCES += \
 
 OTHER_FILES += \
     qml/Button.qml \
-    qml/MapSprite.qml \
     qml/BombSprite.qml \
     qml/EndScreen.qml \
     qml/main.qml \
     qml/PlayerSprite.qml \
-    qml/PlayingField.qml \
     qml/StartScreen.qml \
     qml/Checkbox.qml \
     qml/MissileSprite.qml \

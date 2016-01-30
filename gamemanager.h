@@ -1,5 +1,5 @@
-#ifndef MAPLOADER_H
-#define MAPLOADER_H
+#ifndef GAMEMANAGER_H
+#define GAMEMANAGER_H
 
 #include <QObject>
 #include <QPointer>
@@ -13,8 +13,6 @@
 #include "player.h"
 #include "parameters.h"
 
-
-class Map;
 class QQuickView;
 class QQmlComponent;
 class NetworkClient;
@@ -24,7 +22,6 @@ class GameManager : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
-    Q_PROPERTY(QStringList maps READ maps() NOTIFY mapsChanged())
     Q_PROPERTY(bool soundEnabled READ soundEnabled WRITE setSoundEnabled NOTIFY soundEnabledChanged)
     Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
@@ -36,15 +33,11 @@ public:
     explicit GameManager(QQuickView *parent);
     ~GameManager();
 
-    Q_INVOKABLE void loadMap(const QString &path);
-
     Q_INVOKABLE void removeHumanPlayers();
 
     Q_INVOKABLE void setTickInterval(int interval);
 
     QQuickView *view() { return m_view; }
-
-    QStringList maps();
 
     Q_INVOKABLE QString version();
 
@@ -76,7 +69,6 @@ signals:
     void roundOver();
     void clientConnected();
     void roundsPlayedChanged();
-    void mapsChanged();
     void tick();
     void soundEnabledChanged();
     void playersChanged();
@@ -91,13 +83,11 @@ private slots:
 private:
     void resetPositions();
 
-    Map *m_map;
     QQuickView *m_view;
     QList<QPointer<Player>> m_players;
     QList<Missile*> m_missiles;
     QTimer m_tickTimer;
     QTcpServer m_server;
-    QString m_currentMap;
     int m_roundsPlayed;
 
     bool m_soundEnabled;
@@ -107,4 +97,4 @@ private:
     int m_ticksLeft;
 };
 
-#endif // MAPLOADER_H
+#endif // GAMEMANAGER_H

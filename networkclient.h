@@ -16,7 +16,7 @@ public:
     explicit NetworkClient(QTcpSocket *socket);
     QString remoteName();
     void sendWelcome(const QByteArray &mapData, const QPoint &startData);
-    void sendState(QList<Player*> players, const Map *map, const Player *self);
+    void sendState(QList<Player*> players, const Player *self);
     void sendEndOfRound();
     void sendDead();
     void kick();

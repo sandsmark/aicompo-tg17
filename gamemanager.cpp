@@ -2,7 +2,6 @@
 
 #include "bomb.h"
 #include "tile.h"
-#include "map.h"
 #include "player.h"
 #include "networkclient.h"
 
@@ -16,7 +15,6 @@
 #include <QList>
 #include <QQmlComponent>
 #include <QTcpSocket>
-#include <QFileSystemWatcher>
 #include <QSettings>
 #include <QTimer>
 
@@ -25,14 +23,10 @@
 #define VOLUME 0.5f
 
 GameManager::GameManager(QQuickView *view) : QObject(view),
-    m_map(0), m_view(view), m_roundsPlayed(0), m_ticksLeft(-1)
+    m_view(view),
+    m_roundsPlayed(0),
+    m_ticksLeft(-1)
 {
-    loadMap(":/maps/default.map");
-
-    if (!m_map) {
-        qWarning() << "GameManager: Unable to load default map!";
-        return;
-    }
 
     // Add QML objects
     m_view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(this));
@@ -47,11 +41,6 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(&m_tickTimer, SIGNAL(timeout()), SIGNAL(tick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(roundOver()), SLOT(endRound()));
-
-    // Watch filesystem for map changes
-    QFileSystemWatcher *watcher = new QFileSystemWatcher(this);
-    watcher->addPath("maps/");
-    connect(watcher, SIGNAL(directoryChanged(QString)), SIGNAL(mapsChanged()));
 
     // Set up sound effects
     for(int i=0; i<8; i++) {
@@ -129,22 +118,6 @@ QList<QObject *> GameManager::missiles() const
     return missileList;
 }
 
-QStringList GameManager::maps()
-{
-    QStringList ret;
-
-    ret << ":/maps/default.map"
-        << ":/maps/Arena.map"
-        << ":/maps/HugeArena.map";
-
-    QDir mapDir("maps/");
-    foreach (const QString file, mapDir.entryList(QDir::Files)) {
-        ret << "maps/" + file;
-    }
-
-    return ret;
-}
-
 QString GameManager::version()
 {
     QString versionString;
@@ -155,47 +128,6 @@ QString GameManager::version()
 
     versionString += " // build time: " + QLatin1String(__TIME__) + ' ' + QLatin1String(__DATE__);
     return versionString;
-}
-
-void GameManager::loadMap(const QString &path)
-{
-    Map *map = new Map(this, path);
-
-    if (!map->isValid()) {
-        qWarning() << "Map: Parsed map isn't expected size";
-        delete map;
-        return;
-    }
-
-    if (m_map)
-        m_map->deleteLater();
-    m_map = map;
-
-
-    // Kick out players if too many
-    for (int i=m_players.count()-1; i>=0; --i) {
-        if (m_players.count() <= m_map->startingPositions().count()) {
-            break;
-        }
-        if (!m_players[i]->networkClient()) continue; // Don't kick out human player
-
-        m_players.takeAt(i)->deleteLater();
-    }
-
-
-    // Get a randomized list of unoccupied starting positions
-    QList<QPoint> startPositions = m_map->startingPositions();
-    for (int index = startPositions.count() - 1; index > 0; --index) {
-        qSwap(startPositions[index], startPositions[qrand() % (index + 1)]);
-    }
-
-    // Update positions and id
-    for (int i=0; i<m_players.count(); i++) {
-        //m_players[i]->setPosition(startPositions[i]);
-        m_players[i]->setId(i);
-    }
-
-    connect(m_map, SIGNAL(explosionAt(QPoint)), SLOT(explosionAt(QPoint)));
 }
 
 void GameManager::playBombSound()
@@ -260,8 +192,6 @@ void GameManager::startRound()
         m_players[i]->setEnergy(START_ENERGY);
     }
 
-    loadMap(m_map->name());
-
     // Do not allow to change name after game has started
     for (int i=0; i<m_players.count(); i++) {
         if (!m_players[i]->networkClient()) {
@@ -271,7 +201,6 @@ void GameManager::startRound()
         m_players[i]->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
     }
 
-    m_ticksLeft = m_map->maxTicks();
     m_tickTimer.start();
 }
 
@@ -377,7 +306,7 @@ void GameManager::gameTick()
 
             QList<Player*> list = players;
             list.takeAt(i);
-            players[i]->networkClient()->sendState(list, m_map, players[i]);
+            players[i]->networkClient()->sendState(list, players[i]);
         }
     }
 }
@@ -386,7 +315,7 @@ void GameManager::clientConnect()
 {
     QTcpSocket *socket = m_server.nextPendingConnection();
 
-    if (m_players.count() >= m_map->startingPositions().count() || m_tickTimer.isActive()) {
+    if (m_players.count() >= MAX_PLAYERS || m_tickTimer.isActive()) {
         socket->disconnect();
         socket->deleteLater();
         return;
