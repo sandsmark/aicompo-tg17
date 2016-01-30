@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QPoint>
+#include <QJsonObject>
 
 class QTcpSocket;
 class Player;
@@ -16,7 +17,7 @@ public:
     explicit NetworkClient(QTcpSocket *socket);
     QString remoteName();
     void sendWelcome(const QByteArray &mapData, const QPoint &startData);
-    void sendState(QList<Player*> players, const Player *self);
+    void sendState(const QJsonObject gameState);
     void sendEndOfRound();
     void sendDead();
     void kick();

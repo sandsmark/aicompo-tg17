@@ -4,6 +4,7 @@
 #include <QUrl>
 #include <QObject>
 #include <QPointF>
+#include <QJsonObject>
 
 class NetworkClient;
 
@@ -66,6 +67,8 @@ public:
     void setPosition(QPointF position);
 
     void setVelocity(qreal vx, qreal vy);
+
+    QJsonObject serialize();
 
 public slots:
     void setCommand(QString command);

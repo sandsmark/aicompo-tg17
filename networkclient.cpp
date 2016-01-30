@@ -2,6 +2,7 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QCryptographicHash>
+#include <QJsonDocument>
 #include "player.h"
 #include "bomb.h"
 
@@ -56,45 +57,14 @@ void NetworkClient::sendEndOfRound()
     }
 }
 
-void NetworkClient::sendState(QList<Player *> players, const Player *self)
+void NetworkClient::sendState(const QJsonObject gameState)
 {
-    if (m_json) {
-        sendString("{ \"type\": \"status update\",  \"players\": [");
-        foreach(Player *player, players) {
-            if (!player) continue;
-            sendString(" { \"id\": " + QByteArray::number(player->id()) +
-                       ", \"x\": " + QByteArray::number(player->position().x()) +
-                       ", \"y\": " + QByteArray::number(player->position().y()) + " }");
+    QJsonObject stateObject;
+    stateObject["messagetype"] = "stateupdate";
 
-            if (player != players.last()){
-                sendString(",");
-            }
-        }
-        sendString("  ], ");
-
-        sendString(" ], ");
-    } else {
-        sendString("PLAYERS\n");
-        foreach(Player *player, players) {
-            if (!player) continue;
-            sendString(QByteArray::number(player->id()) + ' ' +
-                       QByteArray::number(player->position().x()) + ',' +
-                       QByteArray::number(player->position().y()) + '\n');
-        }
-        sendString("ENDPLAYERS\n");
-
-        sendString("BOMBS\n");
-
-        sendString("ENDBOMBS\n");
-    }
-
-    if (m_json) {
-        sendString("  \"x\": " + QByteArray::number(self->position().x()) + ", ");
-        sendString("  \"y\": " + QByteArray::number(self->position().y()) + ", ");
-    } else {
-        sendString("X " + QByteArray::number(self->position().x()) + "\n");
-        sendString("Y " + QByteArray::number(self->position().y()) + "\n");
-    }
+    stateObject["gamestate"] = gameState;
+    QJsonDocument packet(stateObject);
+    sendString(packet.toJson());
 }
 
 void NetworkClient::dataReceived()

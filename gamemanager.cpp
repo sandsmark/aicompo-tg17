@@ -17,6 +17,8 @@
 #include <QTcpSocket>
 #include <QSettings>
 #include <QTimer>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include <cmath>
 
@@ -60,11 +62,11 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
 
 //    QTimer::singleShot(250, this, SLOT(addPlayer()));
     QTimer::singleShot(250, this, SLOT(addPlayer()));
-    QTimer::singleShot(250, this, SLOT(addPlayer()));
-    QTimer::singleShot(100, this, SLOT(addPlayer()));
-    QTimer::singleShot(250, this, SLOT(addPlayer()));
+//    QTimer::singleShot(250, this, SLOT(addPlayer()));
+//    QTimer::singleShot(100, this, SLOT(addPlayer()));
+//    QTimer::singleShot(250, this, SLOT(addPlayer()));
     //QTimer::singleShot(100, this, SLOT(addPlayer()));
-    QTimer::singleShot(200, this, SLOT(startRound()));
+//    QTimer::singleShot(200, this, SLOT(startRound()));
 }
 
 GameManager::~GameManager()
@@ -255,7 +257,7 @@ void GameManager::gameTick()
 
 
     // Randomize the order we process players in
-    QList<QPointer<Player> > players = m_players;
+    QList<Player*> players = m_players;
     for (int index = players.count() - 1; index > 0; --index) {
         qSwap(players[index], players[qrand() % (index + 1)]);
     }
@@ -294,20 +296,16 @@ void GameManager::gameTick()
 
     if (dead > 0 && players.size() - dead < 2) {
         emit roundOver();
-    } else {
-        QList<Player*> players;
-        for (int i=0; i<m_players.count(); i++) {
-            if (m_players[i]->isAlive()) {
-                players.append(m_players[i]);
-            }
-        }
-        for (int i=0; i<players.length(); i++) {
-            if (!players[i]->networkClient()) continue;
+        return;
+    }
 
-            QList<Player*> list = players;
-            list.takeAt(i);
-            players[i]->networkClient()->sendState(list, players[i]);
+    // Send status updates to all connected players
+    foreach(Player *player, players) {
+        if (!player->networkClient()) {
+            continue;
         }
+
+        player->networkClient()->sendState(serializeForPlayer(player));
     }
 }
 
@@ -431,4 +429,31 @@ void GameManager::resetPositions()
         qreal angle = i * M_PI * 2.0 / playerCount;
         m_players[i]->setPosition(QPointF(cos(angle) * 0.5, sin(angle) * 0.5));
     }
+}
+
+QJsonObject GameManager::serializeForPlayer(Player *player)
+{
+    QJsonObject gamestateObject;
+    gamestateObject["you"] = player->serialize();
+
+    QJsonArray playersArray;
+    foreach (Player *otherPlayer, m_players) {
+        if (otherPlayer == player) {
+            continue;
+        }
+        if (!otherPlayer->isAlive()) {
+            continue;
+        }
+
+        playersArray.append(otherPlayer->serialize());
+    }
+    gamestateObject["others"] = playersArray;
+
+    QJsonArray missilesArray;
+    foreach (Missile *missile, m_missiles) {
+        missilesArray.append(missile->serialize());
+    }
+    gamestateObject["missiles"] = missilesArray;
+
+    return gamestateObject;
 }

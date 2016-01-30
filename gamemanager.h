@@ -48,7 +48,6 @@ public:
     QList<QObject *> players() const;
     QList<QObject *> missiles() const;
 
-    void humanMoved(QString move);
     int maxPlayerCount() { return MAX_PLAYERS; }
     int maxRounds() { return MAX_ROUNDS; }
 
@@ -82,9 +81,10 @@ private slots:
 
 private:
     void resetPositions();
+    QJsonObject serializeForPlayer(Player *player);
 
     QQuickView *m_view;
-    QList<QPointer<Player>> m_players;
+    QList<Player*> m_players;
     QList<Missile*> m_missiles;
     QTimer m_tickTimer;
     QTcpServer m_server;

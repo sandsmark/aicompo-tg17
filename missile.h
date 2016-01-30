@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QPointF>
+#include <QJsonObject>
 
 class Missile : public QObject
 {
@@ -25,6 +26,8 @@ public:
     bool isAlive() { return m_alive; }
 
     Q_INVOKABLE int owner() { return m_owner; }
+
+    QJsonObject serialize();
 
 signals:
     void positionChanged();

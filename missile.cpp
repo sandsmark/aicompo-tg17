@@ -59,3 +59,17 @@ void Missile::doMove()
     m_rotation = atan2(m_velocityY, m_velocityX);
     emit rotationChanged();
 }
+
+QJsonObject Missile::serialize()
+{
+    QJsonObject missileObject;
+    missileObject["owner"] =  m_owner;
+    missileObject["x"] = m_position.x();
+    missileObject["y"] = m_position.y();
+    missileObject["velocityX"] = m_velocityX;
+    missileObject["velocityY"] = m_velocityY;
+    missileObject["rotation"] = m_rotation;
+    missileObject["energy"] = m_energy;
+
+    return missileObject;
+}

@@ -135,6 +135,20 @@ void Player::setPosition(QPointF position)
     emit rotationChanged();
 }
 
+QJsonObject Player::serialize()
+{
+    QJsonObject playerObject;
+    playerObject["id"] =  m_id;
+    playerObject["x"] = m_position.x();
+    playerObject["y"] = m_position.y();
+    playerObject["velocityX"] = m_velocityX;
+    playerObject["velocityY"] = m_velocityY;
+    playerObject["rotation"] = m_rotation;
+    playerObject["energy"] = m_energy;
+
+    return playerObject;
+}
+
 void Player::decreaseEnergy(int amount)
 {
     if (m_energy <= 0) {
