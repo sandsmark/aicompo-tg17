@@ -170,8 +170,8 @@ void GameManager::gameTick()
             const qreal dx = m_players[i]->position().x() - missile->position().x();
             const qreal dy = m_players[i]->position().y() - missile->position().y();
             if (hypot(dx, dy) < 0.1) {
-                m_players[i]->decreaseEnergy(10);
-                m_players[missile->owner()]->increaseEnergy(10);
+                m_players[i]->decreaseEnergy(MISSILE_DAMAGE);
+                m_players[missile->owner()]->increaseEnergy(MISSILE_DAMAGE);
                 m_players[missile->owner()]->addScore(1);
                 emit explosion(missile->position());
                 missile->deleteLater();
@@ -222,20 +222,19 @@ void GameManager::gameTick()
         } else if (command == "RIGHT") {
             player->rotate(ROTATE_AMOUNT);
         } else if (command == "MISSILE") {
-            player->decreaseEnergy(10);
+            player->decreaseEnergy(MISSILE_COST);
             Missile *missile = new Missile(Missile::Normal, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missileCreated(missile);
         } else if (command == "SEEKING") {
-            player->decreaseEnergy(15);
+            player->decreaseEnergy(SEEKING_MISSILE_COST);
             Missile *missile = new Missile(Missile::Seeking, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missileCreated(missile);
         } else if (command == "MINE") {
-            player->decreaseEnergy(20);
+            player->decreaseEnergy(MINE_COST);
             Missile *missile = new Missile(Missile::Mine, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
-//            createMissileSprite(missile);
             emit missileCreated(missile);
         }
     }

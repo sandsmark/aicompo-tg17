@@ -11,11 +11,11 @@ The anti-gravity engine uses 1 energy for each game tick, and as the energy goes
 
 Turning your ship with your thrusters costs 1 energy.
 
-Accelerating forward costs 10 energy.
+Accelerating forward costs 2 energy.
 
-Firing a normal missile costs 100 energy, firing a homing missile costs 150 energy and dropping a hovermine costs 200 energy.
+Firing a normal missile costs 10 energy, firing a homing missile costs 15 energy and dropping a hovermine costs 20 energy.
 
-If you hit another player with either a missile or a hovermine, that player loses 100 energy, and you get 100 energy.
+If you hit another player with either a missile or a hovermine, that player loses 10 energy, and you get 10 energy.
 
 **These values are subject to change, until we freeze them sometime before The Gathering 2016.**
 
