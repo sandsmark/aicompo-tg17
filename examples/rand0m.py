@@ -12,7 +12,7 @@ s.connect((host, port))
 s.send(b"NAME rand0m\n")
 
 while True:
-    sleep(1)
+    sleep(0.1)
     r = int(random() * 6)
     if (r == 0):
         s.send(b"ACCELERATE\n")
