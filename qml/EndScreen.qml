@@ -86,7 +86,7 @@ Rectangle {
                 return
             }
             GameManager.stopGame()
-            endScreen.opacity = 0
+//            endScreen.opacity = 0
             startScreen.opacity = 1
         }
         text: "Restart"

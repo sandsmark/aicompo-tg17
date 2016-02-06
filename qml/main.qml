@@ -178,13 +178,60 @@ Rectangle {
         ParticleSystem {
             id: missileParticles
             anchors.fill: parent
+
+//            ImageParticle {
+//                opacity: 0.5
+//                source: "qrc:///sprites/star.png"
+//                alpha: 0.1
+//                alphaVariation: 0.1
+//                colorVariation: 0.5
+//                color: "#01ffffff"
+//                groups: ["Player1"]
+//            }
             ImageParticle {
                 opacity: 0.5
                 source: "qrc:///sprites/star.png"
                 alpha: 0.1
                 alphaVariation: 0.1
                 colorVariation: 0.5
-                color: "#01ffffff"
+                color: playerColors[0]
+                groups: ["Player1"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[1]
+                groups: ["Player2"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[2]
+                groups: ["Player3"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[3]
+                groups: ["Player4"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: "white"
+                groups: ["Explosion"]
             }
         }
 
@@ -201,6 +248,7 @@ Rectangle {
             size: 32
             sizeVariation: 16
             system: missileParticles
+            group: "Explosion"
 
             Connections {
                 target: GameManager
@@ -259,7 +307,7 @@ Rectangle {
                         anchors.bottom: parent.bottom
                         color: playerColors[modelData.id]
                         opacity: modelData.energy / 2000 + 0.5
-                        width: 350 * modelData.energy / 1000
+                        width: 400 * modelData.energy / 1000
                         Behavior on width { NumberAnimation { duration: 60; } }
                         ColorAnimation on color {
                             id: coloranim

@@ -200,6 +200,8 @@ void GameManager::resetScores()
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->resetScore();
     }
+    m_roundsPlayed = 0;
+    emit roundsPlayedChanged();
 }
 
 void GameManager::gameTick()
@@ -234,8 +236,9 @@ void GameManager::gameTick()
             const qreal dx = m_players[i]->position().x() - missile->position().x();
             const qreal dy = m_players[i]->position().y() - missile->position().y();
             if (hypot(dx, dy) < 0.1) {
-                m_players[i]->decreaseEnergy(100);
-                m_players[missile->owner()]->increaseEnergy(100);
+                m_players[i]->decreaseEnergy(10);
+                m_players[missile->owner()]->increaseEnergy(10);
+                m_players[missile->owner()]->addScore(1);
                 emit explosion(missile->position());
                 missile->deleteLater();
                 missileIterator.remove();
@@ -285,17 +288,17 @@ void GameManager::gameTick()
         } else if (command == "RIGHT") {
             player->rotate(ROTATE_AMOUNT);
         } else if (command == "MISSILE") {
-            player->decreaseEnergy(100);
+            player->decreaseEnergy(10);
             Missile *missile = new Missile(Missile::Normal, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missileCreated(missile);
         } else if (command == "SEEKING") {
-            player->decreaseEnergy(150);
+            player->decreaseEnergy(15);
             Missile *missile = new Missile(Missile::Seeking, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
             emit missileCreated(missile);
         } else if (command == "MINE") {
-            player->decreaseEnergy(200);
+            player->decreaseEnergy(20);
             Missile *missile = new Missile(Missile::Mine, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
 //            createMissileSprite(missile);

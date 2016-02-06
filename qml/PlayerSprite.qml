@@ -85,7 +85,7 @@ Item {
             height: width
             radius: width/2
             color: "transparent"
-            width: modelData.energy / 10
+            width: modelData.energy / 100
             border.width: modelData.energy / 500
             border.color: playerColors[playerId]
 //            opacity: 0.5
@@ -154,19 +154,24 @@ Item {
         }
     }
 
-//    Emitter {
-//        id: trailEmitter
-//        anchors.fill: parent
-//        emitRate: modelData.energy
-//        lifeSpan: 1000
-//        lifeSpanVariation: 90
-//        enabled: false
-//        velocity: AngleDirection{ angle: modelData.rotation + 180; magnitude: 100; magnitudeVariation: 100; angleVariation: 100}
-//        size: 24
-//        sizeVariation: 16
-//        system: missileParticles
-//        //velocityFromMovement: 10
-//        endSize: 20
-//    }
+    property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
+    Emitter {
+        id: trailEmitter
+        anchors.fill: parent
+        emitRate: 1000
+
+        lifeSpan: 5000
+        lifeSpanVariation: 90
+        enabled: true
+        velocity: AngleDirection{ magnitude: 10; magnitudeVariation: 10; angleVariation: 360}
+        size: 8
+        sizeVariation: 4
+        system: missileParticles
+        group: particleGroups[playerId]
+        //velocityFromMovement: 10
+        endSize: 0
+        shape: EllipseShape {
+        }
+    }
 
 }

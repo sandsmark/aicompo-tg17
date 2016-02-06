@@ -12,18 +12,18 @@ s.connect((host, port))
 s.send(b"NAME rand0m\n")
 
 while True:
-    sleep(0.1)
+    sleep(1)
     r = int(random() * 6)
     if (r == 0):
-        s.send(b"UP\n")
+        s.send(b"ACCELERATE\n")
     elif (r == 1):
-        s.send(b"DOWN\n")
+        s.send(b"MINE\n")
     elif (r == 2):
         s.send(b"RIGHT\n")
     elif (r == 3):
         s.send(b"LEFT\n")
     elif (r == 4):
-        s.send(b"SAY they don't think it be like it is but it do\n")
+        s.send(b"MISSILE\n")
     elif (r == 5):
-        s.send(b"SAY hehehe\n")
+        s.send(b"SEEKING\n")
 s.close                     # Close the socket when done

@@ -17,6 +17,10 @@ Firing a normal missile costs 100 energy, firing a homing missile costs 150 ener
 
 If you hit another player with either a missile or a hovermine, that player loses 100 energy, and you get 100 energy.
 
+**These values are subject to change, until we freeze them sometime before The Gathering 2016.**
+
+We might also add more weapons, if we find some fun ideas.
+
 ---
 
 ## Keymap

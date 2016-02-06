@@ -40,24 +40,30 @@ Item {
 //        rotation: missile.rotation
     }
 
+    property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
     Emitter {
         id: trailEmitter
         anchors.centerIn: parent
-        emitRate: missile.energy > 10 ? 1000 : 50
+        width: parent.width / 2
+        height: width
+        emitRate: missile.energy > 10 ? 500 : 10
         lifeSpan: 500
         lifeSpanVariation: 90
         enabled: true
+        group: (missileData === null) ? "" : particleGroups[missileData.owner()]
         velocity: AngleDirection {
             angle: missile.rotation + 90
             magnitude: missile.energy > 10 ? 200 : 0
             magnitudeVariation: missile.energy > 10 ? 100 : 10
             angleVariation: 5
         }
-        size: 32
-        sizeVariation: missile.energy / 100
+        size: 8
+        sizeVariation: 4
         system: missileParticles
         //velocityFromMovement: 10
         endSize: 20
+        shape: EllipseShape {
+        }
     }
 
 //    RotationAnimation on rotation {
