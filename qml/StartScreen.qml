@@ -189,29 +189,6 @@ Item {
                 color: "white"
             }
         }
-
-
-
-        Checkbox {
-            id: soundCheckbox
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-            checked: GameManager.soundEnabled
-            onClicked: {
-                GameManager.soundEnabled = !GameManager.soundEnabled
-            }
-
-            Text {
-                anchors.right: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: 10
-                text: "Enable sound:"
-                font.pixelSize: 20
-                color: "white"
-            }
-        }
     }
 
     Rectangle {

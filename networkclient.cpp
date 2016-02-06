@@ -4,7 +4,6 @@
 #include <QCryptographicHash>
 #include <QJsonDocument>
 #include "player.h"
-#include "bomb.h"
 
 NetworkClient::NetworkClient(QTcpSocket *socket) :
     QObject(socket), m_socket(socket)

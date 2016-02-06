@@ -1,4 +1,4 @@
-QT += network quick multimedia
+QT += network quick
 
 CONFIG += c++11
 
@@ -12,14 +12,12 @@ win32:RC_ICONS += turnon.ico
 SOURCES += main.cpp \
     player.cpp \
     gamemanager.cpp \
-    bomb.cpp \
     networkclient.cpp \
     missile.cpp
 
 HEADERS += \
     player.h \
     gamemanager.h \
-    bomb.h \
     networkclient.h \
     parameters.h \
     missile.h

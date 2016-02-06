@@ -1,7 +1,5 @@
 #include "gamemanager.h"
 
-#include "bomb.h"
-#include "tile.h"
 #include "player.h"
 #include "networkclient.h"
 
@@ -44,22 +42,6 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(roundOver()), SLOT(endRound()));
 
-    // Set up sound effects
-    for(int i=0; i<8; i++) {
-        QSoundEffect *explosion = new QSoundEffect(this);
-        //explosion->setSource(QUrl::fromLocalFile("sound/explosion0" + QString::number(i+1) + ".wav"));
-        explosion->setVolume(VOLUME);
-        m_explosions.append(explosion);
-    }
-    m_backgroundLoop.setSource(QUrl::fromLocalFile("/home/sandsmark/src/turnonme/loop.wav"));
-    m_backgroundLoop.setVolume(VOLUME);
-    m_backgroundLoop.setLoopCount(QSoundEffect::Infinite);
-    //m_death.setSource(QUrl::fromLocalFile("sound/death.wav"));
-    m_death.setVolume(VOLUME);
-
-    QSettings setting("sound");
-    setSoundEnabled(setting.value("enabled", false).toBool());
-
 //    QTimer::singleShot(250, this, SLOT(addPlayer()));
 //    QTimer::singleShot(250, this, SLOT(addPlayer()));
 //    QTimer::singleShot(250, this, SLOT(addPlayer()));
@@ -77,27 +59,6 @@ GameManager::~GameManager()
             disconnect(m_players[i]->networkClient(), SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
         }
     }
-}
-
-void GameManager::setSoundEnabled(bool enabled)
-{
-    if (enabled == m_soundEnabled) return;
-
-    QSettings setting("sound");
-    setting.setValue("enabled", enabled);
-
-    if (enabled) {
-        m_backgroundLoop.play();
-    } else {
-        m_backgroundLoop.stop();
-        for(int i=0; i<8; i++) {
-            m_explosions[i]->stop();
-        }
-        m_death.stop();
-    }
-    m_soundEnabled = enabled;
-
-    emit soundEnabledChanged();
 }
 
 QList<QObject*> GameManager::players() const
@@ -122,20 +83,10 @@ QString GameManager::version()
     return versionString;
 }
 
-void GameManager::playBombSound()
-{
-    if (m_soundEnabled) {
-        m_explosions[qrand() % 8]->play();
-    }
-}
-
 void GameManager::explosionAt(const QPoint &position)
 {
     for (int i=0; i<m_players.count(); i++) {
         if (m_players[i]->position() == position) {
-            if (m_soundEnabled) {
-                m_death.play();
-            }
             m_players[i]->setAlive(false);
         }
     }

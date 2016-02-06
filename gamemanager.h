@@ -7,7 +7,6 @@
 #include <QString>
 #include <QTimer>
 #include <QTcpServer>
-#include <QSoundEffect>
 
 #include "missile.h"
 #include "player.h"
@@ -22,7 +21,6 @@ class GameManager : public QObject
     Q_OBJECT
 
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
-    Q_PROPERTY(bool soundEnabled READ soundEnabled WRITE setSoundEnabled NOTIFY soundEnabledChanged)
     Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
     Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
@@ -40,8 +38,6 @@ public:
 
     Q_INVOKABLE QString version();
 
-    bool soundEnabled() { return m_soundEnabled; }
-    void setSoundEnabled(bool enabled);
     int ticksLeft() const { return m_ticksLeft; }
 
     QList<QObject *> players() const;
@@ -53,7 +49,6 @@ public slots:
     void explosionAt(const QPoint &position);
     void endRound();
     void startRound();
-    void playBombSound();
     void stopGame();
     void togglePause();
     void addPlayer(NetworkClient *client = 0);
@@ -67,7 +62,6 @@ signals:
     void clientConnected();
     void roundsPlayedChanged();
     void tick();
-    void soundEnabledChanged();
     void playersChanged();
     void explosion(QPointF position);
     void missileCreated(QObject *missile);
@@ -88,11 +82,6 @@ private:
     QTimer m_tickTimer;
     QTcpServer m_server;
     int m_roundsPlayed;
-
-    bool m_soundEnabled;
-    QSoundEffect m_backgroundLoop;
-    QVector<QSoundEffect*> m_explosions;
-    QSoundEffect m_death;
     int m_ticksLeft;
 };
 

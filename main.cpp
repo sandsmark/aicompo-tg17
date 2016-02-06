@@ -1,6 +1,4 @@
 #include "gamemanager.h"
-#include "tile.h"
-#include "bomb.h"
 #include <QGuiApplication>
 #include <QQmlContext>
 #include <QQuickView>
@@ -48,7 +46,6 @@ int main(int argc, char *argv[])
 
     app.setOrganizationDomain("gathering.org");
     app.setApplicationName("Turn On Me");
-    qmlRegisterType<Tile>("com.iskrembilen.turnonme", 1, 0, "Tile");
     QQuickView view;
     QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
     view.setResizeMode(QQuickView::SizeRootObjectToView);
