@@ -150,10 +150,17 @@ The available commands are:
 
 ## How to compile
 
-On Linux, in the folder where the source is, run:
-```
-qmake && make
-```
+### Manual, on Linux
 
-Alternatively, the easiest on Windows/OS X, download the Qt SDK, launch QtCreator, and open the "turnonme.pro" file in the project, and click the green and pretty play button to the left.
+Check out the code, install the development packages for qt5 declarative and qt5 graphicaleffects, and run: `qmake && make`.
+
+### Alternative
+
+For Windows, OS X, etc.
+
+ * Download and install the Qt SDK from https://www.qt.io/download-open-source/
+ * Start QtQtcreator after installing
+ * Go to File -> New File or Project -> Import Project -> Git Clone
+ * Use the repository URL https://github.com/sandsmark/aicompo-tg16.git
+ * Click the green play button.
 
