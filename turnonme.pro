@@ -9,19 +9,17 @@ win32:RC_ICONS += turnon.ico
 # QMAKE_CXXFLAGS += -Wall -Werror -Wextra
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp tile.cpp \
+SOURCES += main.cpp \
     player.cpp \
     gamemanager.cpp \
     bomb.cpp \
-    userplayer.cpp \
     networkclient.cpp \
     missile.cpp
 
-HEADERS += tile.h \
+HEADERS += \
     player.h \
     gamemanager.h \
     bomb.h \
-    userplayer.h \
     networkclient.h \
     parameters.h \
     missile.h
