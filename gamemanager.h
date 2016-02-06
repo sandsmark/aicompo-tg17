@@ -46,7 +46,6 @@ public:
     int maxRounds() { return MAX_ROUNDS; }
 
 public slots:
-    void explosionAt(const QPoint &position);
     void endRound();
     void startRound();
     void stopGame();

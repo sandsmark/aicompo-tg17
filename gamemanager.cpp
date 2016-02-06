@@ -41,14 +41,6 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     connect(&m_tickTimer, SIGNAL(timeout()), SIGNAL(tick()));
     connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
     connect(this, SIGNAL(roundOver()), SLOT(endRound()));
-
-//    QTimer::singleShot(250, this, SLOT(addPlayer()));
-//    QTimer::singleShot(250, this, SLOT(addPlayer()));
-//    QTimer::singleShot(250, this, SLOT(addPlayer()));
-//    QTimer::singleShot(100, this, SLOT(addPlayer()));
-//    QTimer::singleShot(250, this, SLOT(addPlayer()));
-    //QTimer::singleShot(100, this, SLOT(addPlayer()));
-//    QTimer::singleShot(200, this, SLOT(startRound()));
 }
 
 GameManager::~GameManager()
@@ -81,15 +73,6 @@ QString GameManager::version()
 
     versionString += " // build time: " + QLatin1String(__TIME__) + ' ' + QLatin1String(__DATE__);
     return versionString;
-}
-
-void GameManager::explosionAt(const QPoint &position)
-{
-    for (int i=0; i<m_players.count(); i++) {
-        if (m_players[i]->position() == position) {
-            m_players[i]->setAlive(false);
-        }
-    }
 }
 
 void GameManager::endRound()

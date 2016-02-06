@@ -192,6 +192,7 @@ Item {
     }
 
     Rectangle {
+        id: playerCount
         anchors {
             bottom: playerList.top
             left: playerList.left
@@ -206,7 +207,6 @@ Item {
         border.color: "white"
 
         Text {
-            id: playerCount
             font.pixelSize: 20
             color: "white"
             anchors.verticalCenter: parent.verticalCenter
@@ -222,8 +222,8 @@ Item {
         id: playerList
         color: "#7f000000"
         anchors.centerIn: parent
-        width: 800
-        height: 600
+        width: 600
+        height: 400
         anchors.bottomMargin: 100
         border.color: "white"
         border.width: 1
@@ -293,5 +293,20 @@ Item {
     }
 
 
+
+    Button {
+        id: quitButton
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: 10
+        }
+        height: 40
+        width: 200
+        text: "Quit"
+        onClicked: {
+            Qt.quit()
+        }
+    }
 }
 

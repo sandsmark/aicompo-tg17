@@ -375,24 +375,6 @@ Rectangle {
         //onOpacityChanged: gameFilter.opacity = opacity
     }
 
-//    FastBlur {
-//        id: titleBlur
-//        anchors.fill: startScreen
-//        source: startScreen
-//        radius: 16
-//        //opacity: startScreen.opacity
-//        visible: false;//opacity > 0
-
-//    }
-
-//    BrightnessContrast {
-//        source: titleBlur
-//        anchors.fill: titleBlur
-//        //visible: opacity > 0
-//        brightness: 1
-//        contrast: 1
-//    }
-
     Text {
         id: aboutText
         anchors.bottom: buildId.top
