@@ -358,9 +358,12 @@ void GameManager::stopGame()
 {
     m_tickTimer.stop();
 
-    foreach(QPointer<Player> player, m_players) {
+    QMutableListIterator<Player*> it(m_players);
+    while(it.hasNext()) {
+        Player *player = it.next();
         if (player->isDisconnected()) {
             player->deleteLater();
+            it.remove();
         }
     }
 
