@@ -15,7 +15,7 @@ client.on('connect', function()
     client.write('JSON\n');
     
     // Tell server our name
-    client.write('NAME RANDOM\n');
+    client.write('NAME random_nodejs\n');
 })
 
 // Triggered when an error occurs in the connection
@@ -41,10 +41,12 @@ client.on('data', function(data) {
             // Define available
             var moves = [
                 "UP\n",
-                "DOWN\n",
                 "LEFT\n",
                 "RIGHT\n",
-                "BOMB\n"
+                "ACCELERATE\n",
+                "MISSILE\n",
+                "MINE\n",
+                "SEEKING\n"
             ];
             
             // Write our random move to server
