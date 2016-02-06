@@ -35,9 +35,6 @@ private:
 
     QTcpSocket *m_socket;
     QString m_name;
-    bool m_isWebSocket;
-    QByteArray m_webSocketFrame;
-    bool m_json;
 };
 
 #endif // NETWORKCLIENT_H

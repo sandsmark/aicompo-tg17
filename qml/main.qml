@@ -1,4 +1,5 @@
-import QtQuick 2.0
+import QtQuick 2.2
+import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Particles 2.0
 
@@ -25,15 +26,12 @@ Rectangle {
     Keys.onUpPressed: userMove("ACCELERATE")
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
-    Keys.onSpacePressed: userMove("MISSILE")
-    Keys.onTabPressed: userMove("MINE")
     Keys.onEscapePressed: {
         GameManager.stopGame();
         startScreen.opacity = 1
     }
 
     Keys.onPressed: {
-        console.log(event.key)
         if (event.key === Qt.Key_F5) {
             GameManager.endRound();
             return true;
@@ -42,6 +40,12 @@ Rectangle {
             pauseText.visible = !pauseText.visible
             pauseAnimation.restart()
             return true;
+        } else if (event.key === Qt.Key_Period) {
+            userMove("SEEKING")
+        } else if (event.key === Qt.Key_Comma) {
+            userMove("MINE")
+        } else if (event.key === Qt.Key_M) {
+            userMove("MISSILE")
         }
 
         return false;
@@ -135,7 +139,7 @@ Rectangle {
 
         Image {
             id: sun
-            source: "file:///home/sandsmark/src/turnonme/sprites/sun.png"
+            source: "qrc:///sprites/sun.png"
             anchors.centerIn: parent
             width: main.scaleSize / 10
             height: width
@@ -168,7 +172,6 @@ Rectangle {
                     }
                     //! [0]
                 }
-
             }
         }
 
@@ -213,20 +216,23 @@ Rectangle {
             model: GameManager.players
             delegate: PlayerSprite {
                 playerId: model.modelData.id
-                x: main.width / 2 + modelData.position.x * main.width / 2 - width / 2
-                y: main.height / 2 + modelData.position.y * main.height / 2 - height / 2
+//                x: main.width / 2 + modelData.position.x * main.width / 2 - width / 2
+//                y: main.height / 2 + modelData.position.y * main.height / 2 - height / 2
                 height: main.scaleSize / 20
                 width: height
             }
         }
 
-        Repeater {
-            model: GameManager.missiles
-            delegate: MissileSprite {
-                x: main.width / 2 + modelData.position.x * main.width / 2 - width / 2
-                y: main.height / 2 + modelData.position.y * main.height / 2 - height / 2
-                height: main.scaleSize / 20
-                width: height
+        Component {
+            id: missileSpriteSpawner
+
+            MissileSprite {
+            }
+        }
+        Connections {
+            target: GameManager
+            onMissileCreated: {
+                missileSpriteSpawner.createObject(gameArea, {"missileData": missile})
             }
         }
 
@@ -246,12 +252,21 @@ Rectangle {
 
 
                     Rectangle {
+//                        border.width: 2
+//                        border.color: "white"
                         anchors.left: parent.right
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
                         color: playerColors[modelData.id]
                         opacity: modelData.energy / 2000 + 0.5
                         width: 350 * modelData.energy / 1000
+                        Behavior on width { NumberAnimation { duration: 60; } }
+                        ColorAnimation on color {
+                            id: coloranim
+                            duration: 100
+                            from: "white"
+                            to: playerColors[modelData.id]
+                        }
                     }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
@@ -311,6 +326,24 @@ Rectangle {
         opacity: 1
         //onOpacityChanged: gameFilter.opacity = opacity
     }
+
+//    FastBlur {
+//        id: titleBlur
+//        anchors.fill: startScreen
+//        source: startScreen
+//        radius: 16
+//        //opacity: startScreen.opacity
+//        visible: false;//opacity > 0
+
+//    }
+
+//    BrightnessContrast {
+//        source: titleBlur
+//        anchors.fill: titleBlur
+//        //visible: opacity > 0
+//        brightness: 1
+//        contrast: 1
+//    }
 
     Text {
         id: aboutText

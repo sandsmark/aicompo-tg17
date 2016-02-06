@@ -5,41 +5,65 @@ import QtGraphicalEffects 1.0
 Item {
     id: missile
     smooth: false
-    width: (parent == null || parent.scaleSize === undefined) ? 0 : parent.scaleSize / 30
+    width: main.scaleSize / 20
     height: width
+
+    property var missileData
+    property int energy: (missileData === null) ? 0 : missileData.energy
+    rotation: (missileData === null) ? 0 : missileData.rotation + 90
+
+    onMissileDataChanged: {
+        if (missileData === null) {
+            destroy()
+        }
+    }
+
+    x: (missileData === null) ? 0 : main.width / 2 + missileData.position.x * main.width / 2 - width / 2
+    y: (missileData === null) ? 0 : main.height / 2 + missileData.position.y * main.height / 2 - height / 2
 
     Image {
         id: image
         anchors.fill: parent
-        source: modelData.energy < 75 ?
-                    (modelData.energy < 40 ?
+        source: missile.energy < 75 ?
+                    (missile.energy < 40 ?
                          "qrc:/sprites/missile-empty.png" :
                          "qrc:/sprites/missile-half.png") :
                     "qrc:/sprites/missile-full.png"
         visible: false
         smooth: false
     }
+    //onRotationChanged: console.log(rotation)
     ColorOverlay {
         anchors.fill: image
         source: image
-        color: playerColors[modelData.owner()]
+        color: missileData === null ? "transparent" : playerColors[missileData.owner()]
+//        rotation: missile.rotation
     }
-
-    rotation: modelData.rotation + 90
-    property bool alive: modelData.alive
 
     Emitter {
         id: trailEmitter
         anchors.centerIn: parent
-        emitRate: modelData.energy / 10
-        lifeSpan: 1000
-        lifeSpanVariation: 900
+        emitRate: missile.energy > 10 ? 1000 : 50
+        lifeSpan: 500
+        lifeSpanVariation: 90
         enabled: true
-        velocity: AngleDirection{ angle: modelData.rotation - 180; magnitude: 150; magnitudeVariation: 10; angleVariation: 5}
-        size: 24
-        sizeVariation: 16
+        velocity: AngleDirection {
+            angle: missile.rotation + 90
+            magnitude: missile.energy > 10 ? 200 : 0
+            magnitudeVariation: missile.energy > 10 ? 100 : 10
+            angleVariation: 5
+        }
+        size: 32
+        sizeVariation: missile.energy / 100
         system: missileParticles
-        velocityFromMovement: 0.9
-        endSize: 5
+        //velocityFromMovement: 10
+        endSize: 20
     }
+
+//    RotationAnimation on rotation {
+//        from: 0
+//        to: 360
+//        duration: 5000
+//        loops: Animation.Infinite
+//    }
 }

@@ -30,7 +30,7 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
         m_velocityY = sin(m_rotation) * 0.03;
     }
 
-        m_energy = 1000;
+    m_energy = 1000;
 }
 
 void Missile::doMove()
@@ -70,6 +70,12 @@ void Missile::doMove()
     emit positionChanged();
 
 
+    // Always point in the right direction
+    if (m_type == Normal) {
+        m_rotation = atan2(m_velocityY, m_velocityX);
+        emit rotationChanged();
+    }
+
     // Just fall into the sun
     if (m_energy < 10) {
         m_velocityX /= 1.01;
@@ -87,12 +93,11 @@ void Missile::doMove()
 
     m_energy-= 50;
 
+    emit energyChanged();
+
     if (m_type == Normal) {
         m_velocityX += cos(m_rotation) * (m_energy / 1000000.0);
         m_velocityY += sin(m_rotation) * (m_energy / 1000000.0);
-        m_rotation = atan2(m_velocityY, m_velocityX);
-        emit rotationChanged();
-        return;
     } else if (m_type == Seeking) {
         m_velocityX += cos(m_rotation) * (m_energy / 100000.0);
         m_velocityY += sin(m_rotation) * (m_energy / 100000.0);

@@ -42,5 +42,7 @@
         <file>sprites/missile-empty.png</file>
         <file>sprites/missile-full.png</file>
         <file>sprites/missile-half.png</file>
+        <file>sprites/turnon.png</file>
+        <file>sprites/sun.png</file>
     </qresource>
 </RCC>

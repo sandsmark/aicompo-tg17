@@ -23,6 +23,8 @@ class Player : public QObject
     Q_PROPERTY(QPointF position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int energy READ energy NOTIFY energyChanged)
     Q_PROPERTY(int rotation READ rotation NOTIFY rotationChanged)
+    Q_PROPERTY(qreal velocityX MEMBER m_velocityX NOTIFY velocityChanged)
+    Q_PROPERTY(qreal velocityY MEMBER m_velocityY NOTIFY velocityChanged)
 
 public:
     explicit Player(QObject *parent, int id, NetworkClient *networkClient = 0);
@@ -88,6 +90,7 @@ signals:
     void energyChanged();
     void positionChanged();
     void rotationChanged();
+    void velocityChanged();
 
 private slots:
     void onDisconnected();

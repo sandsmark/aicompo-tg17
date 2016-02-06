@@ -60,9 +60,9 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     QSettings setting("sound");
     setSoundEnabled(setting.value("enabled", false).toBool());
 
-    QTimer::singleShot(250, this, SLOT(addPlayer()));
-    QTimer::singleShot(250, this, SLOT(addPlayer()));
-    QTimer::singleShot(250, this, SLOT(addPlayer()));
+//    QTimer::singleShot(250, this, SLOT(addPlayer()));
+//    QTimer::singleShot(250, this, SLOT(addPlayer()));
+//    QTimer::singleShot(250, this, SLOT(addPlayer()));
 //    QTimer::singleShot(100, this, SLOT(addPlayer()));
 //    QTimer::singleShot(250, this, SLOT(addPlayer()));
     //QTimer::singleShot(100, this, SLOT(addPlayer()));
@@ -110,16 +110,6 @@ QList<QObject*> GameManager::players() const
     return playerList;
 }
 
-QList<QObject *> GameManager::missiles() const
-{
-    QList<QObject*> missileList;
-    foreach(Missile *missileObject, m_missiles) {
-        missileList.append(missileObject);
-    }
-
-    return missileList;
-}
-
 QString GameManager::version()
 {
     QString versionString;
@@ -159,7 +149,6 @@ void GameManager::endRound()
         m_missiles[i]->deleteLater();
     }
     m_missiles.clear();
-    emit missilesChanged();
 
     for (int i=0; i<m_players.count(); i++) {
         if (!m_players[i]->networkClient()) continue;
@@ -217,7 +206,6 @@ void GameManager::gameTick()
 {
     m_ticksLeft--;
 
-    bool missilesRemoved = false;
     QMutableListIterator<Missile*> missileIterator(m_missiles);
     while (missileIterator.hasNext()) {
         Missile *missile = missileIterator.next();
@@ -228,7 +216,6 @@ void GameManager::gameTick()
             emit explosion(missile->position());
             missile->deleteLater();
             missileIterator.remove();
-            missilesRemoved = true;
             continue;
         }
 
@@ -252,7 +239,6 @@ void GameManager::gameTick()
                 emit explosion(missile->position());
                 missile->deleteLater();
                 missileIterator.remove();
-                missilesRemoved = true;
                 break;
             }
 
@@ -268,10 +254,6 @@ void GameManager::gameTick()
         if (missile->type() == Missile::Seeking && closest) {
             missile->setRotation(atan2(closestDY, closestDX));
         }
-    }
-
-    if (missilesRemoved) {
-        emit missilesChanged();
     }
 
 
@@ -303,20 +285,21 @@ void GameManager::gameTick()
         } else if (command == "RIGHT") {
             player->rotate(ROTATE_AMOUNT);
         } else if (command == "MISSILE") {
-            player->decreaseEnergy(20);
+            player->decreaseEnergy(100);
             Missile *missile = new Missile(Missile::Normal, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
-            emit missilesChanged();
+            emit missileCreated(missile);
         } else if (command == "SEEKING") {
-            player->decreaseEnergy(20);
+            player->decreaseEnergy(150);
             Missile *missile = new Missile(Missile::Seeking, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
-            emit missilesChanged();
+            emit missileCreated(missile);
         } else if (command == "MINE") {
-            player->decreaseEnergy(20);
+            player->decreaseEnergy(200);
             Missile *missile = new Missile(Missile::Mine, player->position(), player->rotation(), player->id(), this);
             m_missiles.append(missile);
-            emit missilesChanged();
+//            createMissileSprite(missile);
+            emit missileCreated(missile);
         }
     }
 
@@ -483,3 +466,42 @@ QJsonObject GameManager::serializeForPlayer(Player *player)
 
     return gamestateObject;
 }
+
+//void GameManager::createMissileSprite(Missile *missileObject)
+//{
+//    static QQmlComponent *spriteComponent = nullptr;
+
+//    if (!spriteComponent) {
+//        spriteComponent = new QQmlComponent(m_view->engine(), QUrl("qrc:/qml/MissileSprite.qml"), QQmlComponent::PreferSynchronous);
+//    }
+//    Q_ASSERT(spriteComponent);
+
+
+//    if (spriteComponent->status() != QQmlComponent::Ready) {
+//        qWarning() << Q_FUNC_INFO << "Component not ready:" << spriteComponent->errorString();;
+//        return;
+//    }
+
+//    QQuickItem *gameArea = qobject_cast<QQuickItem*>(m_view->rootObject()->findChild<QObject*>("gameArea"));
+//    if (!gameArea) {
+//        qWarning() << Q_FUNC_INFO << "Unable to find game area";
+//        return;
+//    }
+
+
+//    QObject *missileSpriteObject = spriteComponent->create();
+//    if (!missileSpriteObject) {
+//        qWarning() << Q_FUNC_INFO << "Unable to create missile sprite";
+//        return;
+//    }
+//    QQuickItem *missileSprite = qobject_cast<QQuickItem*>(missileSpriteObject);
+//    if (!missileSprite) {
+//        qWarning() << Q_FUNC_INFO << "Invalid missile sprite";
+//        missileSpriteObject->deleteLater();
+//        return;
+//    }
+
+//    missileSprite->setParent(missileObject);
+//    missileSprite->setParentItem(gameArea);
+//    missileSprite->setProperty("missileData", QVariant::fromValue(missileObject));
+//}

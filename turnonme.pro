@@ -4,6 +4,8 @@ CONFIG += c++11
 
 linux: QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
 
+win32:RC_ICONS += turnon.ico
+
 # QMAKE_CXXFLAGS += -Wall -Werror -Wextra
 
 # The .cpp file which was generated for your project. Feel free to hack it.
@@ -40,4 +42,6 @@ OTHER_FILES += \
 DISTFILES += \
     sprites/missile-empty.png \
     sprites/missile-full.png \
-    sprites/missile-half.png
+    sprites/missile-half.png \
+    sprites/turnon.png \
+    sprites/sun.png

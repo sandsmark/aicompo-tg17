@@ -22,6 +22,27 @@ Item {
         }
     }
 
+    x: main.width / 2 + playerX * main.width / 2 - width / 2
+    y: main.height / 2 + playerY * main.height / 2 - height / 2
+
+    property real playerX: modelData.position.x
+    property real playerY: modelData.position.y
+
+//    Behavior on playerX {
+//        SmoothedAnimation {
+//            velocity: 60/modelData.velocityX
+////            easing.type: Easing.Linear
+//        }
+//    }
+
+//    Behavior on playerY {
+//        SmoothedAnimation {
+//            velocity: 60/modelData.velocityY
+//            //velocity: 60
+////            easing.type: Easing.Linear
+//        }
+//    }
+
     Image {
         id: image
         anchors.centerIn: parent
@@ -47,8 +68,8 @@ Item {
             x: parent.width/2 - parent.width / 4
             y: parent.height /2 - parent.height / 4
             emitRate: 2000
-            lifeSpan: 75
-            lifeSpanVariation: 20
+            lifeSpan: 150
+            lifeSpanVariation: 100
             enabled: false
             velocity: AngleDirection{ angle: 90; magnitude: 1000; angleVariation: 15}
             size: 50
@@ -60,12 +81,14 @@ Item {
 
 
         Rectangle {
-            anchors.fill: parent
+            anchors.centerIn: parent
+            height: width
             radius: width/2
             color: "transparent"
-            border.width: modelData.energy / 50
+            width: modelData.energy / 10
+            border.width: modelData.energy / 500
             border.color: playerColors[playerId]
-            opacity: 0.5
+//            opacity: 0.5
             //opacity: modelData.energy / 1000
         }
     }
@@ -100,6 +123,7 @@ Item {
     onCommandChanged: {
         if (command === "ACCELERATE") {
             accelerationEmitter.pulse(500)
+//            trailEmitter.pulse(500)
         }
     }
 
@@ -129,4 +153,20 @@ Item {
             blurAnimation.restart()
         }
     }
+
+//    Emitter {
+//        id: trailEmitter
+//        anchors.fill: parent
+//        emitRate: modelData.energy
+//        lifeSpan: 1000
+//        lifeSpanVariation: 90
+//        enabled: false
+//        velocity: AngleDirection{ angle: modelData.rotation + 180; magnitude: 100; magnitudeVariation: 100; angleVariation: 100}
+//        size: 24
+//        sizeVariation: 16
+//        system: missileParticles
+//        //velocityFromMovement: 10
+//        endSize: 20
+//    }
+
 }

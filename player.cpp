@@ -3,8 +3,8 @@
 #include "networkclient.h"
 #include "parameters.h"
 
+#include <qmath.h> // because windows sucks assss
 #include <QDebug>
-#include <cmath>
 
 Player::Player(QObject *parent, int id, NetworkClient *networkClient) : QObject(parent),
     m_id(id),
@@ -247,4 +247,5 @@ void Player::doMove()
     m_position.setX(x);
     m_position.setY(y);
     emit positionChanged();
+    emit velocityChanged();
 }

@@ -25,7 +25,6 @@ class GameManager : public QObject
     Q_PROPERTY(bool soundEnabled READ soundEnabled WRITE setSoundEnabled NOTIFY soundEnabledChanged)
     Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
-    Q_PROPERTY(QList<QObject*> missiles READ missiles NOTIFY missilesChanged)
     Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
     Q_PROPERTY(int maxRounds READ maxRounds CONSTANT)
 
@@ -46,7 +45,6 @@ public:
     int ticksLeft() const { return m_ticksLeft; }
 
     QList<QObject *> players() const;
-    QList<QObject *> missiles() const;
 
     int maxPlayerCount() { return MAX_PLAYERS; }
     int maxRounds() { return MAX_ROUNDS; }
@@ -71,8 +69,8 @@ signals:
     void tick();
     void soundEnabledChanged();
     void playersChanged();
-    void missilesChanged();
     void explosion(QPointF position);
+    void missileCreated(QObject *missile);
 
 private slots:
     void gameTick();
@@ -82,6 +80,7 @@ private slots:
 private:
     void resetPositions();
     QJsonObject serializeForPlayer(Player *player);
+//    void createMissileSprite(Missile *parent);
 
     QQuickView *m_view;
     QList<Player*> m_players;

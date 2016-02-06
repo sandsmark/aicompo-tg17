@@ -7,9 +7,39 @@
 #include <QtQml>
 #include <QQuickItem>
 #include <QFontDatabase>
+#include <iostream>
+
+void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QString txt;
+    switch (type) {
+    case QtDebugMsg:
+        txt = QString("Debug: %1 (%2:%3, %4)\n").arg(msg).arg(context.file).arg(context.line).arg(context.function);
+        break;
+    case QtInfoMsg:
+        txt = QString("Info: %1 (%2:%3, %4)\n").arg(msg).arg(context.file).arg(context.line).arg(context.function);
+    break;
+    case QtWarningMsg:
+        txt = QString("Warning: %1 (%2:%3, %4)\n").arg(msg).arg(context.file).arg(context.line).arg(context.function);
+    break;
+    case QtCriticalMsg:
+        txt = QString("Critical: %1 (%2:%3, %4)\n").arg(msg).arg(context.file).arg(context.line).arg(context.function);
+    break;
+    case QtFatalMsg:
+        txt = QString("Fatal: %1 (%2:%3, %4)\n").arg(msg).arg(context.file).arg(context.line).arg(context.function);
+    break;
+    }
+    QFile outFile("log.txt");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << txt << endl;
+
+    std::cout << txt.toStdString() << std::endl;
+}
 
 int main(int argc, char *argv[])
 {
+    qInstallMessageHandler(myMessageHandler);
     QGuiApplication app(argc, argv);
 
 
@@ -29,5 +59,6 @@ int main(int argc, char *argv[])
     //}
     view.setSource(QUrl("qrc:/qml/main.qml"));
     view.showMaximized();
+    //view.showFullScreen();
     return app.exec();
 }

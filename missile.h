@@ -1,6 +1,7 @@
 #ifndef MISSILE_H
 #define MISSILE_H
 
+#include <qmath.h> // because windows sucks assss
 #include <QObject>
 #include <QPointF>
 #include <QJsonObject>

@@ -7,7 +7,7 @@
 #include "bomb.h"
 
 NetworkClient::NetworkClient(QTcpSocket *socket) :
-    QObject(socket), m_socket(socket), m_isWebSocket(false), m_json(false)
+    QObject(socket), m_socket(socket)
 {
     socket->open(QIODevice::ReadWrite);
     m_name = m_socket->peerAddress().toString();
@@ -28,33 +28,23 @@ void NetworkClient::kick()
 
 void NetworkClient::sendString(QByteArray string)
 {
-    if (m_isWebSocket) {
-        foreach(QByteArray line, string.split('\n')) {
-            m_socket->write("\0");
-            m_socket->write(line + "\r\n");
-            m_socket->write("\xff");
-        }
-    } else {
-        m_socket->write(string);
-    }
+    m_socket->write(string);
 }
 
 void NetworkClient::sendDead()
 {
-    if (m_json) {
-        sendString("{ \"type\": \"dead\" }\n");
-    } else {
-        sendString("DEAD\n");
-    }
+    QJsonObject object;
+    object["messagetype"] = "dead";
+    QJsonDocument packet(object);
+    sendString(packet.toJson());
 }
 
 void NetworkClient::sendEndOfRound()
 {
-    if (m_json) {
-        sendString("{ \"type\": \"round end\" }\n");
-    } else {
-        sendString("ENDOFROUND\n");
-    }
+    QJsonObject object;
+    object["messagetype"] = "endofround";
+    QJsonDocument packet(object);
+    sendString(packet.toJson());
 }
 
 void NetworkClient::sendState(const QJsonObject gameState)
@@ -70,18 +60,6 @@ void NetworkClient::sendState(const QJsonObject gameState)
 void NetworkClient::dataReceived()
 {
     QByteArray data = m_socket->readAll();
-    if (m_isWebSocket) {
-        if (m_webSocketFrame.isEmpty() && !data.startsWith('\0')) return; // invalid data
-
-        m_webSocketFrame += data;
-
-        if (data.endsWith('\xff')) {
-            data = m_webSocketFrame;
-            m_webSocketFrame.clear();
-        } else {
-            return;
-        }
-    }
 
 
     QList<QByteArray> lines = data.split('\n');
@@ -96,27 +74,6 @@ void NetworkClient::dataReceived()
                 m_name = m_name.left(10);
             }
             emit nameChanged(m_name);
-            continue;
-        }
-
-        if (line.startsWith("JSON")) {
-            m_json = true;
-            continue;
-        }
-
-        if (line.startsWith("Sec-WebSocket-Key:")) {
-            QList<QByteArray> splitLine = line.split(':');
-            if (splitLine.length() < 2) continue;
-            QByteArray handshake = splitLine[1].trimmed() + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-
-            QCryptographicHash hash(QCryptographicHash::Sha1);
-            hash.addData(handshake);
-            handshake = hash.result().toBase64();
-            m_socket->write("HTTP/1.1 101 Switching Protocols\r\n"
-                            "Upgrade: websocket\r\n"
-                            "Connection: Upgrade\r\n"
-                            "Sec-WebSocket-Accept: " + handshake + "\r\n"
-                            "Sec-WebSocket-Protocol: chat\r\n");
             continue;
         }
 
