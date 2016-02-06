@@ -21,6 +21,10 @@ If you hit another player with either a missile or a hovermine, that player lose
 
 We might also add more weapons, if we find some fun ideas.
 
+## Windows binary
+
+You can download a pre-built version for Windows here: https://iskrembilen.com/turnonme.zip
+
 ---
 
 ## Keymap
