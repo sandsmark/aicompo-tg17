@@ -31,20 +31,6 @@ Rectangle {
         anchors.fill: parent
         cursorShape: MouseArea.PointingHandCursor
         hoverEnabled: true
-        /*onEntered: {
-            if (checkMark.checked) {
-                checkMark.opacity = 1.0
-            } else {
-                checkMark.opacity = 0.3
-            }
-        }
-        onExited: {
-            if (checkMark.checked) {
-                checkMark.opacity = 0.7
-            } else {
-                checkMark.opacity = 0.0
-            }
-        }*/
         
         onClicked: checkbox.clicked()
     }

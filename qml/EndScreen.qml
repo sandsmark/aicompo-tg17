@@ -34,8 +34,6 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: quitButton.top
         anchors.margins: 20
-        //anchors.left: parent.left
-        //anchors.right: parent.right
         border.color: "white"
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
@@ -46,8 +44,9 @@ Rectangle {
                 delegate: Text {
                     horizontalAlignment: Text.AlignHCenter
                     color: "white"
-                    font.pixelSize: 45
+                    font.pointSize: 20
                     font.bold: true
+                    font.family: "Aldrich"
                     text: model.modelData.name + ": " + model.modelData.wins + " wins" + " (points: " + model.modelData.score + ")"
                 }
             }
@@ -57,10 +56,13 @@ Rectangle {
     // Quit button
     Button {
         id: quitButton
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
-        anchors.right: parent.horizontalCenter
-        anchors.rightMargin: 10
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: 10
+            right: parent.horizontalCenter
+            rightMargin: 10
+        }
+
         width: 200
         height: 50
 
@@ -86,7 +88,6 @@ Rectangle {
                 return
             }
             GameManager.stopGame()
-//            endScreen.opacity = 0
             startScreen.opacity = 1
         }
         text: "Restart"

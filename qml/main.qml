@@ -330,8 +330,6 @@ Rectangle {
                 }
             }
         }
-
-        //visible: startScreen.opacity < 1
     }
 
     FastBlur {
@@ -339,8 +337,7 @@ Rectangle {
         anchors.fill: gameArea
         source: gameArea
         radius: 32
-        //opacity: startScreen.opacity
-        visible: false;//opacity > 0
+        visible: false;
 
     }
 
