@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/BombSprite.qml</file>
         <file>qml/Button.qml</file>
         <file>qml/Checkbox.qml</file>
         <file>qml/EndScreen.qml</file>

@@ -27,7 +27,6 @@ RESOURCES += \
 
 OTHER_FILES += \
     qml/Button.qml \
-    qml/BombSprite.qml \
     qml/EndScreen.qml \
     qml/main.qml \
     qml/PlayerSprite.qml \
