@@ -1,89 +1,113 @@
-Drop da Bomb
+Turn On Me
 ============
 
-## How to build
+This is a game where you circle a sun and try to shoot down the other players.
 
-On linux, in the folder where the source is:
-```
-qmake && make
-```
+All players have an amount of energy, which is used for both the anti-gravity engine that allows the extremely heavy ships to stay in orbit, as well as doing actions.
 
-On windows, download the Qt SDK, launch QtCreator, and open the "bomb.pro" file in the project, and click the pretty play button to the left.
+All players start the round with 1000 energy.
 
-### Default protocol 
+The anti-gravity engine uses 1 energy for each game tick, and as the energy goes lower your ship gets heavier, and therefore circles closer to the sun.
 
-```
-PLAYERS
-0 1,1 // ID x,y
-2 3,9 // ID x,y
-ENDPLAYERS
-BOMBS
-5,8 7 // x,y ticks left before kaboom
-ENDBOMBS
-X 15 // Your x-coordinate
-Y 1 // Your y-coordinate
-HEIGHT 13 // Map-height
-WIDTH 17 // Map-width
-MAP
-+++++++++++++++++
-+.....+###+.#...+
-+++##...++.##.+++
-+######.#.##....+
-+##++.+.#.+.++#.+
-+.#+.#.#++#.#+#.+
-++.##.+...#.###++
-+#++#++#+++#.++#+
-+##...##+..#####+
-+...+.#..###+...+
-+.+#..#++..##.+.+
-+.+###+##.+...+.+
-+++++++++++++++++
-ENDMAP
-```
+Turning your ship with your thrusters costs 1 energy.
+
+Accelerating forward costs 10 energy.
+
+Firing a normal missile costs 100 energy, firing a homing missile costs 150 energy and dropping a hovermine costs 200 energy.
+
+If you hit another player with either a missile or a hovermine, that player loses 100 energy, and you get 100 energy.
 
 ---
 
-### JSON Protocol
+## Keymap
 
-After connecting, emit `JSON\n` to receive JSON objects instead of TEXT mode. The latter will require you to write your own parser - wich can be a good and a bad thing, depending on you :)
+ * F5: Restarts round
+ * p: Pause
+ * ESC: Stop game
 
-On each game tick the server emits one or more JSON-objects, depending on what happened the last tick.
+### Keys for human player
 
-`status update` - Contains all essential information your player will need to interact with the surroundings.
+ * Left: turn left
+ * Right: turn right
+ * Forward: Accelerate
+ * m: Fire normal missile.
+ * ,: Drop mine.
+ * .: Fire homing missile.
+
+---
+
+
+## Communication Protocol
+
+The protocol is based on JSON.
+
+To connect to the game, open a TCP connection to where the game is running on port `54321`. When running on the same machine, just connect to localhost (127.0.0.1).
+
+After connecting, send "NAME " followed by the name of your bot to set a name (for example: "NAME superbot\n").
+
+When the game starts, you will start to get "stateupdate" JSON objects, that look like this:
 
 ```JSON
 {
-    "type": "status update",
-    "players": [
-        {
-            "id": 0,
-            "x": 1,
-            "y": 1
+    "messagetype": "stateupdate",
+    "gamestate": {
+        "missiles": [
+            {
+                "energy": 0,
+                "owner": 0,
+                "rotation": 1.5125629973121255,
+                "type": "NORMAL",
+                "velocityX": 0.002812616921765813,
+                "velocityY": 0.048244483355828163,
+                "x": -0.1065170720879374,
+                "y": 0.057297497784823674
+            },
+            {
+                "energy": 4981,
+                "owner": 0,
+                "rotation": 1.8384380069025155,
+                "type": "MINE",
+                "velocityX": 0.00042820233654171418,
+                "velocityY": -0.0015615237322931463,
+                "x": -0.22436009460522804,
+                "y": 0.81817305140153029
+            },
+            {
+                "energy": 350,
+                "owner": 0,
+                "rotation": -1.1475855031033397,
+                "type": "SEEKING",
+                "velocityX": 0.032627412854647569,
+                "velocityY": -0.03970474002645958,
+                "x": -0.086567348713245326,
+                "y": 0.69192650021900126
+            }
+        ],
+        "others": [
+            {
+                "energy": 858,
+                "id": 0,
+                "rotation": 90,
+                "velocityX": -0.007226001197449654,
+                "velocityY": -0.026401470594673109,
+                "x": -0.42907664254625305,
+                "y": 0.40928029816990924
+            }
+        ],
+        "you": {
+            "energy": 918,
+            "id": 1,
+            "rotation": 270,
+            "velocityX": 0.0076515503238599285,
+            "velocityY": 0.025595966187665863,
+            "x": 0.43292444925334561,
+            "y": -0.41881639474014176
         }
-    ],
-    "bombs": [
-        {
-            "x": 2,
-            "y": 1,
-            "state": 0
-        }
-    ],
-    "x": 10,
-    "y": 1,
-    "height": 13,
-    "width": 17,
-    "map": [
-        "++++++++",
-        "+..####+",
-        "+.#####+",
-        "+######+",
-        "+######+",
-        "+#####.+",
-        "+####..+",
-        "++++++++"
-    ]
+    }
 }
 ```
+
+There are also two other kinds of messages:
 
 --
 
@@ -95,115 +119,33 @@ On each game tick the server emits one or more JSON-objects, depending on what h
 
 --
 
-`end round` - There's only one player left (for your sake I hope it's you)
+`endofround` - There's only one player left (for your sake I hope it's you)
 
 ```JSON
-{ "type": "round end" }
+{ "type": "endofround" }
 ```
+
+### Controlling
+
+To do something, send the appropriate command followed by `\n`, for example `RIGHT\n`.
+
+The available commands are:
+
+ * `ACCELERATE`: Accelerate in the direction you're currently pointing.
+ * `LEFT`: Turn left.
+ * `RIGHT`: Turn right.
+ * `MISSILE`: Fire a normal missile in the direction you're currently pointing.
+ * `SEEKING`: Fire a homing missile that tries to home in on the closest player.
+ * `MINE`: Drop a "mine" that tries to hover around the sun.
 
 ---
 
-### The map
+## How to compile
 
-This example map can you add into the maps-folder in your game-folder. It'll be parsed automatically and you can use it to play on. Be creative, and test as many map combinations as possible to be sure your AI can cover all kinds of resistance! :)
-
+On Linux, in the folder where the source is, run:
 ```
-480     Number of ticks
-8x8     Mapsize in XxY
-++++++++
-+p__###+
-+.#####+
-+######+
-+######+
-+#####.+
-+###__p+
-++++++++
-
-+     Walls that can not be destroyed
-#     Walls that can be destroyed
-.     Grass
-_     Floor
-p     Player spawn
+qmake && make
 ```
 
-When you are playing, the map looks a bit different. All walkable tiles have been converted to a dot (`.`), so the map above would now look like the one below, really not much of a difference.
+Alternatively, the easiest on Windows/OS X, download the Qt SDK, launch QtCreator, and open the "turnonme.pro" file in the project, and click the green and pretty play button to the left.
 
-```
-++++++++
-+...###+
-+.#####+
-+######+
-+######+
-+#####.+
-+###...+
-++++++++
-```
-
----
-
-### The bombs
-
-Watch out! They sting!
-
-On a serious note though, not too much special about them except for the `state` property. This tells you how many ticks the bomb has left to live. At a state of 0, the bomb will explode in a horizontal and vertical direction, covering the total of 5 tiles vertically and horizontally creating a + sign.
-
----
-
-### Playing the game!
-
-When you are connected to the server, you most likely wan to set your bots name. This is done by emitting `NAME RandomBot\n` to the server.
-
-When you have joined a game you have the possibility to interact in 5 ways; navigating in 4 directions, and **dropping da bomb**!
-
-```
-"LEFT\n"
-"RIGHT\n"
-"UP\n"
-"DOWN\n"
-"BOMB"\n"
-```
-
-Easy, right? :)
-
-Last but not least, the bots can throw shit at each other! For instance `SAY Puny humans!\n`
-
----
-
-### Example of a connection
-
-```
-> - you
-$ - server
-
-You connect to the server
-> "JSON\n"
-> "NAME RandomAI\n"
-Game starts
-$ The server emits the JSON-package
-> "BOMB\n"
-$ The server emits the JSON-package
-> "LEFT\N"
-$ The server emits the JSON-package
-> "SAY I'm just gonna hang out here for a bit...\n"
-$ { "type": "dead" }
-
-Now make your own bot, and try to make it do a better job than ours :)
-```
-
-**Remember:** Always end a command with `\n`
-
----
-
-### Keymap
-
-```
-f5     Restarts round
-space  Pause
-esc    Stop game 
-
-Arrowkeys for controlling the human player, and backspace for dropping bombs.
-```
-
----
-
-If you feel you need to test your bot, you can download a testbot created by Patrick Tørresvold [here](software.2rsvold.com/DemoMiner.zip).
