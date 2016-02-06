@@ -118,7 +118,7 @@ There are also two other kinds of messages:
 `dead` - You've been killed, and cannot expect more data until next round
 
 ```JSON
-{ "type": "dead" }
+{ "messagetype": "dead" }
 ```   
 
 --
@@ -126,7 +126,7 @@ There are also two other kinds of messages:
 `endofround` - There's only one player left (for your sake I hope it's you)
 
 ```JSON
-{ "type": "endofround" }
+{ "messagetype": "endofround" }
 ```
 
 ### Controlling
