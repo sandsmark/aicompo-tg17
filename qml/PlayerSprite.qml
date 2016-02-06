@@ -162,16 +162,14 @@ Item {
 
         lifeSpan: 5000
         lifeSpanVariation: 90
-        enabled: true
+        enabled: modelData.energy > 1
         velocity: AngleDirection{ magnitude: 10; magnitudeVariation: 10; angleVariation: 360}
         size: 8
         sizeVariation: 4
         system: missileParticles
         group: particleGroups[playerId]
-        //velocityFromMovement: 10
         endSize: 0
-        shape: EllipseShape {
-        }
+        shape: EllipseShape { }
     }
 
 }
