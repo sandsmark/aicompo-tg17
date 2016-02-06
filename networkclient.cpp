@@ -27,7 +27,7 @@ void NetworkClient::kick()
 
 void NetworkClient::sendString(QByteArray string)
 {
-    m_socket->write(string);
+    m_socket->write(string + '\n');
 }
 
 void NetworkClient::sendDead()
@@ -35,7 +35,7 @@ void NetworkClient::sendDead()
     QJsonObject object;
     object["messagetype"] = "dead";
     QJsonDocument packet(object);
-    sendString(packet.toJson());
+    sendString(packet.toJson(QJsonDocument::Compact));
 }
 
 void NetworkClient::sendEndOfRound()
@@ -43,7 +43,7 @@ void NetworkClient::sendEndOfRound()
     QJsonObject object;
     object["messagetype"] = "endofround";
     QJsonDocument packet(object);
-    sendString(packet.toJson());
+    sendString(packet.toJson(QJsonDocument::Compact));
 }
 
 void NetworkClient::sendState(const QJsonObject gameState)
@@ -53,7 +53,7 @@ void NetworkClient::sendState(const QJsonObject gameState)
 
     stateObject["gamestate"] = gameState;
     QJsonDocument packet(stateObject);
-    sendString(packet.toJson());
+    sendString(packet.toJson(QJsonDocument::Compact));
 }
 
 void NetworkClient::dataReceived()
