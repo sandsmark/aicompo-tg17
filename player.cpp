@@ -118,6 +118,13 @@ bool Player::isAlive()
 
 void Player::setRotation(int rotation)
 {
+    if (rotation < 0) {
+        rotation += 360;
+    }
+    if (rotation > 360) {
+        rotation -= 360;
+    }
+
     m_rotation = rotation;
     emit rotationChanged();
 }
@@ -131,8 +138,7 @@ void Player::setPosition(QPointF position)
     m_position = position;
     emit positionChanged();
 
-    m_rotation = velocityAngle * 360 / (M_PI * 2.0);
-    emit rotationChanged();
+    setRotation(velocityAngle * 360 / (M_PI * 2.0));
 }
 
 QJsonObject Player::serialize()
@@ -182,9 +188,7 @@ void Player::rotate(int amount)
     }
 
     decreaseEnergy(ROTATE_COST);
-    m_rotation += amount;
-
-    emit rotationChanged();
+    setRotation(m_rotation + amount);
 }
 
 void Player::setEnergy(int energy)
