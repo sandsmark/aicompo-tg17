@@ -22,11 +22,50 @@ Item {
         }
     }
 
-    x: main.width / 2 + playerX * main.width / 2 - width / 2
-    y: main.height / 2 + playerY * main.height / 2 - height / 2
+    x: main.width / 2 + targetX * main.width / 2 - width / 2
+    y: main.height / 2 + targetY * main.height / 2 - height / 2
 
+    property real targetX: 0
+    property real targetY: 0
     property real playerX: modelData.position.x
     property real playerY: modelData.position.y
+    property real lastPlayerX: 0
+    property real lastPlayerY: 0
+
+    onPlayerXChanged: {
+        if (Math.abs(playerX - lastPlayerX) > 0.1) {
+            targetX = playerX
+        } else {
+            xAnimation.from = lastPlayerX
+            xAnimation.to = playerX
+            xAnimation.restart()
+        }
+
+        lastPlayerX = playerX
+    }
+
+    onPlayerYChanged: {
+        if (Math.abs(playerY - lastPlayerY) > 0.1) {
+            targetY = playerY
+        } else {
+            yAnimation.from = lastPlayerY
+            yAnimation.to = playerY
+            yAnimation.restart()
+        }
+
+        lastPlayerY = playerY
+    }
+
+    PropertyAnimation on targetX {
+        id: xAnimation
+        duration: 50
+    }
+
+
+    PropertyAnimation on targetY {
+        id: yAnimation
+        duration: 50
+    }
 
 //    Behavior on playerX {
 //        SmoothedAnimation {
