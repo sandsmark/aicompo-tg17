@@ -73,7 +73,6 @@ private slots:
 private:
     void resetPositions();
     QJsonObject serializeForPlayer(Player *player);
-//    void createMissileSprite(Missile *parent);
 
     QQuickView *m_view;
     QList<Player*> m_players;
