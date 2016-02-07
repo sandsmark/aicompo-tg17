@@ -9,19 +9,6 @@ Item {
     property int playerId
     property string command: modelData.lastCommand
 
-    ParticleSystem {
-        id: accelerationParticles
-        anchors.fill: parent
-        ImageParticle {
-            source: "qrc:///sprites/star.png"
-            alpha: 0.1
-            alphaVariation: 0.1
-            color: playerColors[playerId]
-//            colorVariation: 0.3
-            //color: "#01ffffff"
-        }
-    }
-
     x: main.width / 2 + targetX * main.width / 2 - width / 2
     y: main.height / 2 + targetY * main.height / 2 - height / 2
 
@@ -94,7 +81,7 @@ Item {
         Behavior on opacity {
             NumberAnimation {
                 easing.type: Easing.Linear
-                duration: 1000
+                duration: 100
             }
         }
 
@@ -107,15 +94,16 @@ Item {
             x: parent.width/2 - parent.width / 4
             y: parent.height /2 - parent.height / 4
             emitRate: 2000
-            lifeSpan: 150
+            lifeSpan: 50
             lifeSpanVariation: 100
             enabled: false
-            velocity: AngleDirection{ angle: 90; magnitude: 1000; angleVariation: 15}
+            velocity: AngleDirection{ angle: modelData.rotation + 180; magnitude: 1000; angleVariation: 15}
             size: 50
             sizeVariation: 5
-            system: accelerationParticles
+            system: particleSystem
             width: parent.width / 2
             height: parent.height /2
+            group: particleGroups[playerId]
         }
 
 
@@ -132,31 +120,23 @@ Item {
         }
     }
 
-    ParticleSystem {
-        id: deathParticles
-        anchors.fill: image
-        ImageParticle {
-            source: "qrc:///sprites/star.png"
-            alpha: 0.0
-            colorVariation: 0.1
-            color: playerColors[playerId]
-        }
 
-        Emitter {
-            id: deathEmitter
-            anchors.fill: parent
-            emitRate: 1000
-            lifeSpan: 2000
-            lifeSpanVariation: 1000
-            enabled: false
-            velocity: AngleDirection{magnitude: 8; angleVariation: 360}
-            size: 24
-            sizeVariation: 16
+    Emitter {
+        id: deathEmitter
+        anchors.fill: parent
+        emitRate: 1000
+        lifeSpan: 2000
+        lifeSpanVariation: 1000
+        enabled: false
+        velocity: AngleDirection{magnitude: 8; magnitudeVariation: 100; angleVariation: 360}
+        size: 24
+        sizeVariation: 16
 
-            shape: MaskShape {
-                source: image.source
-            }
+        shape: MaskShape {
+            source: image.source
         }
+        group: particleGroups[playerId]
+        system: particleSystem
     }
 
     onCommandChanged: {
@@ -205,7 +185,7 @@ Item {
         velocity: AngleDirection{ magnitude: 10; magnitudeVariation: 10; angleVariation: 360}
         size: 8
         sizeVariation: 4
-        system: missileParticles
+        system: particleSystem
         group: particleGroups[playerId]
         endSize: 0
         shape: EllipseShape { }

@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: missile
     smooth: false
-    width: main.scaleSize / 20
+    width: main.scaleSize / 30
     height: width
 
     property var missileData
@@ -18,7 +18,7 @@ Item {
         }
     }
 
-    x:  main.width / 2 + targetX * main.width / 2 - width / 2
+    x: main.width / 2 + targetX * main.width / 2 - width / 2
     y: main.height / 2 + targetY * main.height / 2 - height / 2
 
 
@@ -102,7 +102,7 @@ Item {
         }
         size: 8
         sizeVariation: 4
-        system: missileParticles
+        system: particleSystem
         //velocityFromMovement: 10
         endSize: 20
         shape: EllipseShape {

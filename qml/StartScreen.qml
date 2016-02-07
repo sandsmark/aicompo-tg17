@@ -16,10 +16,13 @@ Item {
     }
 
 
-    ParticleSystem {
-        id: sys
-        anchors.fill: parent
-        running: true
+    Emitter {
+        lifeSpan: 4000
+        emitRate: 120
+        size: 12
+        anchors.centerIn: parent
+        enabled: parent.visible
+        //! [0]
 
         property real petalLength: 180
         property real petalRotation: 0
@@ -30,79 +33,52 @@ Item {
             running: true
             duration: 24000
         }
-
         function convert(a) {return a*(Math.PI/180);}
-        Emitter {
-            lifeSpan: 4000
-            emitRate: 120
-            size: 12
-            anchors.centerIn: parent
-            //! [0]
-            onEmitParticles: {
-                for (var i=0; i<particles.length; i++) {
-                    var particle = particles[i];
-                    particle.startSize = Math.max(02,Math.min(492,Math.tan(particle.t/2)*24));
-                    var theta = Math.floor(Math.random() * 6.0);
-                    particle.red = theta == 0 || theta == 1 || theta == 2 ? 0.2 : 1;
-                    particle.green = theta == 2 || theta == 3 || theta == 4 ? 0.2 : 1;
-                    particle.blue = theta == 4 || theta == 5 || theta == 0 ? 0.2 : 1;
-                    theta /= 6.0;
-                    theta *= 2.0*Math.PI;
-                    theta += sys.convert(sys.petalRotation);//Convert from degrees to radians
-                    particle.initialVX = sys.petalLength * Math.cos(theta);
-                    particle.initialVY = sys.petalLength * Math.sin(theta);
-                    particle.initialAX = particle.initialVX * -0.5;
-                    particle.initialAY = particle.initialVY * -0.5;
-                }
+        onEmitParticles: {
+            for (var i=0; i<particles.length; i++) {
+                var particle = particles[i];
+                particle.startSize = Math.max(02,Math.min(492,Math.tan(particle.t/2)*24));
+                var theta = Math.floor(Math.random() * 6.0);
+                particle.red = theta == 0 || theta == 1 || theta == 2 ? 0.2 : 1;
+                particle.green = theta == 2 || theta == 3 || theta == 4 ? 0.2 : 1;
+                particle.blue = theta == 4 || theta == 5 || theta == 0 ? 0.2 : 1;
+                theta /= 6.0;
+                theta *= 2.0*Math.PI;
+                theta += convert(petalRotation);//Convert from degrees to radians
+                particle.initialVX = petalLength * Math.cos(theta);
+                particle.initialVY = petalLength * Math.sin(theta);
+                particle.initialAX = particle.initialVX * -0.5;
+                particle.initialAY = particle.initialVY * -0.5;
             }
-            //! [0]
         }
-
-        ImageParticle {
-            source: "qrc:///particleresources/fuzzydot.png"
-            alpha: 0.0
-        }
+        //! [0]
+        group: "Petal"
+        system: particleSystem
     }
 
-    ParticleSystem {
-        id: logo
+
+    Emitter {
         anchors.top: parent.top
         anchors.bottom: titleText.top
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
         width: height
-
-        ImageParticle {
-            source: "qrc:///particleresources/star.png"
-            z: 2
-            anchors.fill: parent
-            color: "#0fa0f0ff"
-            alphaVariation: 1
-            colorVariation: 0.1
-            rotationVariation: 360
+        enabled: parent.visible
+        emitRate: 5000
+        lifeSpan: 2000
+        size: 15
+        sizeVariation: 15
+        //! [0]
+        shape: MaskShape {
+            source: "qrc:///sprites/turnon.png"
         }
-
-        Emitter {
-            anchors.fill: parent
-            emitRate: 5000
-            lifeSpan: 1000
-            size: 15
-            sizeVariation: 5
-            //! [0]
-            shape: MaskShape {
-                source: "qrc:///sprites/turnon.png"
-            }
-            velocity: TargetDirection {
-                targetItem: logo
-                targetVariation: width/10
-                ///angle: 180
-                //angleVariation: 360
-                magnitude: 0.1
-                magnitudeVariation: 0.1
-                proportionalMagnitude: true
-            }
-            //! [0]
+        velocity: PointDirection {
+            xVariation: 10
+            yVariation: 10
         }
+        system: particleSystem
+        group: "Explosion"
+        //! [0]
     }
 
     Text {

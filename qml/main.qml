@@ -144,50 +144,33 @@ Rectangle {
             width: main.scaleSize / 10
             height: width
 
-            ParticleSystem {
+            Emitter {
                 anchors.fill: parent
-                ImageParticle {
-                    source: "qrc:///sprites/star.png"
-                    alphaVariation: 0.1
-                    colorVariation: 0.5
-                    color: "#0fffff00"
+                //group: "center"
+                emitRate: 1000
+                lifeSpan: 2000
+                size: 20
+                sizeVariation: 5
+                endSize: 0
+                //! [0]
+                shape: EllipseShape {fill: false}
+                velocity: TargetDirection {
+                    targetX: sun.width/2
+                    targetY: sun.height/2
+                    proportionalMagnitude: true
+                    magnitude: 0.5
+                    magnitudeVariation: 0.9
                 }
-
-                Emitter {
-                    anchors.fill: parent
-                    //group: "center"
-                    emitRate: 1000
-                    lifeSpan: 2000
-                    size: 20
-                    sizeVariation: 5
-                    endSize: 0
-                    //! [0]
-                    shape: EllipseShape {fill: false}
-                    velocity: TargetDirection {
-                        targetX: sun.width/2
-                        targetY: sun.height/2
-                        proportionalMagnitude: true
-                        magnitude: 0.5
-                        magnitudeVariation: 0.9
-                    }
-                    //! [0]
-                }
+                system: particleSystem
+                group: "Sun"
+                //! [0]
             }
         }
 
         ParticleSystem {
-            id: missileParticles
+            id: particleSystem
             anchors.fill: parent
 
-//            ImageParticle {
-//                opacity: 0.5
-//                source: "qrc:///sprites/star.png"
-//                alpha: 0.1
-//                alphaVariation: 0.1
-//                colorVariation: 0.5
-//                color: "#01ffffff"
-//                groups: ["Player1"]
-//            }
             ImageParticle {
                 opacity: 0.5
                 source: "qrc:///sprites/star.png"
@@ -233,6 +216,18 @@ Rectangle {
                 color: "white"
                 groups: ["Explosion"]
             }
+            ImageParticle {
+                source: "qrc:///sprites/star.png"
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: "#0fffff00"
+                groups: ["Sun"]
+            }
+            ImageParticle {
+                source: "qrc:///particleresources/fuzzydot.png"
+                alpha: 0.0
+                groups: ["Petal"]
+            }
         }
 
         Emitter {
@@ -247,7 +242,7 @@ Rectangle {
             velocity: AngleDirection{magnitude: 128; angleVariation: 360}
             size: 32
             sizeVariation: 16
-            system: missileParticles
+            system: particleSystem
             group: "Explosion"
 
             Connections {
@@ -256,18 +251,6 @@ Rectangle {
                     blurAnimation.restart()
                     crashEmitter.burst(500, main.width / 2 + position.x * main.width / 2, main.height/ 2 + position.y * main.height/ 2)
                 }
-            }
-        }
-
-        // List of player sprites
-        Repeater {
-            model: GameManager.players
-            delegate: PlayerSprite {
-                playerId: model.modelData.id
-//                x: main.width / 2 + modelData.position.x * main.width / 2 - width / 2
-//                y: main.height / 2 + modelData.position.y * main.height / 2 - height / 2
-                height: main.scaleSize / 20
-                width: height
             }
         }
 
@@ -356,6 +339,19 @@ Rectangle {
         }
         brightness: 0.9
         contrast: 0.4
+    }
+
+
+    // List of player sprites
+    Repeater {
+        model: GameManager.players
+        delegate: PlayerSprite {
+            playerId: model.modelData.id
+//                x: main.width / 2 + modelData.position.x * main.width / 2 - width / 2
+//                y: main.height / 2 + modelData.position.y * main.height / 2 - height / 2
+            height: main.scaleSize / 20
+            width: height
+        }
     }
 
     focus: true
