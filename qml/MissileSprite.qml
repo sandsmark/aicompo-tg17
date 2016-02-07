@@ -18,8 +18,51 @@ Item {
         }
     }
 
-    x: (missileData === null) ? 0 : main.width / 2 + missileData.position.x * main.width / 2 - width / 2
-    y: (missileData === null) ? 0 : main.height / 2 + missileData.position.y * main.height / 2 - height / 2
+    x:  main.width / 2 + targetX * main.width / 2 - width / 2
+    y: main.height / 2 + targetY * main.height / 2 - height / 2
+
+
+    property real targetX: 0
+    property real targetY: 0
+    property real missileX: (missileData === null) ? 0 : missileData.position.x
+    property real missileY: (missileData === null) ? 0 : missileData.position.y
+    property real lastMissileX: 0
+    property real lastMissileY: 0
+
+    onMissileXChanged: {
+        if (Math.abs(missileX - lastMissileX) > 0.1) {
+            targetX = missileX
+        } else {
+            xAnimation.from = lastMissileX
+            xAnimation.to = missileX
+            xAnimation.restart()
+        }
+
+        lastMissileX = missileX
+    }
+
+    onMissileYChanged: {
+        if (Math.abs(missileY - lastMissileY) > 0.1) {
+            targetY = missileY
+        } else {
+            yAnimation.from = lastMissileY
+            yAnimation.to = missileY
+            yAnimation.restart()
+        }
+
+        lastMissileY = missileY
+    }
+
+    PropertyAnimation on targetX {
+        id: xAnimation
+        duration: 50
+    }
+
+
+    PropertyAnimation on targetY {
+        id: yAnimation
+        duration: 50
+    }
 
     Image {
         id: image
