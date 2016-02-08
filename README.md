@@ -47,13 +47,13 @@ You can download a pre-built version for Windows here: https://iskrembilen.com/t
 
 ## Communication Protocol
 
-The protocol is based on JSON.
+The protocol is based on JSON. All "packets" (JSON objects) are sent in compact form, terminated with a newline. So to parse, read a line and unserialize the JSON.
 
 To connect to the game, open a TCP connection to where the game is running on port `54321`. When running on the same machine, just connect to localhost (127.0.0.1).
 
 After connecting, send "NAME " followed by the name of your bot to set a name (for example: "NAME superbot\n").
 
-When the game starts, you will start to get "stateupdate" JSON objects, that look like this:
+When the game starts, you will start to get "stateupdate" JSON objects, that look like this in expanded form:
 
 ```JSON
 {
