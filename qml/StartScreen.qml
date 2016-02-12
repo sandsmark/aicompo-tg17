@@ -263,7 +263,6 @@ Item {
                 return
             }
             GameManager.resetScores()
-            startScreen.opacity = 0
             GameManager.startRound()
         }
     }

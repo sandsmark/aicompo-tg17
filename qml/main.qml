@@ -28,7 +28,6 @@ Rectangle {
     Keys.onLeftPressed: userMove("LEFT")
     Keys.onEscapePressed: {
         GameManager.stopGame();
-        startScreen.opacity = 1
     }
 
     Keys.onPressed: {
@@ -364,7 +363,7 @@ Rectangle {
 
     StartScreen {
         id: startScreen
-        opacity: 1
+        opacity: !GameManager.isGameRunning
         //onOpacityChanged: gameFilter.opacity = opacity
     }
 
