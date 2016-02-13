@@ -15,7 +15,6 @@ Item {
         }
     }
 
-
     Emitter {
         lifeSpan: 4000
         emitRate: 120
@@ -83,13 +82,11 @@ Item {
 
     Text {
         id: titleText
-        //anchors.top: parent.top
         anchors.bottom: settingsList.top
         anchors.horizontalCenter: parent.horizontalCenter
         verticalAlignment: Text.AlignVCenter
         text: "TURN ON ME"
         color: "black"
-        //color: "#7f000000"
         font.pointSize: 30
         font.bold: true
         style: Text.Outline
@@ -146,21 +143,24 @@ Item {
         }
 
         Checkbox {
-            id: debugCheckbox
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 10
+            checked: true
 
             onClicked: {
                 checked = !checked
-                GameManager.setTickInterval(checked ? 10 : 50)
+                particleSystem.restart() // quick hack to kill all particles
+                particleSystem.running = checked
+                particleSystem.visible = checked
+                gameFilter.visible = false
             }
 
             Text {
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.rightMargin: 10
-                text: "Enable debug mode:"
+                text: "Enable effects:"
                 font.pixelSize: 20
                 color: "white"
             }
