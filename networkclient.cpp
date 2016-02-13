@@ -11,8 +11,8 @@ NetworkClient::NetworkClient(QTcpSocket *socket) :
     socket->open(QIODevice::ReadWrite);
     m_name = m_socket->peerAddress().toString();
 
-    connect(m_socket, SIGNAL(disconnected()), SIGNAL(clientDisconnected()));
-    connect(m_socket, SIGNAL(readyRead()), SLOT(dataReceived()));
+    connect(m_socket, &QTcpSocket::disconnected, this, &NetworkClient::clientDisconnected);
+    connect(m_socket, &QTcpSocket::readyRead, this, &NetworkClient::dataReceived);
 }
 
 QString NetworkClient::remoteName()

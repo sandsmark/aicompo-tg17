@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("gathering.org");
     app.setApplicationName("Turn On Me");
     QQuickView view;
-    QObject::connect((QObject*)view.engine(), SIGNAL(quit()), &app, SLOT(quit()));
+    QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     GameManager manager(&view);
 

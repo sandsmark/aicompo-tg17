@@ -20,10 +20,10 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) : QObject(
     if (networkClient) {
         networkClient->setParent(this); // automatically delete
 
-        connect(networkClient, SIGNAL(nameChanged(QString)), SLOT(setName(QString)));
-        connect(networkClient, SIGNAL(commandReceived(QString)), SLOT(setCommand(QString)));
-        connect(networkClient, SIGNAL(clientDisconnected()), SLOT(onDisconnected()));
-        connect(networkClient, SIGNAL(clientDisconnected()), SIGNAL(clientDisconnected()));
+        connect(networkClient, &NetworkClient::nameChanged, this, &Player::setName);
+        connect(networkClient, &NetworkClient::commandReceived, this, &Player::setCommand);
+        connect(networkClient, &NetworkClient::clientDisconnected, this, &Player::onDisconnected);
+        connect(networkClient, &NetworkClient::clientDisconnected, this, &Player::clientDisconnected);
     }
 
     m_spritePath = "qrc:/sprites/players/player" + QString::number(id) + ".png";

@@ -38,10 +38,10 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
 
     m_server.listen(QHostAddress::Any, 54321);
 
-    connect(&m_tickTimer, SIGNAL(timeout()), SLOT(gameTick()));
-    connect(&m_tickTimer, SIGNAL(timeout()), SIGNAL(tick()));
-    connect(&m_server, SIGNAL(newConnection()), SLOT(clientConnect()));
-    connect(this, SIGNAL(roundOver()), SLOT(endRound()));
+    connect(&m_tickTimer, &QTimer::timeout, this, &GameManager::gameTick);
+    connect(&m_tickTimer, &QTimer::timeout, this, &GameManager::tick);
+    connect(&m_server, &QTcpServer::newConnection, this, &GameManager::clientConnect);
+    connect(this, &GameManager::roundOver, this, &GameManager::endRound);
 }
 
 GameManager::~GameManager()
@@ -49,7 +49,7 @@ GameManager::~GameManager()
     // Ensure we don't crash because we delete stuff before it disconnects
     for (int i=0; i<m_players.count(); i++) {
         if (m_players[i]->networkClient()) {
-            disconnect(m_players[i]->networkClient(), SIGNAL(clientDisconnected()), this, SLOT(clientDisconnected()));
+            disconnect(m_players[i]->networkClient(), &NetworkClient::clientDisconnected, this, &GameManager::clientDisconnected);
         }
     }
 }
@@ -101,7 +101,7 @@ void GameManager::endRound()
     emit roundsPlayedChanged();
 
     if (m_roundsPlayed < MAX_ROUNDS) {
-        QTimer::singleShot(5000, this, SLOT(startRound()));
+        QTimer::singleShot(5000, this, &GameManager::startRound);
     }
 }
 
@@ -127,7 +127,7 @@ void GameManager::startRound()
             continue;
         }
 
-        m_players[i]->networkClient()->disconnect(SIGNAL(nameChanged(QString)));
+        m_players[i]->networkClient()->disconnect(m_players[i]->networkClient(), &NetworkClient::nameChanged, m_players[i], &Player::setName);
     }
 
     m_tickTimer.start();
@@ -313,7 +313,7 @@ void GameManager::addPlayer(NetworkClient *client)
         player->setName("Local user");
     } else {
         player->setName(client->remoteName());
-        connect(player, SIGNAL(clientDisconnected()), SLOT(clientDisconnected()));
+        connect(player, &Player::clientDisconnected, this, &GameManager::clientDisconnected);
     }
 
     emit playersChanged();
