@@ -12,7 +12,7 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
     m_owner(owner)
 {
     if (type == Mine) {
-        m_rotation = atan2(startPosition.y(), startPosition.x());
+        setRotation(atan2(startPosition.y(), startPosition.x()));
 
         m_velocityX = cos(m_rotation) * 0.005;
         m_velocityY = sin(m_rotation) * 0.005;
@@ -20,7 +20,7 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
         return;
     }
 
-    m_rotation = (startRotation * M_PI * 2) / 360.0;
+    setRotation((startRotation * M_PI * 2) / 360.0);
 
     if (type == Normal) {
         m_velocityX = cos(m_rotation) * 0.05;
@@ -31,6 +31,20 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
     }
 
     m_energy = 1000;
+}
+
+void Missile::setRotation(qreal rotation)
+{
+    if (rotation < 0) {
+        rotation += M_PI * 2.0;
+    }
+
+    if (rotation > M_PI * 2.0) {
+        rotation -= M_PI * 2.0;
+    }
+
+    m_rotation = rotation;
+    emit rotationChanged();
 }
 
 void Missile::doMove()
@@ -72,8 +86,7 @@ void Missile::doMove()
 
     // Always point in the right direction
     if (m_type == Normal) {
-        m_rotation = atan2(m_velocityY, m_velocityX);
-        emit rotationChanged();
+        setRotation(atan2(m_velocityY, m_velocityX));
     }
 
     // Just fall into the sun

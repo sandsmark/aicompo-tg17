@@ -28,7 +28,7 @@ public:
     QPointF position() { return m_position; }
 
     int rotation() { return (m_rotation * 360 / (M_PI * 2)); }
-    void setRotation(qreal rotation) { m_rotation = rotation; emit rotationChanged(); }
+    void setRotation(qreal rotation);
 
     void doMove();
     int energy() { return m_energy; }
