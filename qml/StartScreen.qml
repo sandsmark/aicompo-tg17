@@ -21,7 +21,6 @@ Item {
         size: 12
         anchors.centerIn: parent
         enabled: parent.visible
-        //! [0]
 
         property real petalLength: 180
         property real petalRotation: 0
@@ -43,14 +42,14 @@ Item {
                 particle.blue = theta == 4 || theta == 5 || theta == 0 ? 0.2 : 1;
                 theta /= 6.0;
                 theta *= 2.0*Math.PI;
-                theta += convert(petalRotation);//Convert from degrees to radians
+                theta += convert(petalRotation); // Convert from degrees to radians
                 particle.initialVX = petalLength * Math.cos(theta);
                 particle.initialVY = petalLength * Math.sin(theta);
                 particle.initialAX = particle.initialVX * -0.5;
                 particle.initialAY = particle.initialVY * -0.5;
             }
         }
-        //! [0]
+
         group: "Petal"
         system: particleSystem
     }
@@ -67,7 +66,7 @@ Item {
         lifeSpan: 2000
         size: 15
         sizeVariation: 15
-        //! [0]
+
         shape: MaskShape {
             source: "qrc:///sprites/turnon.png"
         }
@@ -77,7 +76,6 @@ Item {
         }
         system: particleSystem
         group: "Explosion"
-        //! [0]
     }
 
     Text {
@@ -177,7 +175,6 @@ Item {
             rightMargin: 5
         }
         height: 40
-        //width: 250
         color: "#7f000000"
         border.width: 1
         border.color: "white"

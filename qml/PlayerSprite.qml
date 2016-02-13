@@ -56,9 +56,9 @@ Item {
     Image {
         id: image
         anchors.centerIn: parent
-        width: parent.width // opacity
-        height: parent.height // opacity
-        source: modelData.spritePath//"qrc:/sprites/players/player" + playerId + ".png"
+        width: parent.width
+        height: parent.height
+        source: modelData.spritePath
         opacity: alive ? 1 : 0
         smooth: false
         rotation: modelData.rotation + 90
@@ -121,7 +121,6 @@ Item {
     onCommandChanged: {
         if (command === "ACCELERATE") {
             accelerationEmitter.pulse(500)
-//            trailEmitter.pulse(500)
         }
     }
 

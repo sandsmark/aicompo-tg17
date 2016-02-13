@@ -75,12 +75,11 @@ Item {
         visible: false
         smooth: false
     }
-    //onRotationChanged: console.log(rotation)
+
     ColorOverlay {
         anchors.fill: image
         source: image
         color: missileData === null ? "transparent" : playerColors[missileData.owner()]
-//        rotation: missile.rotation
     }
 
     Emitter {
@@ -102,16 +101,8 @@ Item {
         size: 8
         sizeVariation: 4
         system: particleSystem
-        //velocityFromMovement: 10
         endSize: 20
         shape: EllipseShape {
         }
     }
-
-//    RotationAnimation on rotation {
-//        from: 0
-//        to: 360
-//        duration: 5000
-//        loops: Animation.Infinite
-//    }
 }

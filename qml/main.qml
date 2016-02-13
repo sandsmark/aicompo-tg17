@@ -77,7 +77,6 @@ Rectangle {
             source: "qrc:/sprites/starfield.jpg"
             fillMode: Image.Tile
             opacity: 0.5
-            //visible: false
         }
 
         Text {
@@ -145,13 +144,12 @@ Rectangle {
 
             Emitter {
                 anchors.fill: parent
-                //group: "center"
                 emitRate: 1000
                 lifeSpan: 2000
                 size: 20
                 sizeVariation: 5
                 endSize: 0
-                //! [0]
+
                 shape: EllipseShape {fill: false}
                 velocity: TargetDirection {
                     targetX: sun.width/2
@@ -162,7 +160,6 @@ Rectangle {
                 }
                 system: particleSystem
                 group: "Sun"
-                //! [0]
             }
         }
 
@@ -284,8 +281,6 @@ Rectangle {
 
 
                     Rectangle {
-//                        border.width: 2
-//                        border.color: "white"
                         anchors.left: parent.right
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom
@@ -329,7 +324,6 @@ Rectangle {
         id: gameFilter
         source: gameBlur
         anchors.fill: gameBlur
-        //visible: opacity > 0
         opacity: 0
         NumberAnimation on opacity {
             running: false
@@ -348,8 +342,6 @@ Rectangle {
         model: GameManager.players
         delegate: PlayerSprite {
             playerId: model.modelData.id
-//                x: main.width / 2 + modelData.position.x * main.width / 2 - width / 2
-//                y: main.height / 2 + modelData.position.y * main.height / 2 - height / 2
             height: main.scaleSize / 20
             width: height
         }
@@ -366,7 +358,6 @@ Rectangle {
     StartScreen {
         id: startScreen
         opacity: !GameManager.isGameRunning
-        //onOpacityChanged: gameFilter.opacity = opacity
     }
 
     Text {
