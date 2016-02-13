@@ -53,6 +53,17 @@ Item {
         duration: 50
     }
 
+
+    Rectangle {
+        anchors.centerIn: parent
+        height: width
+        width: parent.width
+        radius: width/2
+        color: "transparent"
+        border.width: modelData.energy / 50
+        border.color: playerColors[playerId]
+    }
+
     Image {
         id: image
         anchors.centerIn: parent
@@ -86,18 +97,6 @@ Item {
             height: parent.height /2
             group: particleSystem.particleGroups[playerId]
         }
-
-
-        Rectangle {
-            anchors.centerIn: parent
-            height: width
-            radius: width/2
-            color: "transparent"
-            width: modelData.energy / 100
-            border.width: modelData.energy / 500
-            border.color: playerColors[playerId]
-        }
-
 
         Emitter {
             id: deathEmitter
