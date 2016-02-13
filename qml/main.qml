@@ -236,11 +236,11 @@ Rectangle {
             width: 10
             height: 10
             emitRate: 1000
-            lifeSpan: 500
+            lifeSpan: 250
             lifeSpanVariation: 100
             enabled: false
             velocity: AngleDirection{magnitude: 128; angleVariation: 360}
-            size: 32
+            size: 16
             sizeVariation: 16
             system: particleSystem
             group: "Explosion"
