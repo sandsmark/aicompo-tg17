@@ -146,25 +146,6 @@ Item {
         }
     }
 
-    // Try to smooth out movement between ticks
-//    Behavior on x {
-//        enabled: true
-//        NumberAnimation {
-//            id: xAnimation
-//            easing { type: Easing.OutQuad; amplitude: 1.0; period: 0.9 }
-//            duration: 50
-//        }
-//    }
-
-//    Behavior on y {
-//        enabled: true
-//        NumberAnimation {
-//            id: yAnimation
-//            easing { type: Easing.OutQuad; amplitude: 1.0; period: 0.9 }
-//            duration: 50
-//        }
-//    }
-
     property bool alive: modelData.alive
     onAliveChanged: {
         if (!alive) {
