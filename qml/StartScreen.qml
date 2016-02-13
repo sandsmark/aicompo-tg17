@@ -121,7 +121,7 @@ Item {
             enabled: GameManager.players.length < GameManager.maxPlayers || checked
             onClicked: {
                 if (checked) {
-                    GameManager.removeHumanPlayers()
+                    GameManager.removeHumanPlayer()
                     checked = false
                 } else {
                     if (GameManager.players.length >= GameManager.maxPlayers) return;

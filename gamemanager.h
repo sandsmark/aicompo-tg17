@@ -31,7 +31,7 @@ public:
     explicit GameManager(QQuickView *parent);
     ~GameManager();
 
-    Q_INVOKABLE void removeHumanPlayers();
+    Q_INVOKABLE void removeHumanPlayer();
 
     Q_INVOKABLE void setTickInterval(int interval);
 

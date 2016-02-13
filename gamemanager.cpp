@@ -320,27 +320,32 @@ void GameManager::addPlayer(NetworkClient *client)
 }
 void GameManager::kick(int index)
 {
+    if (index < 0 || index > m_players.count()) {
+        qWarning() << "Asked to kick invalid index" << index;
+        return;
+    }
+
     if (m_players.at(index)->networkClient()) {
         m_players.at(index)->networkClient()->kick();
     } else {
         m_players.takeAt(index)->deleteLater();
     }
-    emit playersChanged();
-}
 
-void GameManager::removeHumanPlayers()
-{
-    for (int i=0; i<m_players.count(); i++) {
-        if (!m_players[i]->networkClient()) {
-            m_players.takeAt(i)->deleteLater();
-            break;
-        }
-    }
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setId(i);
     }
 
     emit playersChanged();
+}
+
+void GameManager::removeHumanPlayer()
+{
+    for (int i=0; i<m_players.count(); i++) {
+        if (!m_players[i]->networkClient()) {
+            kick(i);
+            return;
+        }
+    }
 }
 
 void GameManager::setTickInterval(int interval)
@@ -370,6 +375,10 @@ void GameManager::stopGame()
             player->deleteLater();
             it.remove();
         }
+    }
+
+    for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setId(i);
     }
 
     emit playersChanged();
