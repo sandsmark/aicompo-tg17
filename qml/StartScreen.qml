@@ -10,8 +10,7 @@ Item {
 
     Behavior on opacity {
         NumberAnimation {
-            easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
-            duration: 2000
+            duration: 500
         }
     }
 
