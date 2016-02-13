@@ -20,6 +20,7 @@ class GameManager : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool isGameRunning READ isGameRunning NOTIFY isGameRunningChanged)
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
     Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
@@ -38,6 +39,7 @@ public:
 
     Q_INVOKABLE QString version();
 
+    bool isGameRunning() const { return m_isGameRunning; }
     int ticksLeft() const { return m_ticksLeft; }
 
     QList<QObject *> players() const;
@@ -57,6 +59,7 @@ public slots:
     int roundsPlayed() { return m_roundsPlayed; }
 
 signals:
+    void isGameRunningChanged();
     void roundOver();
     void clientConnected();
     void roundsPlayedChanged();
@@ -81,6 +84,7 @@ private:
     QTcpServer m_server;
     int m_roundsPlayed;
     int m_ticksLeft;
+    bool m_isGameRunning;
 };
 
 #endif // GAMEMANAGER_H

@@ -25,7 +25,8 @@
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view(view),
     m_roundsPlayed(0),
-    m_ticksLeft(-1)
+    m_ticksLeft(-1),
+    m_isGameRunning(false)
 {
 
     // Add QML objects
@@ -109,6 +110,9 @@ void GameManager::startRound()
     if (m_players.isEmpty()) {
         return;
     }
+
+    m_isGameRunning = true;
+    emit isGameRunningChanged();
 
     resetPositions();
 
@@ -356,6 +360,8 @@ void GameManager::togglePause()
 void GameManager::stopGame()
 {
     m_tickTimer.stop();
+    m_isGameRunning = false;
+    emit isGameRunningChanged();
 
     QMutableListIterator<Player*> it(m_players);
     while(it.hasNext()) {

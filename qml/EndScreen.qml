@@ -88,7 +88,6 @@ Rectangle {
                 return
             }
             GameManager.stopGame()
-            startScreen.opacity = 1
         }
         text: "Restart"
     }
