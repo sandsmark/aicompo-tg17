@@ -125,7 +125,10 @@ void GameManager::endRound()
         std::sort(playerList.begin(), playerList.end(), Player::comparePlayers);
 
         for(Player *player : playerList) {
-            scoreFile.write(player->name().toUtf8() + '\n');
+            scoreFile.write(player->name().toUtf8() + ' ' +
+                            QByteArray::number(player->wins()) + ' ' +
+                            QByteArray::number(player->score()) + ' ' +
+                            QByteArray::number(player->energy()) + '\n');
         }
     }
 }
