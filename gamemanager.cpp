@@ -91,7 +91,6 @@ void GameManager::endRound()
     }
 
     for (int i=0; i<m_players.count(); i++) {
-        m_players[i]->setCommand(QString());
         if (m_players[i]->isAlive()) {
             m_players[i]->addWin();
         }
@@ -117,6 +116,7 @@ void GameManager::startRound()
     resetPositions();
 
     for (int i=0; i<m_players.count(); i++) {
+        m_players[i]->setCommand(QString());
         m_players[i]->setAlive(true);
         m_players[i]->setEnergy(START_ENERGY);
     }
