@@ -1,3 +1,11 @@
+CHANGELOG:
+=========
+
+List of changes that affect development of bots:
+
+ * Saturday 13.02.2016: Changed the value sent for the rotation of missiles from radians to degrees, to match the value sent for players.
+
+
 Turn On Me
 ============
 
