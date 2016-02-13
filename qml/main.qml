@@ -308,6 +308,93 @@ Rectangle {
                 }
             }
         }
+
+        Rectangle {
+            id: startCountdown
+            anchors.centerIn: parent
+            height: parent.height / 2
+            width: height / 3
+            color: "#a0000000"
+            border.color: "white"
+            border.width: 2
+
+            opacity: countdownTimer.running ? 1 : 0
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 500
+                }
+            }
+
+            Rectangle {
+                id: countdownGreen
+                color: "green"
+                opacity: 0
+                width: parent.width
+                height: width
+                anchors {
+                    top: parent.top
+                    horizontalCenter: parent.horizontalCenter
+                }
+            }
+
+            Rectangle {
+                id: countdownYellow
+                color: "yellow"
+                opacity: 0
+                width: parent.width
+                height: width
+                anchors {
+                    verticalCenter: parent.verticalCenter
+                    horizontalCenter: parent.horizontalCenter
+                }
+            }
+
+
+            Rectangle {
+                id: countdownRed
+                color: "red"
+                opacity: 0
+                width: parent.width
+                height: width
+                anchors {
+                    bottom: parent.bottom
+                    horizontalCenter: parent.horizontalCenter
+                }
+            }
+
+            Connections {
+                target: GameManager
+                onRoundStarting: {
+                    countdownGreen.opacity = 0
+                    countdownYellow.opacity = 0
+                    countdownRed.opacity = 0
+                    countdownTimer.progress = 0
+                    countdownTimer.restart()
+                }
+            }
+
+            Timer {
+                id: countdownTimer
+                interval: 1000
+                running: false
+                repeat: true
+                property int progress: 0
+
+                onTriggered: {
+                    if (progress === 0) {
+                        countdownGreen.opacity = 0.5
+                    } else if (progress === 1) {
+                        countdownYellow.opacity = 0.5
+                    } else {
+                        countdownRed.opacity = 0.5
+                        countdownTimer.stop()
+                    }
+
+                    progress++
+                }
+            }
+        }
     }
 
     FastBlur {

@@ -100,7 +100,8 @@ void GameManager::endRound()
     emit roundsPlayedChanged();
 
     if (m_roundsPlayed < MAX_ROUNDS) {
-        QTimer::singleShot(5000, this, &GameManager::startRound);
+        // Pause for a bit so we can see the result
+        QTimer::singleShot(2000, this, &GameManager::startRound);
     }
 }
 
@@ -110,8 +111,10 @@ void GameManager::startRound()
         return;
     }
 
-    m_isGameRunning = true;
-    emit isGameRunningChanged();
+    if (!m_isGameRunning) {
+        m_isGameRunning = true;
+        emit gameRunningChanged();
+    }
 
     resetPositions();
 
@@ -130,7 +133,10 @@ void GameManager::startRound()
         m_players[i]->networkClient()->disconnect(m_players[i]->networkClient(), &NetworkClient::nameChanged, m_players[i], &Player::setName);
     }
 
-    m_tickTimer.start();
+    emit roundStarting();
+
+    // Old style connect because overloads suck with the new ones
+    QTimer::singleShot(3000, &m_tickTimer, SLOT(start()));
 }
 
 void GameManager::resetScores()
@@ -366,7 +372,7 @@ void GameManager::stopGame()
 {
     m_tickTimer.stop();
     m_isGameRunning = false;
-    emit isGameRunningChanged();
+    emit gameRunningChanged();
 
     QMutableListIterator<Player*> it(m_players);
     while(it.hasNext()) {
