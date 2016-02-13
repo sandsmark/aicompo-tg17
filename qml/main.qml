@@ -210,7 +210,6 @@ Rectangle {
                 source: "qrc:///sprites/star.png"
                 alpha: 0.1
                 alphaVariation: 0.1
-                colorVariation: 0.5
                 color: "white"
                 groups: ["Explosion", "Logo"]
             }
