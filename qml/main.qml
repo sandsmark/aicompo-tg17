@@ -171,6 +171,8 @@ Rectangle {
             id: particleSystem
             anchors.fill: parent
 
+            property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
+
             ImageParticle {
                 opacity: 0.5
                 source: "qrc:///sprites/star.png"

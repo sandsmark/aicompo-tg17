@@ -88,7 +88,7 @@ Item {
             system: particleSystem
             width: parent.width / 2
             height: parent.height /2
-            group: particleGroups[playerId]
+            group: particleSystem.particleGroups[playerId]
         }
 
 
@@ -120,7 +120,7 @@ Item {
         shape: MaskShape {
             source: image.source
         }
-        group: particleGroups[playerId]
+        group: particleSystem.particleGroups[playerId]
         system: particleSystem
     }
 
@@ -139,7 +139,6 @@ Item {
         }
     }
 
-    property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
     Emitter {
         id: trailEmitter
         anchors.fill: parent
@@ -152,7 +151,7 @@ Item {
         size: 8
         sizeVariation: 4
         system: particleSystem
-        group: particleGroups[playerId]
+        group: particleSystem.particleGroups[playerId]
         endSize: 0
         shape: EllipseShape { }
     }

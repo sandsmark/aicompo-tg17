@@ -83,7 +83,6 @@ Item {
 //        rotation: missile.rotation
     }
 
-    property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
     Emitter {
         id: trailEmitter
         anchors.centerIn: parent
@@ -93,7 +92,7 @@ Item {
         lifeSpan: 500
         lifeSpanVariation: 90
         enabled: true
-        group: (missileData === null) ? "" : particleGroups[missileData.owner()]
+        group: (missileData === null) ? "" : particleSystem.particleGroups[missileData.owner()]
         velocity: AngleDirection {
             angle: missile.rotation + 90
             magnitude: missile.energy > 10 ? 200 : 0
