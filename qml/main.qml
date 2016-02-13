@@ -125,14 +125,14 @@ Rectangle {
             id: roundsPlayed
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            text: "round: " + GameManager.roundsPlayed + "/" + GameManager.maxRounds
+            text: "round: " + (GameManager.roundsPlayed + 1) + "/" + GameManager.maxRounds
             color: "#7f000000"
             font.bold: true
             style: Text.Outline
             styleColor: "white"
             font.pointSize: 40
             z: 10
-            opacity: 0.7
+            opacity: (GameManager.roundsPlayed < GameManager.maxRounds) ? 0.7 : 0
         }
 
         Image {
@@ -440,7 +440,7 @@ Rectangle {
 
 
     EndScreen {
-        opacity: (GameManager.roundsPlayed >= GameManager.maxRounds)
+        opacity: (GameManager.roundsPlayed >= GameManager.maxRounds) ? 1 : 0
         objectName: "endScreen"
     }
 
