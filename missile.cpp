@@ -125,7 +125,7 @@ QJsonObject Missile::serialize()
     missileObject["y"] = m_position.y();
     missileObject["velocityX"] = m_velocityX;
     missileObject["velocityY"] = m_velocityY;
-    missileObject["rotation"] = m_rotation;
+    missileObject["rotation"] = rotation();
     missileObject["energy"] = m_energy;
     if (m_type == Mine) {
         missileObject["type"] = "MINE";
