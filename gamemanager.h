@@ -43,7 +43,8 @@ public:
     QList<QObject *> players() const;
 
     int maxPlayerCount() { return MAX_PLAYERS; }
-    int maxRounds() { return MAX_ROUNDS; }
+    int maxRounds() { return m_maxRounds; }
+    void setMaxRounds(int maxRounds) { m_maxRounds = maxRounds; }
 
     void setCountdownDuration(int duration) { m_startTimer.setInterval(duration); }
 
@@ -85,6 +86,7 @@ private:
     int m_roundsPlayed;
     bool m_gameRunning;
     QTimer m_startTimer;
+    int m_maxRounds;
 };
 
 #endif // GAMEMANAGER_H

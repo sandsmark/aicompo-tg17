@@ -42,6 +42,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 #define ARGUMENT_TICK_INTERVAL "tick-interval"
 #define ARGUMENT_QUIT_ON_FINISH "quit-on-finish"
 #define ARGUMENT_FULLSCREEN "fullscreen"
+#define ARGUMENT_ROUNDS "rounds"
 
 int main(int argc, char *argv[])
 {
@@ -54,6 +55,7 @@ int main(int argc, char *argv[])
     parser.addOption({{"i", ARGUMENT_TICK_INTERVAL}, "Set the tick interval to <ms> milliseconds (10 - 1000).", "ms"});
     parser.addOption({ARGUMENT_QUIT_ON_FINISH, "Exit the game after playing all rounds."});
     parser.addOption({ARGUMENT_FULLSCREEN, "Start in fullscreen."});
+    parser.addOption({ARGUMENT_ROUNDS, "Rounds to play.", "rounds"});
     parser.process(app);
 
     QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
@@ -71,6 +73,13 @@ int main(int argc, char *argv[])
     QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     GameManager manager(&view);
+
+    if (parser.isSet(ARGUMENT_ROUNDS)) {
+        int rounds = parser.value(ARGUMENT_ROUNDS).toInt();
+        if (rounds > 0) {
+            manager.setMaxRounds(rounds);
+        }
+    }
 
     if (parser.isSet(ARGUMENT_START_AT)) {
         int startAtPlayers = parser.value(ARGUMENT_START_AT).toInt();

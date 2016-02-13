@@ -25,7 +25,8 @@
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view(view),
     m_roundsPlayed(0),
-    m_gameRunning(false)
+    m_gameRunning(false),
+    m_maxRounds(MAX_ROUNDS)
 {
 
     // Add QML objects
@@ -108,7 +109,7 @@ void GameManager::endRound()
     m_roundsPlayed++;
     emit roundsPlayedChanged();
 
-    if (m_roundsPlayed < MAX_ROUNDS) {
+    if (m_roundsPlayed < m_maxRounds) {
         // Show the countdown again
         if (m_startTimer.interval() > 0) {
             emit showCountdown();
