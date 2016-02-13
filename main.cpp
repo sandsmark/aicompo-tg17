@@ -35,6 +35,12 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     std::cout << txt.toStdString() << std::endl;
 }
 
+#define ARGUMENT_TICK_INTERVAL "tick-interval"
+#define ARGUMENT_START_AT "start-at"
+#define ARGUMENT_TICK_INTERVAL "tick-interval"
+#define ARGUMENT_QUIT_ON_FINISH "quit-on-finish"
+#define ARGUMENT_FULLSCREEN "fullscreen"
+
 int main(int argc, char *argv[])
 {
     qInstallMessageHandler(myMessageHandler);
@@ -42,10 +48,10 @@ int main(int argc, char *argv[])
 
     QCommandLineParser parser;
     parser.addHelpOption();
-    parser.addOption({"start-at", "Automatically start the game after <players> players (1 - 4) has connected.", "players"});
-    parser.addOption({{"i", "tick-interval"}, "Set the tick interval to <ms> milliseconds (10 - 1000).", "ms"});
-    parser.addOption({"quit-on-finish", "Exit the game after playing all rounds."});
-    parser.addOption({"fullscreen", "Start in fullscreen."});
+    parser.addOption({ARGUMENT_START_AT, "Automatically start the game after <players> players (1 - 4) has connected.", "players"});
+    parser.addOption({{"i", ARGUMENT_TICK_INTERVAL}, "Set the tick interval to <ms> milliseconds (10 - 1000).", "ms"});
+    parser.addOption({ARGUMENT_QUIT_ON_FINISH, "Exit the game after playing all rounds."});
+    parser.addOption({ARGUMENT_FULLSCREEN, "Start in fullscreen."});
     parser.process(app);
 
     QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
@@ -58,8 +64,8 @@ int main(int argc, char *argv[])
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     GameManager manager(&view);
 
-    if (parser.isSet("start-at")) {
-        int startAtPlayers = parser.value("start-at").toInt();
+    if (parser.isSet(ARGUMENT_START_AT)) {
+        int startAtPlayers = parser.value(ARGUMENT_START_AT).toInt();
         if (startAtPlayers < 1 || startAtPlayers > 4) {
             parser.showHelp(-1);
         }
@@ -72,15 +78,15 @@ int main(int argc, char *argv[])
         });
     }
 
-    if (parser.isSet("tick-interval")) {
-        int tickInterval = parser.value("tick-interval").toInt();
+    if (parser.isSet(ARGUMENT_TICK_INTERVAL)) {
+        int tickInterval = parser.value(ARGUMENT_TICK_INTERVAL).toInt();
         if (tickInterval < 10 || tickInterval > 1000) {
             parser.showHelp(-1);
         }
         manager.setTickInterval(tickInterval);
     }
 
-    if (parser.isSet("quit-on-finish")) {
+    if (parser.isSet(ARGUMENT_QUIT_ON_FINISH)) {
         QObject::connect(&manager, &GameManager::roundsPlayedChanged, [&]{
             if (manager.roundsPlayed() >= MAX_ROUNDS) {
                 app.quit();
@@ -90,7 +96,7 @@ int main(int argc, char *argv[])
 
     view.setSource(QUrl("qrc:/qml/main.qml"));
 
-    if (parser.isSet("fullscreen")) {
+    if (parser.isSet(ARGUMENT_FULLSCREEN)) {
         view.showFullScreen();
     } else {
         view.show();
