@@ -3,13 +3,12 @@ import QtQuick 2.0
 Rectangle {
     id: endScreen
     anchors.fill: parent
-    enabled: opacity > 0.1 ? true : false
+    enabled: visible
     visible: opacity > 0
 
     Behavior on opacity {
         NumberAnimation {
-            easing { type: Easing.OutElastic; amplitude: 1.0; period: 0.9 }
-            duration: 5000
+            duration: 500
         }
     }
 
