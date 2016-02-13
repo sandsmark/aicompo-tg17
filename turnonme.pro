@@ -13,14 +13,16 @@ SOURCES += main.cpp \
     player.cpp \
     gamemanager.cpp \
     networkclient.cpp \
-    missile.cpp
+    missile.cpp \
+    settings.cpp
 
 HEADERS += \
     player.h \
     gamemanager.h \
     networkclient.h \
     parameters.h \
-    missile.h
+    missile.h \
+    settings.h
 
 RESOURCES += \
     resources.qrc

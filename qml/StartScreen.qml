@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.0
+import org.gathering.turnonme 1.0
 
 Item {
     id: startScreen
@@ -145,14 +146,21 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 10
-            checked: true
+            checked: Settings.getValue(Settings.EnableEffects, true)
 
-            onClicked: {
-                checked = !checked
+            function handleValue() {
                 particleSystem.restart() // quick hack to kill all particles
                 particleSystem.running = checked
                 particleSystem.visible = checked
-                gameFilter.visible = false
+                gameFilter.visible = checked
+            }
+
+            Component.onCompleted: handleValue()
+
+            onClicked: {
+                checked = !checked
+                Settings.setValue(Settings.EnableEffects, checked)
+                handleValue()
             }
 
             Text {

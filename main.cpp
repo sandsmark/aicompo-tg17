@@ -1,4 +1,6 @@
 #include "gamemanager.h"
+#include "settings.h"
+
 #include <QGuiApplication>
 #include <QQmlContext>
 #include <QQuickView>
@@ -59,6 +61,12 @@ int main(int argc, char *argv[])
 
     app.setOrganizationDomain("gathering.org");
     app.setApplicationName("Turn On Me");
+
+    qmlRegisterSingletonType<Settings>("org.gathering.turnonme", 1, 0, "Settings", [](QQmlEngine *, QJSEngine*) -> QObject* {
+        return new Settings;
+    });
+
+
     QQuickView view;
     QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
     view.setResizeMode(QQuickView::SizeRootObjectToView);
