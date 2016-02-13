@@ -78,10 +78,11 @@ int main(int argc, char *argv[])
             parser.showHelp(-1);
         }
 
+        manager.setCountdownDuration(0);
+
         QObject::connect(&manager, &GameManager::playersChanged, [&]{
             if (manager.players().count() >= startAtPlayers) {
-                manager.resetScores();
-                manager.startRound();
+                manager.startGame();
             }
         });
     }

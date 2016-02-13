@@ -268,8 +268,7 @@ Item {
             if (GameManager.players.length < 1) {
                 return
             }
-            GameManager.resetScores()
-            GameManager.startRound()
+            GameManager.startGame()
         }
     }
 

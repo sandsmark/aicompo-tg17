@@ -365,12 +365,15 @@ Rectangle {
 
             Connections {
                 target: GameManager
-                onRoundStarting: {
+                onShowCountdown: {
                     countdownGreen.opacity = 0
                     countdownYellow.opacity = 0
                     countdownRed.opacity = 0
                     countdownTimer.progress = 0
                     countdownTimer.restart()
+                }
+                onGameRunningChanged: {
+                    countdownTimer.stop()
                 }
             }
 

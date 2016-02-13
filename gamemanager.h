@@ -22,7 +22,6 @@ class GameManager : public QObject
 
     Q_PROPERTY(bool gameRunning READ isGameRunning NOTIFY gameRunningChanged)
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
-    Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
     Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
     Q_PROPERTY(int maxRounds READ maxRounds CONSTANT)
@@ -40,21 +39,22 @@ public:
     Q_INVOKABLE QString version();
 
     bool isGameRunning() const { return m_gameRunning; }
-    int ticksLeft() const { return m_ticksLeft; }
 
     QList<QObject *> players() const;
 
     int maxPlayerCount() { return MAX_PLAYERS; }
     int maxRounds() { return MAX_ROUNDS; }
 
+    void setCountdownDuration(int duration) { m_startTimer.setInterval(duration); }
+
 public slots:
     void endRound();
     void startRound();
+    void startGame();
     void stopGame();
     void togglePause();
     void addPlayer(NetworkClient *client = 0);
     void kick(int index);
-    void resetScores();
 
     int roundsPlayed() { return m_roundsPlayed; }
 
@@ -63,11 +63,10 @@ signals:
     void roundOver();
     void clientConnected();
     void roundsPlayedChanged();
-    void tick();
     void playersChanged();
     void explosion(QPointF position);
     void missileCreated(QObject *missile);
-    void roundStarting();
+    void showCountdown();
 
 private slots:
     void gameTick();
@@ -84,8 +83,8 @@ private:
     QTimer m_tickTimer;
     QTcpServer m_server;
     int m_roundsPlayed;
-    int m_ticksLeft;
     bool m_gameRunning;
+    QTimer m_startTimer;
 };
 
 #endif // GAMEMANAGER_H

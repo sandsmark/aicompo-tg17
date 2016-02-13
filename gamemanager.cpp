@@ -25,8 +25,7 @@
 GameManager::GameManager(QQuickView *view) : QObject(view),
     m_view(view),
     m_roundsPlayed(0),
-    m_ticksLeft(-1),
-    m_isGameRunning(false)
+    m_gameRunning(false)
 {
 
     // Add QML objects
@@ -36,12 +35,15 @@ GameManager::GameManager(QQuickView *view) : QObject(view),
     m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
     m_tickTimer.setSingleShot(false);
 
+    // Set up timer for delayed starting of rounds
+    m_startTimer.setInterval(3000);
+    m_startTimer.setSingleShot(true);
+
     m_server.listen(QHostAddress::Any, 54321);
 
+    connect(&m_startTimer, &QTimer::timeout, this, &GameManager::startRound);
     connect(&m_tickTimer, &QTimer::timeout, this, &GameManager::gameTick);
-    connect(&m_tickTimer, &QTimer::timeout, this, &GameManager::tick);
     connect(&m_server, &QTcpServer::newConnection, this, &GameManager::clientConnect);
-    connect(this, &GameManager::roundOver, this, &GameManager::endRound);
 }
 
 GameManager::~GameManager()
@@ -80,6 +82,8 @@ void GameManager::endRound()
 {
     m_tickTimer.stop();
 
+    emit roundOver();
+
     for (int i=0; i<m_missiles.count(); i++) {
         m_missiles[i]->deleteLater();
     }
@@ -100,8 +104,11 @@ void GameManager::endRound()
     emit roundsPlayedChanged();
 
     if (m_roundsPlayed < MAX_ROUNDS) {
-        // Pause for a bit so we can see the result
-        QTimer::singleShot(2000, this, &GameManager::startRound);
+        // Show the countdown again
+        if (m_startTimer.interval() > 0) {
+            emit showCountdown();
+        }
+        m_startTimer.start();
     }
 }
 
@@ -111,9 +118,8 @@ void GameManager::startRound()
         return;
     }
 
-    if (!m_isGameRunning) {
-        m_isGameRunning = true;
-        emit gameRunningChanged();
+    if (!m_gameRunning) {
+        return;
     }
 
     resetPositions();
@@ -133,25 +139,34 @@ void GameManager::startRound()
         m_players[i]->networkClient()->disconnect(m_players[i]->networkClient(), &NetworkClient::nameChanged, m_players[i], &Player::setName);
     }
 
-    emit roundStarting();
-
-    // Old style connect because overloads suck with the new ones
-    QTimer::singleShot(3000, &m_tickTimer, SLOT(start()));
+    m_tickTimer.start();
 }
 
-void GameManager::resetScores()
+void GameManager::startGame()
 {
+    if (m_gameRunning) {
+        return;
+    }
+
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->resetScore();
     }
+
     m_roundsPlayed = 0;
     emit roundsPlayedChanged();
+
+    m_gameRunning = true;
+    emit gameRunningChanged();
+
+    if (m_startTimer.interval() > 0) {
+        emit showCountdown();
+    }
+
+    m_startTimer.start();
 }
 
 void GameManager::gameTick()
 {
-    m_ticksLeft--;
-
     QMutableListIterator<Missile*> missileIterator(m_missiles);
     while (missileIterator.hasNext()) {
         Missile *missile = missileIterator.next();
@@ -249,7 +264,7 @@ void GameManager::gameTick()
     }
 
     if (dead > 0 && players.size() - dead < 2) {
-        emit roundOver();
+        endRound();
         return;
     }
 
@@ -370,8 +385,9 @@ void GameManager::togglePause()
 
 void GameManager::stopGame()
 {
+    m_startTimer.stop(); // Just in case
     m_tickTimer.stop();
-    m_isGameRunning = false;
+    m_gameRunning = false;
     emit gameRunningChanged();
 
     QMutableListIterator<Player*> it(m_players);
