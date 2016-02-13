@@ -70,12 +70,14 @@ Item {
         shape: MaskShape {
             source: "qrc:///sprites/turnon.png"
         }
+
         velocity: PointDirection {
             xVariation: 10
             yVariation: 10
         }
+
         system: particleSystem
-        group: "Explosion"
+        group: "Logo"
     }
 
     Text {

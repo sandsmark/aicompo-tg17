@@ -212,7 +212,7 @@ Rectangle {
                 alphaVariation: 0.1
                 colorVariation: 0.5
                 color: "white"
-                groups: ["Explosion"]
+                groups: ["Explosion", "Logo"]
             }
             ImageParticle {
                 source: "qrc:///sprites/star.png"
