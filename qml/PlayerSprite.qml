@@ -4,7 +4,6 @@ import QtQuick.Particles 2.0
 
 Item {
     id: playerSprite
-    rotation: modelData.rotation + 90
 
     property int playerId
     property string command: modelData.lastCommand
@@ -62,16 +61,13 @@ Item {
         source: modelData.spritePath//"qrc:/sprites/players/player" + playerId + ".png"
         opacity: alive ? 1 : 0
         smooth: false
+        rotation: modelData.rotation + 90
 
         Behavior on opacity {
             NumberAnimation {
                 easing.type: Easing.Linear
                 duration: 100
             }
-        }
-
-        Behavior on rotation {
-            SmoothedAnimation { duration: 200 }
         }
 
         Emitter {
@@ -100,28 +96,26 @@ Item {
             width: modelData.energy / 100
             border.width: modelData.energy / 500
             border.color: playerColors[playerId]
-//            opacity: 0.5
-            //opacity: modelData.energy / 1000
         }
-    }
 
 
-    Emitter {
-        id: deathEmitter
-        anchors.fill: parent
-        emitRate: 1000
-        lifeSpan: 2000
-        lifeSpanVariation: 1000
-        enabled: false
-        velocity: AngleDirection{magnitude: 8; magnitudeVariation: 20; angleVariation: 360}
-        size: 24
-        sizeVariation: 16
+        Emitter {
+            id: deathEmitter
+            anchors.fill: parent
+            emitRate: 1000
+            lifeSpan: 2000
+            lifeSpanVariation: 1000
+            enabled: false
+            velocity: AngleDirection{magnitude: 8; magnitudeVariation: 20; angleVariation: 360}
+            size: 24
+            sizeVariation: 16
 
-        shape: MaskShape {
-            source: image.source
+            shape: MaskShape {
+                source: image.source
+            }
+            group: particleSystem.particleGroups[playerId]
+            system: particleSystem
         }
-        group: particleSystem.particleGroups[playerId]
-        system: particleSystem
     }
 
     onCommandChanged: {
@@ -155,5 +149,4 @@ Item {
         endSize: 0
         shape: EllipseShape { }
     }
-
 }
