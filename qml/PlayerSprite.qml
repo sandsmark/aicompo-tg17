@@ -128,7 +128,7 @@ Item {
         lifeSpan: 2000
         lifeSpanVariation: 1000
         enabled: false
-        velocity: AngleDirection{magnitude: 8; magnitudeVariation: 100; angleVariation: 360}
+        velocity: AngleDirection{magnitude: 8; magnitudeVariation: 20; angleVariation: 360}
         size: 24
         sizeVariation: 16
 
