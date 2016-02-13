@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
     parser.addOption({"start-at", "Automatically start the game after <players> players (1 - 4) has connected.", "players"});
     parser.addOption({{"i", "tick-interval"}, "Set the tick interval to <ms> milliseconds (10 - 1000).", "ms"});
     parser.addOption({"quit-on-finish", "Exit the game after playing all rounds."});
+    parser.addOption({"fullscreen", "Start in fullscreen."});
     parser.process(app);
 
     QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
@@ -88,7 +89,12 @@ int main(int argc, char *argv[])
     }
 
     view.setSource(QUrl("qrc:/qml/main.qml"));
-    view.showMaximized();
-    //view.showFullScreen();
+
+    if (parser.isSet("fullscreen")) {
+        view.showFullScreen();
+    } else {
+        view.show();
+    }
+
     return app.exec();
 }
