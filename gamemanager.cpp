@@ -58,12 +58,23 @@ GameManager::~GameManager()
 
 QList<QObject*> GameManager::players() const
 {
-    QList<QObject*> playerList;
-    foreach(Player *playerObject, m_players) {
-        playerList.append(playerObject);
+    QList<Player*> playerList = m_players;
+
+    // Sort players by wins, and then scores/points
+    std::sort(playerList.begin(), playerList.end(), [](Player *a, Player *b) {
+        if (a->wins() != b->wins()) {
+            return a->wins() > b->wins();
+        }
+
+        return a->score() > b->score();
+    });
+
+    QList<QObject*> objectList;
+    foreach(Player *playerObject, playerList) {
+        objectList.append(playerObject);
     }
 
-    return playerList;
+    return objectList;
 }
 
 QString GameManager::version()

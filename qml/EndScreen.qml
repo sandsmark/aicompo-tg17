@@ -26,7 +26,7 @@ Rectangle {
         style: Text.Outline
     }
 
-    // List of connected users
+    // List of players
     Rectangle {
         color: "#c0000000";
         id: userList
@@ -40,14 +40,14 @@ Rectangle {
             anchors.top: parent.top
             anchors.margins: 20
             Repeater {
-                model: GameManager.players
+                model: endScreen.visible ? GameManager.players : 0 // Only fetch players when finished, to get them correctly sorted
                 delegate: Text {
                     horizontalAlignment: Text.AlignHCenter
                     color: "white"
                     font.pointSize: 20
                     font.bold: true
                     font.family: "Aldrich"
-                    text: model.modelData.name + ": " + model.modelData.wins + " wins" + " (points: " + model.modelData.score + ")"
+                    text: (index + 1) + ". " + model.modelData.name + ": " + model.modelData.wins + " wins" + " (" + model.modelData.score + " hits)"
                 }
             }
         }
