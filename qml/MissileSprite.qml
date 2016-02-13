@@ -88,7 +88,7 @@ Item {
         width: parent.width / 2
         height: width
         emitRate: missile.energy > 10 ? 500 : 10
-        lifeSpan: 500
+        lifeSpan: 100
         lifeSpanVariation: 90
         enabled: true
         group: (missileData === null) ? "" : particleSystem.particleGroups[missileData.owner()]
