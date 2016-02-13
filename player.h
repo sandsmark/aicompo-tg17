@@ -72,6 +72,16 @@ public:
 
     QJsonObject serialize();
 
+    // For sorting the player list
+    static bool comparePlayers(Player *a, Player *b)
+    {
+        if (a->wins() != b->wins()) {
+            return a->wins() > b->wins();
+        }
+
+        return a->score() > b->score();
+    }
+
 public slots:
     void setCommand(QString command);
     void setName(QString name);

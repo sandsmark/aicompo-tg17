@@ -61,13 +61,7 @@ QList<QObject*> GameManager::players() const
     QList<Player*> playerList = m_players;
 
     // Sort players by wins, and then scores/points
-    std::sort(playerList.begin(), playerList.end(), [](Player *a, Player *b) {
-        if (a->wins() != b->wins()) {
-            return a->wins() > b->wins();
-        }
-
-        return a->score() > b->score();
-    });
+    std::sort(playerList.begin(), playerList.end(), Player::comparePlayers);
 
     QList<QObject*> objectList;
     foreach(Player *playerObject, playerList) {
@@ -120,6 +114,18 @@ void GameManager::endRound()
             emit showCountdown();
         }
         m_startTimer.start();
+    } else {
+        QFile scoreFile("scores.txt");
+        if (!scoreFile.open(QIODevice::WriteOnly)) {
+            return;
+        }
+
+        QList<Player*> playerList = m_players;
+        std::sort(playerList.begin(), playerList.end(), Player::comparePlayers);
+
+        for(Player *player : playerList) {
+            scoreFile.write(player->name().toUtf8() + '\n');
+        }
     }
 }
 
