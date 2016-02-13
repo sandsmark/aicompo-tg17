@@ -149,7 +149,6 @@ void GameManager::gameTick()
         missile->doMove();
 
         if (!missile->isAlive()) {
-            emit explosion(missile->position());
             missile->deleteLater();
             missileIterator.remove();
             continue;
