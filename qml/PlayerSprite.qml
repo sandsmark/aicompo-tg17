@@ -133,6 +133,18 @@ Item {
         }
     }
 
+    Text {
+        anchors.horizontalCenter: image.horizontalCenter
+        anchors.bottom: parent.bottom
+        text: modelData.name
+        color: "white"
+        style: Text.Outline
+        styleColor: "black"
+        font.family: "Aldrich"
+        font.pointSize: 10
+        font.strikeout: !modelData.alive
+    }
+
     Emitter {
         id: trailEmitter
         anchors.fill: parent
