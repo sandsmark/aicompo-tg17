@@ -54,21 +54,6 @@ Item {
         duration: 50
     }
 
-//    Behavior on playerX {
-//        SmoothedAnimation {
-//            velocity: 60/modelData.velocityX
-////            easing.type: Easing.Linear
-//        }
-//    }
-
-//    Behavior on playerY {
-//        SmoothedAnimation {
-//            velocity: 60/modelData.velocityY
-//            //velocity: 60
-////            easing.type: Easing.Linear
-//        }
-//    }
-
     Image {
         id: image
         anchors.centerIn: parent
