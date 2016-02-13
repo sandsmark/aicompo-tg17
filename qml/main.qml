@@ -357,7 +357,7 @@ Rectangle {
 
     StartScreen {
         id: startScreen
-        opacity: !GameManager.isGameRunning
+        opacity: GameManager.gameRunning ? 0 : 1
     }
 
     Text {

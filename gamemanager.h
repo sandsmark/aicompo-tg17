@@ -20,7 +20,7 @@ class GameManager : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool isGameRunning READ isGameRunning NOTIFY isGameRunningChanged)
+    Q_PROPERTY(bool gameRunning READ isGameRunning NOTIFY isGameRunningChanged)
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
     Q_PROPERTY(int ticksLeft READ ticksLeft NOTIFY tick)
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
