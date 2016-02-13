@@ -319,7 +319,7 @@ Rectangle {
         id: gameBlur
         anchors.fill: gameArea
         source: gameArea
-        radius: 32
+        radius: 16
         visible: false;
 
     }
@@ -337,8 +337,8 @@ Rectangle {
             from: 1
             to: 0
         }
-        brightness: 0.9
-        contrast: 0.4
+        brightness: 0.5
+        contrast: 0.3
     }
 
 
