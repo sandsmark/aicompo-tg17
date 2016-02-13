@@ -27,6 +27,10 @@ void NetworkClient::kick()
 
 void NetworkClient::sendString(QByteArray string)
 {
+    if (!m_socket->isOpen()) {
+        return;
+    }
+
     m_socket->write(string + '\n');
 }
 
