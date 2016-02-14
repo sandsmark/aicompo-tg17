@@ -173,6 +173,12 @@ void GameManager::startGame()
         m_players[i]->resetScore();
     }
 
+
+    for (int i=0; i<m_missiles.count(); i++) {
+        m_missiles[i]->deleteLater();
+    }
+    m_missiles.clear();
+
     m_roundsPlayed = 0;
     emit roundsPlayedChanged();
 
