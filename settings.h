@@ -11,7 +11,7 @@ public:
     enum Key {
         EnableEffects
     };
-    Q_ENUM(Key)
+    Q_ENUMS(Key)
 
     explicit Settings(QObject *parent = 0);
 

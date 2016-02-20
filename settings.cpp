@@ -2,6 +2,8 @@
 #include <QSettings>
 #include <QDebug>
 
+#define KEY_EFFECTS "EnableEffects"
+
 Settings::Settings(QObject *parent) : QObject(parent)
 {
 }
@@ -9,13 +11,33 @@ Settings::Settings(QObject *parent) : QObject(parent)
 void Settings::setValue(Key key, QVariant value)
 {
     QSettings settings;
-    settings.setValue(QVariant::fromValue(key).toString(), value);
+    QString keyString;
+    switch(key) {
+    case EnableEffects:
+        keyString = KEY_EFFECTS;
+        break;
+    default:
+        qWarning() << Q_FUNC_INFO << "invalid key" << key;
+        return;
+    }
+
+    settings.setValue(keyString, value);
 }
 
 QVariant Settings::getValue(Settings::Key key, QVariant defaultValue)
 {
     QSettings settings;
-    QVariant value = settings.value(QVariant::fromValue(key).toString(), defaultValue);
+
+    QString keyString;
+    switch(key) {
+    case EnableEffects:
+        keyString = KEY_EFFECTS;
+        break;
+    default:
+        qWarning() << Q_FUNC_INFO << "invalid key" << key;
+        return QVariant();
+    }
+    QVariant value = settings.value(keyString, defaultValue);
 
     // Ugly hack because QSettings doesn't store type info,
     // and returns stored bools as strings.
