@@ -43,15 +43,6 @@ int main(int argc, char *argv[])
 {
     qInstallMessageHandler(myMessageHandler);
 
-    QGuiApplication app(argc, argv);
-
-    QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
-    app.setFont(QFont("Aldrich"));
-
-    app.setOrganizationDomain("gathering.org");
-    app.setApplicationName("Turn On Me");
-
-
     QCommandLineParser parser;
 
     QCommandLineOption autostartOption("start-at",
@@ -74,7 +65,11 @@ int main(int argc, char *argv[])
     parser.addOption(roundsOption);
     parser.addOption(headlessOption);
 
-    parser.process(app);
+    QStringList arguments;
+    for (int i=0; i<argc; i++) {
+        arguments.append(QString::fromLocal8Bit(argv[i]));
+    }
+    parser.process(arguments);
 
     int startAtPlayers = parser.value(autostartOption).toInt();
     if (startAtPlayers < 1 || startAtPlayers > MAX_PLAYERS) {
@@ -96,16 +91,21 @@ int main(int argc, char *argv[])
 
     bool runHeadless = parser.isSet(headlessOption);
 
-    qmlRegisterSingletonType<Settings>("org.gathering.turnonme", 1, 0, "Settings", [](QQmlEngine *, QJSEngine*) -> QObject* {
-        return new Settings;
-    });
+    QCoreApplication *app;
+    if (runHeadless) {
+        app = new QCoreApplication(argc, argv);
+    } else {
+        QGuiApplication *guiApp = new QGuiApplication(argc, argv);
+        app = guiApp;
 
+        QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
+        guiApp->setFont(QFont("Aldrich"));
+    }
 
-    QQuickView view;
-    QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
+    app->setOrganizationDomain("gathering.org");
+    app->setApplicationName("Turn On Me");
 
-    GameManager manager(&view);
+    GameManager manager;
     manager.setMaxRounds(rounds);
 
     if (parser.isSet(autostartOption) || runHeadless) {
@@ -137,18 +137,32 @@ int main(int argc, char *argv[])
 
             if (manager.roundsPlayed() >= rounds) {
                 qDebug() << "Game over.";
-                app.quit();
+                app->quit();
             }
         });
     }
 
-    view.setSource(QUrl("qrc:/qml/main.qml"));
+    if (!runHeadless) {
+        qmlRegisterSingletonType<Settings>("org.gathering.turnonme", 1, 0, "Settings", [](QQmlEngine *, QJSEngine*) -> QObject* {
+            return new Settings;
+        });
 
-    if (parser.isSet(fullscreenOption)) {
-        view.showFullScreen();
-    } else if (!runHeadless) {
-        view.show();
+        QQuickView *view = new QQuickView; // we leak this on exit, yolo
+        QObject::connect(view->engine(), &QQmlEngine::quit, app, &QGuiApplication::quit);
+        view->setResizeMode(QQuickView::SizeRootObjectToView);
+
+        view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(&manager));
+        view->setSource(QUrl("qrc:/qml/main.qml"));
+        QObject::connect(view->rootObject(), SIGNAL(userMove(QString)), &manager, SIGNAL(humanMove(QString)));
+
+        if (parser.isSet(fullscreenOption)) {
+            view->showFullScreen();
+        } else {
+            view->show();
+        }
     }
 
-    return app.exec();
+    int ret = app->exec();
+    delete app;
+    return ret;
 }

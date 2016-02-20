@@ -27,14 +27,12 @@ class GameManager : public QObject
     Q_PROPERTY(int maxRounds READ maxRounds CONSTANT)
 
 public:
-    explicit GameManager(QQuickView *parent);
+    explicit GameManager();
     ~GameManager();
 
     Q_INVOKABLE void removeHumanPlayer();
 
     Q_INVOKABLE void setTickInterval(int interval);
-
-    QQuickView *view() { return m_view; }
 
     Q_INVOKABLE QString version();
 
@@ -68,6 +66,7 @@ signals:
     void explosion(QPointF position);
     void missileCreated(QObject *missile);
     void showCountdown();
+    void humanMove(QString move);
 
 private slots:
     void gameTick();
@@ -78,7 +77,6 @@ private:
     void resetPositions();
     QJsonObject serializeForPlayer(Player *player);
 
-    QQuickView *m_view;
     QList<Player*> m_players;
     QList<Missile*> m_missiles;
     QTimer m_tickTimer;

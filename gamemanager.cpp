@@ -6,9 +6,6 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
-#include <QQmlContext>
-#include <QQuickView>
-#include <QQuickItem>
 #include <QPoint>
 #include <QList>
 #include <QQmlComponent>
@@ -22,16 +19,11 @@
 
 #define VOLUME 0.5f
 
-GameManager::GameManager(QQuickView *view) : QObject(view),
-    m_view(view),
+GameManager::GameManager() : QObject(),
     m_roundsPlayed(0),
     m_gameRunning(false),
     m_maxRounds(MAX_ROUNDS)
 {
-
-    // Add QML objects
-    m_view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(this));
-
     // Set up gametick timer
     m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
     m_tickTimer.setSingleShot(false);
@@ -362,7 +354,7 @@ void GameManager::addPlayer(NetworkClient *client)
     resetPositions();
 
     if (!client) {
-        connect(m_view->rootObject(), SIGNAL(userMove(QString)), player, SLOT(setCommand(QString)));
+        connect(this, &GameManager::humanMove, player, &Player::setCommand);
         player->setName("Local user");
     } else {
         player->setName(client->remoteName());
