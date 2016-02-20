@@ -124,7 +124,12 @@ void GameManager::endRound()
         QList<Player*> playerList = m_players;
         std::sort(playerList.begin(), playerList.end(), Player::comparePlayers);
 
+        qDebug() << "Result:";
         for(Player *player : playerList) {
+            qDebug() << player->name()
+                     << "Wins:" << player->wins()
+                     << "Score:" << player->score()
+                     << "Energy:" << player->energy();
             scoreFile.write(player->name().toUtf8() + ' ' +
                             QByteArray::number(player->wins()) + ' ' +
                             QByteArray::number(player->score()) + ' ' +
