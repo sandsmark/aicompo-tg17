@@ -6,6 +6,8 @@ linux: QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
 
 win32:RC_ICONS += turnon.ico
 
+lessThan(QT_MAJOR_VERSION, 5): error("Requires Qt 5!")
+
 # QMAKE_CXXFLAGS += -Wall -Werror -Wextra
 
 # The .cpp file which was generated for your project. Feel free to hack it.
