@@ -54,12 +54,17 @@ int main(int argc, char *argv[])
 
     QCommandLineParser parser;
 
-    QCommandLineOption autostartOption("start-at", "Automatically start the game after <players> (1 - 4) have connected", "players", QString::number(MAX_PLAYERS));
+    QCommandLineOption autostartOption("start-at",
+                                       "Automatically start the game after <players> (1 - 4) have connected, default " + QString::number(MAX_PLAYERS),
+                                       "players", QString::number(MAX_PLAYERS));
     QCommandLineOption tickintervalOption(QStringList() << "tick-interval" << "i" ,
-                                          "Set the tick interval to <ms> milliseconds (10 - 1000)", "ms", QString::number(DEFAULT_TICKINTERVAL));
+                                          "Set the tick interval to <ms> milliseconds (10 - 1000), default " + QString::number(DEFAULT_TICKINTERVAL),
+                                          "ms", QString::number(DEFAULT_TICKINTERVAL));
     QCommandLineOption quitOnFinishOption("quit-on-finish", "Exit the game after playing all rounds");
     QCommandLineOption fullscreenOption("fullscreen" , "Start the game in fullscreen" );
-    QCommandLineOption roundsOption("rounds", "Set the number of rounds to play to <rounds>", "rounds", QString::number(MAX_ROUNDS));
+    QCommandLineOption roundsOption("rounds", "Set the number of rounds to <rounds>, default " + QString::number(MAX_ROUNDS),
+                                    "rounds", QString::number(MAX_ROUNDS));
+    QCommandLineOption headlessOption("headless", "Run without showing the UI, e. g. for running on a server. This implies the start-at and quit-on-finish options.");
 
     parser.addHelpOption();
     parser.addOption(autostartOption);
@@ -67,6 +72,7 @@ int main(int argc, char *argv[])
     parser.addOption(quitOnFinishOption);
     parser.addOption(fullscreenOption);
     parser.addOption(roundsOption);
+    parser.addOption(headlessOption);
 
     parser.process(app);
 
@@ -88,6 +94,8 @@ int main(int argc, char *argv[])
         parser.showHelp(EINVAL);
     }
 
+    bool runHeadless = parser.isSet(headlessOption);
+
     qmlRegisterSingletonType<Settings>("org.gathering.turnonme", 1, 0, "Settings", [](QQmlEngine *, QJSEngine*) -> QObject* {
         return new Settings;
     });
@@ -100,11 +108,19 @@ int main(int argc, char *argv[])
     GameManager manager(&view);
     manager.setMaxRounds(rounds);
 
-    if (parser.isSet(autostartOption)) {
+    if (parser.isSet(autostartOption) || runHeadless) {
         manager.setCountdownDuration(0);
 
+        qDebug() << "Waiting for" << startAtPlayers << "players...";
+
         QObject::connect(&manager, &GameManager::playersChanged, [&]{
+
+            if (manager.roundsPlayed() < manager.maxRounds()) {
+                qDebug() << "Player" << manager.players().count() << "of" << startAtPlayers << "connected...";
+            }
+
             if (manager.players().count() >= startAtPlayers) {
+                qDebug() << "All players connected, starting game";
                 manager.startGame();
             }
         });
@@ -112,9 +128,15 @@ int main(int argc, char *argv[])
 
     manager.setTickInterval(tickInterval);
 
-    if (parser.isSet(quitOnFinishOption)) {
-        QObject::connect(&manager, &GameManager::roundsPlayedChanged, [&]{
+    if (parser.isSet(quitOnFinishOption) || runHeadless) {
+        QObject::connect(&manager, &GameManager::roundsPlayedChanged, [&] {
+
+            if (manager.roundsPlayed() > 0) {
+                qDebug() << "Round" << manager.roundsPlayed() << "of" << rounds << "finished";
+            }
+
             if (manager.roundsPlayed() >= rounds) {
+                qDebug() << "Game over.";
                 app.quit();
             }
         });
@@ -124,7 +146,7 @@ int main(int argc, char *argv[])
 
     if (parser.isSet(fullscreenOption)) {
         view.showFullScreen();
-    } else {
+    } else if (!runHeadless) {
         view.show();
     }
 
