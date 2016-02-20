@@ -3,59 +3,62 @@ var HOST = '127.0.0.1';
 var PORT = 54321;
 var client = new net.Socket();
 
-// Connect to server
+function onMessage(jsonMessage) {
+    if (jsonMessage.messagetype == "stateupdate") {
+        // Define available
+        var moves = [
+            "LEFT\n",
+            "RIGHT\n",
+            "ACCELERATE\n",
+            "MISSILE\n",
+            "MINE\n",
+            "SEEKING\n"
+        ];
+
+        var move = moves[Math.floor(Math.random() * 5)];
+        
+        // Write our random move to server
+        client.write(move);
+    }
+}
+
 client.connect(PORT, HOST);
 
-// Emitted when connection is succesful
 client.on('connect', function()
 {
     console.log('CONNECTED TO: ' + HOST + ':' + PORT);
-    
-    // Tell server that we want JSON
-    client.write('JSON\n');
     
     // Tell server our name
     client.write('NAME random_nodejs\n');
 })
 
-// Triggered when an error occurs in the connection
 client.on('error', function(data) {
     console.log('ERROR: ' + data);
     client.destroy();
 });
 
-// Triggered each time the server sends us something
+var buffer = new Buffer(0);
 client.on('data', function(data) {
-
-    // Splits data on \n
-    var d = data.toString("utf-8").split("\n");
-
-    // Removes last object in array, as it always is a \n
-    d.pop();
-
-    // Loop through datastrings
-    for (var i = 0; i < d.length; i++)
-    {
-        var obj = JSON.parse(d[i]);
-        if (obj.type == "status update") {
-            // Define available
-            var moves = [
-                "UP\n",
-                "LEFT\n",
-                "RIGHT\n",
-                "ACCELERATE\n",
-                "MISSILE\n",
-                "MINE\n",
-                "SEEKING\n"
-            ];
-            
-            // Write our random move to server
-            client.write(moves[Math.floor(Math.random() * 5)]);
-        }
-    }
+    var latestBuf = Buffer.concat([buffer, data]);
+    buffer = parseBuffer(latestBuf, onMessage);
 });
 
-// Triggered when connection closes
+function parseBuffer(buffer, msgCallback) {
+    var start = 0;
+
+    while(start < buffer.length) {
+        var endOfMsg = buffer.indexOf('\n', start) + 1;
+        if(endOfMsg <= 0)
+            break;
+
+        msgCallback(JSON.parse(buffer.toString('utf-8', start, endOfMsg)));
+
+        start = endOfMsg;
+    }
+
+    return buffer.slice(start, buffer.length);
+}
+
 client.on('close', function(error) {
     client.destroy();
     if (error == true)
@@ -65,5 +68,4 @@ client.on('close', function(error) {
         console.log("Disconnected.");
     }
 });
-
 
