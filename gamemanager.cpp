@@ -303,6 +303,11 @@ void GameManager::clientConnect()
 {
     QTcpSocket *socket = m_server.nextPendingConnection();
 
+    if (!socket) {
+        qWarning() << "We expected a socket here, but got none";
+        return;
+    }
+
     if (m_players.count() >= MAX_PLAYERS || m_tickTimer.isActive()) {
         socket->disconnect();
         socket->deleteLater();
