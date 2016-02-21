@@ -164,9 +164,13 @@ int main(int argc, char *argv[])
         } else {
             view->show();
         }
+        int ret = app->exec();
+        delete view;
+        delete app;
+        return ret;
+    } else {
+        int ret = app->exec();
+        delete app;
+        return ret;
     }
-
-    int ret = app->exec();
-    delete app;
-    return ret;
 }
