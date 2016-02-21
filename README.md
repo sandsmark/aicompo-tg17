@@ -31,7 +31,9 @@ We might also add more weapons, if we find some fun ideas.
 
 ## Windows binary
 
-You can download a pre-built version for Windows here: https://iskrembilen.com/turnonme.zip
+There are pre-compiled Windows binaries attached to the releases here: https://github.com/sandsmark/aicompo-tg16/releases
+
+There are also automatically built and untested pre-release builds available here: https://iskrembilen.com/turnonme-win32/
 
 ---
 
