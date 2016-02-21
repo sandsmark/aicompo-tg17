@@ -55,7 +55,7 @@ Rectangle {
         id: backgroundColorAnimation
         from: "red"
         to: "black"
-        duration: 5000
+        duration: 1000
         running: false
     }
 
@@ -417,11 +417,11 @@ Rectangle {
         NumberAnimation on opacity {
             running: false
             id: blurAnimation
-            duration: 500
+            duration: 250
             from: 1
             to: 0
         }
-        brightness: 0.5
+        brightness: 0.1
         contrast: 0.3
     }
 
@@ -431,7 +431,7 @@ Rectangle {
         model: GameManager.players
         delegate: PlayerSprite {
             playerId: model.modelData.id
-            height: main.scaleSize / 20
+            height: main.scaleSize / 15
             width: height
         }
     }
