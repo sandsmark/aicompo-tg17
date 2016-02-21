@@ -430,6 +430,9 @@ void GameManager::stopGame()
         m_players[i]->setId(i);
     }
 
+    m_roundsPlayed = 0;
+    emit roundsPlayedChanged();
+
     emit playersChanged();
 }
 
