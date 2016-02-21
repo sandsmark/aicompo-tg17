@@ -29,7 +29,7 @@ GameManager::GameManager() : QObject(),
     m_tickTimer.setSingleShot(false);
 
     // Set up timer for delayed starting of rounds
-    m_startTimer.setInterval(3000);
+    m_startTimer.setInterval(750);
     m_startTimer.setSingleShot(true);
 
     m_server.listen(QHostAddress::Any, 54321);

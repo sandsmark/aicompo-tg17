@@ -379,7 +379,7 @@ Rectangle {
 
             Timer {
                 id: countdownTimer
-                interval: 1000
+                interval: 250
                 running: false
                 repeat: true
                 property int progress: 0
