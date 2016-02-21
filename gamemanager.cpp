@@ -346,6 +346,7 @@ void GameManager::clientDisconnected()
 void GameManager::addPlayer(NetworkClient *client)
 {
     if (m_players.count() >= MAX_PLAYERS) {
+        client->deleteLater();
         return;
     }
 
