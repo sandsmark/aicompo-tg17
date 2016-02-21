@@ -327,8 +327,8 @@ Rectangle {
             }
 
             Rectangle {
-                id: countdownGreen
-                color: "green"
+                id: countdownFirst
+                color: "yellow"
                 opacity: 0
                 width: parent.width
                 height: width
@@ -339,7 +339,7 @@ Rectangle {
             }
 
             Rectangle {
-                id: countdownYellow
+                id: countdownSecond
                 color: "yellow"
                 opacity: 0
                 width: parent.width
@@ -352,8 +352,8 @@ Rectangle {
 
 
             Rectangle {
-                id: countdownRed
-                color: "red"
+                id: countdownThird
+                color: "green"
                 opacity: 0
                 width: parent.width
                 height: width
@@ -366,9 +366,9 @@ Rectangle {
             Connections {
                 target: GameManager
                 onShowCountdown: {
-                    countdownGreen.opacity = 0
-                    countdownYellow.opacity = 0
-                    countdownRed.opacity = 0
+                    countdownFirst.opacity = 0
+                    countdownSecond.opacity = 0
+                    countdownThird.opacity = 0
                     countdownTimer.progress = 0
                     countdownTimer.restart()
                 }
@@ -386,11 +386,11 @@ Rectangle {
 
                 onTriggered: {
                     if (progress === 0) {
-                        countdownGreen.opacity = 0.5
+                        countdownFirst.opacity = 0.5
                     } else if (progress === 1) {
-                        countdownYellow.opacity = 0.5
+                        countdownSecond.opacity = 0.5
                     } else {
-                        countdownRed.opacity = 0.5
+                        countdownThird.opacity = 0.5
                         countdownTimer.stop()
                     }
 
