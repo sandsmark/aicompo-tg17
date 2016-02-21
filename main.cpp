@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
     manager.setMaxRounds(rounds);
 
     if (parser.isSet(autostartOption) || runHeadless) {
-        manager.setCountdownDuration(0);
+        manager.setCountdownDuration(500);
 
         qDebug() << "Waiting for" << startAtPlayers << "players...";
 
