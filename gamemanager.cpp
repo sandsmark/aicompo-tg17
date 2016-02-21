@@ -17,8 +17,6 @@
 
 #include <cmath>
 
-#define VOLUME 0.5f
-
 GameManager::GameManager() : QObject(),
     m_roundsPlayed(0),
     m_gameRunning(false),
