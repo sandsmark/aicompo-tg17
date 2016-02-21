@@ -202,8 +202,7 @@ void GameManager::gameTick()
         }
 
         Player *closest = nullptr;
-        qreal closestDX;
-        qreal closestDY;
+        qreal closestDX = 0, closestDY = 0;
         for(int i=0; i<m_players.count(); i++) {
             if (!m_players[i]->isAlive()) {
                 continue;
