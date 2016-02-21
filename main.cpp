@@ -41,9 +41,28 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
 
 int main(int argc, char *argv[])
 {
+    // We have to process this manually because QCommandLineParser might crash without a QCoreApplication
+    bool runHeadless = false;
+    for (int i=0; i<argc; i++) {
+        if (argv[i] == QStringLiteral("--headless")) {
+            runHeadless = true;
+            break;
+        }
+    }
+
+    QCoreApplication *app;
+    if (runHeadless) {
+        app = new QCoreApplication(argc, argv);
+    } else {
+        QGuiApplication *guiApp = new QGuiApplication(argc, argv);
+        app = guiApp;
+
+        QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
+        guiApp->setFont(QFont("Aldrich"));
+    }
+
     qInstallMessageHandler(myMessageHandler);
 
-    QCommandLineParser parser;
 
     QCommandLineOption autostartOption("start-at",
                                        "Automatically start the game after <players> (1 - 4) have connected, default " + QString::number(MAX_PLAYERS),
@@ -57,6 +76,7 @@ int main(int argc, char *argv[])
                                     "rounds", QString::number(MAX_ROUNDS));
     QCommandLineOption headlessOption("headless", "Run without showing the UI, e. g. for running on a server. This implies the start-at and quit-on-finish options.");
 
+    QCommandLineParser parser;
     parser.addHelpOption();
     parser.addOption(autostartOption);
     parser.addOption(tickintervalOption);
@@ -65,11 +85,7 @@ int main(int argc, char *argv[])
     parser.addOption(roundsOption);
     parser.addOption(headlessOption);
 
-    QStringList arguments;
-    for (int i=0; i<argc; i++) {
-        arguments.append(QString::fromLocal8Bit(argv[i]));
-    }
-    parser.process(arguments);
+    parser.process(*app);
 
     int startAtPlayers = parser.value(autostartOption).toInt();
     if (startAtPlayers < 1 || startAtPlayers > MAX_PLAYERS) {
@@ -89,18 +105,6 @@ int main(int argc, char *argv[])
         parser.showHelp(EINVAL);
     }
 
-    bool runHeadless = parser.isSet(headlessOption);
-
-    QCoreApplication *app;
-    if (runHeadless) {
-        app = new QCoreApplication(argc, argv);
-    } else {
-        QGuiApplication *guiApp = new QGuiApplication(argc, argv);
-        app = guiApp;
-
-        QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
-        guiApp->setFont(QFont("Aldrich"));
-    }
 
     app->setOrganizationDomain("gathering.org");
     app->setApplicationName("Turn On Me");
