@@ -55,7 +55,7 @@ QList<QObject*> GameManager::players() const
     std::sort(playerList.begin(), playerList.end(), Player::comparePlayers);
 
     QList<QObject*> objectList;
-    foreach(Player *playerObject, playerList) {
+    for (Player *playerObject : playerList) {
         objectList.append(playerObject);
     }
 
@@ -246,7 +246,7 @@ void GameManager::gameTick()
     }
 
     int dead = 0;
-    foreach(Player *player, players) {
+    for(Player *player : players) {
         if (!player->isAlive()) {
             dead++;
             continue;
@@ -290,7 +290,7 @@ void GameManager::gameTick()
     }
 
     // Send status updates to all connected players
-    foreach(Player *player, players) {
+    for(Player *player : players) {
         if (!player->networkClient()) {
             continue;
         }
@@ -451,7 +451,7 @@ QJsonObject GameManager::serializeForPlayer(Player *player)
     gamestateObject["you"] = player->serialize();
 
     QJsonArray playersArray;
-    foreach (Player *otherPlayer, m_players) {
+    for (Player *otherPlayer : m_players) {
         if (otherPlayer == player) {
             continue;
         }
@@ -464,7 +464,7 @@ QJsonObject GameManager::serializeForPlayer(Player *player)
     gamestateObject["others"] = playersArray;
 
     QJsonArray missilesArray;
-    foreach (Missile *missile, m_missiles) {
+    for (Missile *missile : m_missiles) {
         missilesArray.append(missile->serialize());
     }
     gamestateObject["missiles"] = missilesArray;

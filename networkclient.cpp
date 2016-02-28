@@ -66,7 +66,7 @@ void NetworkClient::dataReceived()
 
 
     QList<QByteArray> lines = data.split('\n');
-    foreach(const QByteArray line, lines) {
+    for (const QByteArray line : lines) {
         if (line.isEmpty()) continue;
 
         if (line.startsWith("NAME ")) {
