@@ -4,6 +4,7 @@ CHANGELOG:
 List of changes that **affect development of bots**:
 
  * Saturday 13.02.2016: Changed the value sent for the rotation of missiles from radians to degrees, to match the value sent for players.
+ * Sunday 28.02.2016: Increased damage from missiles from 10 to 50 energy. Before this firing a homing missile or hovermine cost more than what you could gain from hitting something.
 
 
 Turn On Me
@@ -23,7 +24,7 @@ Accelerating forward costs 2 energy.
 
 Firing a normal missile costs 10 energy, firing a homing missile costs 15 energy and dropping a hovermine costs 20 energy.
 
-If you hit another player with either a missile or a hovermine, that player loses 10 energy, and you get 10 energy.
+If you hit another player with either a missile or a hovermine, that player loses 50 energy, and you get 50 energy.
 
 **These values are subject to change, until we freeze them sometime before The Gathering 2016.**
 
