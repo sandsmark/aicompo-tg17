@@ -11,6 +11,10 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
     m_alive(true),
     m_owner(owner)
 {
+    static int idCounter = 0;
+    m_id = idCounter;
+    idCounter++;
+
     if (type == Mine) {
         setRotation(atan2(startPosition.y(), startPosition.x()));
 
@@ -120,6 +124,7 @@ void Missile::doMove()
 QJsonObject Missile::serialize()
 {
     QJsonObject missileObject;
+    missileObject["id"] = m_id;
     missileObject["owner"] =  m_owner;
     missileObject["x"] = m_position.x();
     missileObject["y"] = m_position.y();

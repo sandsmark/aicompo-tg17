@@ -72,9 +72,10 @@ When the game starts, you will start to get "stateupdate" JSON objects, that loo
     "gamestate": {
         "missiles": [
             {
+                "id": 0,
                 "energy": 0,
                 "owner": 0,
-                "rotation": 1.5125629973121255,
+                "rotation": 180,
                 "type": "NORMAL",
                 "velocityX": 0.002812616921765813,
                 "velocityY": 0.048244483355828163,
@@ -82,9 +83,10 @@ When the game starts, you will start to get "stateupdate" JSON objects, that loo
                 "y": 0.057297497784823674
             },
             {
+                "id": 50,
                 "energy": 4981,
                 "owner": 0,
-                "rotation": 1.8384380069025155,
+                "rotation": 45,
                 "type": "MINE",
                 "velocityX": 0.00042820233654171418,
                 "velocityY": -0.0015615237322931463,
@@ -92,9 +94,10 @@ When the game starts, you will start to get "stateupdate" JSON objects, that loo
                 "y": 0.81817305140153029
             },
             {
+                "id": 60,
                 "energy": 350,
                 "owner": 0,
-                "rotation": -1.1475855031033397,
+                "rotation": 300,
                 "type": "SEEKING",
                 "velocityX": 0.032627412854647569,
                 "velocityY": -0.03970474002645958,

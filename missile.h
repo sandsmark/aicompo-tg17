@@ -56,6 +56,7 @@ private:
     int m_energy;
     bool m_alive;
     int m_owner;
+    int m_id;
 };
 
 #endif // MISSILE_H
