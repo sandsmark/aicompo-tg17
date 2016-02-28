@@ -20,7 +20,7 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
 
         m_velocityX = cos(m_rotation) * 0.005;
         m_velocityY = sin(m_rotation) * 0.005;
-        m_energy = 5000;
+        m_energy = MINE_START_ENERGY;
         return;
     }
 
@@ -34,7 +34,7 @@ Missile::Missile(Type type, QPointF startPosition, int startRotation, int owner,
         m_velocityY = sin(m_rotation) * 0.03;
     }
 
-    m_energy = 1000;
+    m_energy = MISSILE_START_ENERGY;
 }
 
 void Missile::setRotation(qreal rotation)
