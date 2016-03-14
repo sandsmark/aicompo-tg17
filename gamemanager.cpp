@@ -195,23 +195,28 @@ void GameManager::gameTick()
 
         missile->doMove();
 
+        // The missile doMove() checks if it has hit the sun, and if so sets alive to false
         if (!missile->isAlive()) {
             missile->deleteLater();
             missileIterator.remove();
             continue;
         }
 
+        // For seeking missiles, we need to find the closest player
         Player *closest = nullptr;
         qreal closestDX = 0, closestDY = 0;
+
         for(int i=0; i<m_players.count(); i++) {
             if (!m_players[i]->isAlive()) {
                 continue;
             }
 
+            // Missiles can't hit and seeking missiles won't target their own player
             if (missile->owner() == m_players[i]->id()) {
                 continue;
             }
 
+            // Check if missile has hit a player
             const qreal dx = m_players[i]->position().x() - missile->position().x();
             const qreal dy = m_players[i]->position().y() - missile->position().y();
             if (hypot(dx, dy) < 0.1) {
@@ -255,6 +260,8 @@ void GameManager::gameTick()
         player->doMove();
         player->decreaseEnergy(1);
 
+        // Get last command from player, and if there is one do the appropriate thing
+        // This also resets the command to "", so we don't do a command more than once
         QString command = player->command();
         if (command.isEmpty()) {
             continue;
@@ -284,6 +291,7 @@ void GameManager::gameTick()
         }
     }
 
+    // Check if there's only one player left, but only if there is more than one player playing
     if (dead > 0 && players.size() - dead < 2) {
         endRound();
         return;
