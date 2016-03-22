@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    // If we run headless we want a QCoreApplication so it doesn't try to connect to an X server
     QCoreApplication *app;
     if (runHeadless) {
         app = new QCoreApplication(argc, argv);
@@ -61,9 +62,10 @@ int main(int argc, char *argv[])
         guiApp->setFont(QFont("Aldrich"));
     }
 
+    // Install custom message handler for logging to a file
     qInstallMessageHandler(myMessageHandler);
 
-
+    // Set up command line options
     QCommandLineOption autostartOption("start-at",
                                        "Automatically start the game after <players> (1 - 4) have connected, default " + QString::number(MAX_PLAYERS),
                                        "players", QString::number(MAX_PLAYERS));
@@ -105,9 +107,9 @@ int main(int argc, char *argv[])
         parser.showHelp(EINVAL);
     }
 
-
-    app->setOrganizationDomain("gathering.org");
+    // Set application name and domain mainly for QSettings
     app->setApplicationName("Turn On Me");
+    app->setOrganizationDomain("gathering.org");
 
     GameManager manager;
     manager.setMaxRounds(rounds);
