@@ -245,7 +245,6 @@ Rectangle {
             Connections {
                 target: GameManager
                 onExplosion: {
-                    blurAnimation.restart()
                     crashEmitter.burst(500, main.width / 2 + position.x * main.width / 2, main.height/ 2 + position.y * main.height/ 2)
                 }
             }
@@ -421,7 +420,6 @@ Rectangle {
         source: gameArea
         radius: 16
         visible: false;
-
     }
 
     BrightnessContrast {
@@ -436,7 +434,7 @@ Rectangle {
             from: 1
             to: 0
         }
-        brightness: 0.1
+        brightness: 1.1
         contrast: 0.3
     }
 

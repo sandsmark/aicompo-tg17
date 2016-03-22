@@ -199,6 +199,7 @@ void GameManager::gameTick()
 
         // The missile doMove() checks if it has hit the sun, and if so sets alive to false
         if (!missile->isAlive()) {
+            emit explosion(missile->position());
             missile->deleteLater();
             missileIterator.remove();
             continue;
