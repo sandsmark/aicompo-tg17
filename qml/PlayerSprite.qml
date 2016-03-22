@@ -59,9 +59,8 @@ Item {
         height: width
         width: parent.width
         radius: width/2
-        color: "transparent"
-        border.width: modelData.energy / 50
-        border.color: playerColors[playerId]
+        visible: alive
+        color: playerColors[playerId]
     }
 
     Image {
@@ -70,16 +69,22 @@ Item {
         width: parent.width
         height: parent.height
         source: modelData.spritePath
-        opacity: alive ? 1 : 0
         smooth: false
-        rotation: modelData.rotation + 90
+        visible: false
+    }
 
+    Desaturate {
+        anchors.fill: image
+        opacity: alive ? 1 : 0
         Behavior on opacity {
             NumberAnimation {
                 easing.type: Easing.Linear
                 duration: 100
             }
         }
+        source: image
+        rotation: modelData.rotation + 90
+        desaturation: 1 - (modelData.energy / 1000)
 
         Emitter {
             id: accelerationEmitter
