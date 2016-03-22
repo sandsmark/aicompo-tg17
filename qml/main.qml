@@ -285,7 +285,7 @@ Rectangle {
                         anchors.bottom: parent.bottom
                         color: playerColors[modelData.id]
                         opacity: modelData.energy / 2000 + 0.5
-                        width: 400 * modelData.energy / 1000
+                        width: 410 * modelData.energy / 1000
                         Behavior on width { NumberAnimation { duration: 60; } }
                         ColorAnimation on color {
                             id: coloranim
@@ -295,9 +295,11 @@ Rectangle {
                         }
                     }
                     Text {
+                        id: playerName
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.right
-                        text: modelData.name + ": " + modelData.energy
+                        width: 300
+                        text: modelData.name
                         color: "white"
                         style: Text.Outline
                         styleColor: "black"
@@ -305,6 +307,19 @@ Rectangle {
                         font.pointSize: 20
                         font.strikeout: !modelData.alive
                     }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: playerName.right
+                        width: font.pointSize * 10
+                        text: modelData.energy
+                        color: "white"
+                        style: Text.Outline
+                        styleColor: "black"
+                        font.family: "Aldrich"
+                        font.pointSize: 20
+                        font.strikeout: !modelData.alive
+                    }
+
                 }
             }
         }
