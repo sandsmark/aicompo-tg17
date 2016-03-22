@@ -1,6 +1,10 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
+#include "missile.h"
+#include "player.h"
+#include "parameters.h"
+
 #include <QObject>
 #include <QPointer>
 #include <QList>
@@ -8,9 +12,7 @@
 #include <QTimer>
 #include <QTcpServer>
 
-#include "missile.h"
-#include "player.h"
-#include "parameters.h"
+#include <random>
 
 class QQuickView;
 class QQmlComponent;
@@ -85,6 +87,8 @@ private:
     bool m_gameRunning;
     QTimer m_startTimer;
     int m_maxRounds;
+    std::random_device m_randomDevice;
+    std::mt19937 m_randomGenerator;
 };
 
 #endif // GAMEMANAGER_H

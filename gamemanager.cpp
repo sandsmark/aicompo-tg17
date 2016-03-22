@@ -16,11 +16,13 @@
 #include <QJsonArray>
 
 #include <cmath>
+#include <algorithm>
 
 GameManager::GameManager() : QObject(),
     m_roundsPlayed(0),
     m_gameRunning(false),
-    m_maxRounds(MAX_ROUNDS)
+    m_maxRounds(MAX_ROUNDS),
+    m_randomGenerator(m_randomDevice())
 {
     // Set up gametick timer
     m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
@@ -246,9 +248,7 @@ void GameManager::gameTick()
 
     // Randomize the order we process players in
     QList<Player*> players = m_players;
-    for (int index = players.count() - 1; index > 0; --index) {
-        qSwap(players[index], players[qrand() % (index + 1)]);
-    }
+    std::shuffle(players.begin(), players.end(), m_randomGenerator);
 
     int dead = 0;
     for(Player *player : players) {
@@ -446,10 +446,22 @@ void GameManager::stopGame()
 
 void GameManager::resetPositions()
 {
-    int playerCount = m_players.count();
+    if (m_players.count() == 0) {
+        return;
+    }
+
+    // Randomize the position processing order
+    QList<Player*> players = m_players;
+    std::shuffle(players.begin(), players.end(), m_randomGenerator);
+    int playerCount = players.count();
+
+    // Rotate by a random amount
+    std::uniform_real_distribution<qreal> randomDistribution(0, M_PI / 2.0);
+    qreal angleOffset = randomDistribution(m_randomGenerator);
+
     for (int i=0; i<playerCount; i++) {
-        qreal angle = i * M_PI * 2.0 / playerCount;
-        m_players[i]->setPosition(QPointF(cos(angle) * 0.5, sin(angle) * 0.5));
+        qreal angle = i * M_PI * 2.0 / playerCount + angleOffset;
+        players[i]->setPosition(QPointF(cos(angle) * 0.5, sin(angle) * 0.5));
     }
 }
 
