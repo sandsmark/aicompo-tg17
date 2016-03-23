@@ -11,6 +11,9 @@ Item {
     x: main.width / 2 + targetX * main.width / 2 - width / 2
     y: main.height / 2 + targetY * main.height / 2 - height / 2
 
+    height: main.scaleSize / 15
+    width: height
+
     property real targetX: 0
     property real targetY: 0
     property real playerX: modelData.position.x

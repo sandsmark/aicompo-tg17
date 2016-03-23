@@ -70,15 +70,6 @@ Rectangle {
         id: gameArea
         anchors.fill: parent
 
-
-        Image {
-            id: background
-            anchors.fill: parent
-            source: "qrc:/sprites/starfield.jpg"
-            fillMode: Image.Tile
-            opacity: 0.5
-        }
-
         Text {
             id: pauseText
             anchors.top: parent.top
@@ -211,7 +202,7 @@ Rectangle {
                 alpha: 0.1
                 alphaVariation: 0.1
                 color: "white"
-                groups: ["Explosion", "Logo"]
+                groups: ["Explosion", "Logo", "Stars"]
             }
             ImageParticle {
                 source: "qrc:///sprites/star.png"
@@ -225,7 +216,31 @@ Rectangle {
                 alpha: 0.0
                 groups: ["Petal"]
             }
+
+            Emitter {
+                group: "Stars"
+                emitRate: 40
+                lifeSpan: 40000
+                enabled: true
+                size: 5
+                sizeVariation: 3
+                velocity: PointDirection { x: 50; xVariation: 10 }
+                height: parent.height
+            }
+
+            Emitter {
+                group: "Stars"
+                emitRate: 40
+                lifeSpan: 40000
+                enabled: true
+                size: 10
+                sizeVariation: 5
+                velocity: PointDirection { x: -100; xVariation: 10 }
+                height: parent.height
+                anchors.right: parent.right
+            }
         }
+
 
         Emitter {
             id: crashEmitter
@@ -414,28 +429,20 @@ Rectangle {
         }
     }
 
-    FastBlur {
-        id: gameBlur
-        anchors.fill: gameArea
-        source: gameArea
-        radius: 16
-        visible: false;
-    }
-
     BrightnessContrast {
         id: gameFilter
-        source: gameBlur
-        anchors.fill: gameBlur
+        source: gameArea
+        anchors.fill: gameArea
         opacity: 0
         NumberAnimation on opacity {
             running: false
             id: blurAnimation
             duration: 250
-            from: 1
+            from: 0.7
             to: 0
         }
-        brightness: 1.1
-        contrast: 0.3
+        brightness: 0.9
+        contrast: 1
     }
 
 
@@ -444,8 +451,6 @@ Rectangle {
         model: GameManager.players
         delegate: PlayerSprite {
             playerId: model.modelData.id
-            height: main.scaleSize / 15
-            width: height
         }
     }
 
