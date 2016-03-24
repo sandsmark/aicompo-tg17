@@ -37,7 +37,7 @@ void NetworkClient::sendString(QByteArray string)
 void NetworkClient::sendDead()
 {
     QJsonObject object;
-    object["messagetype"] = "dead";
+    object["messagetype"] = QStringLiteral("dead");
     QJsonDocument packet(object);
     sendString(packet.toJson(QJsonDocument::Compact));
 }
@@ -45,7 +45,7 @@ void NetworkClient::sendDead()
 void NetworkClient::sendEndOfRound()
 {
     QJsonObject object;
-    object["messagetype"] = "endofround";
+    object["messagetype"] = QStringLiteral("endofround");
     QJsonDocument packet(object);
     sendString(packet.toJson(QJsonDocument::Compact));
 }
@@ -53,7 +53,7 @@ void NetworkClient::sendEndOfRound()
 void NetworkClient::sendState(const QJsonObject gameState)
 {
     QJsonObject stateObject;
-    stateObject["messagetype"] = "stateupdate";
+    stateObject["messagetype"] = QStringLiteral("stateupdate");
 
     stateObject["gamestate"] = gameState;
     QJsonDocument packet(stateObject);

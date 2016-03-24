@@ -133,11 +133,11 @@ QJsonObject Missile::serialize()
     missileObject["rotation"] = rotation();
     missileObject["energy"] = m_energy;
     if (m_type == Mine) {
-        missileObject["type"] = "MINE";
+        missileObject["type"] = QStringLiteral("MINE");
     } else if (m_type == Normal) {
-        missileObject["type"] = "NORMAL";
+        missileObject["type"] = QStringLiteral("NORMAL");
     } else if (m_type == Seeking) {
-        missileObject["type"] = "SEEKING";
+        missileObject["type"] = QStringLiteral("SEEKING");
     }
 
     return missileObject;
