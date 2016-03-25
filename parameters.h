@@ -21,7 +21,7 @@
 
 #define START_ENERGY 1000
 
-#define MAX_PLAYERS 4
+#define MAX_PLAYERS 10
 #define MAX_ROUNDS 4
 
 #endif // PARAMETERS_H

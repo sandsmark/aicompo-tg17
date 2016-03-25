@@ -17,7 +17,11 @@ Rectangle {
         "#c0ff400f", // red
         "#c0400fff", // blue
         "#c040ff0f", // green
-        "#c0f0ff40"  // yellow
+        "#c0f0ff40", // yellow
+        "#c0f601ff", // pink
+        "#c0ffa201", // brown
+        "#c001ffde", // cyan
+        "#c0a801ff"  // purple
     ]
 
     signal userMove(string direction)
@@ -158,7 +162,7 @@ Rectangle {
             id: particleSystem
             anchors.fill: parent
 
-            property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
+            property var particleGroups: ["Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"]
 
             ImageParticle {
                 opacity: 0.5
@@ -195,6 +199,51 @@ Rectangle {
                 colorVariation: 0.5
                 color: playerColors[3]
                 groups: ["Player4"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[4]
+                groups: ["Player5"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[4]
+                groups: ["Player5"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[5]
+                groups: ["Player6"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[6]
+                groups: ["Player7"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/star.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                colorVariation: 0.5
+                color: playerColors[7]
+                groups: ["Player8"]
             }
             ImageParticle {
                 opacity: 0.5

@@ -19,5 +19,9 @@
         <file>sprites/missile-half.png</file>
         <file>sprites/turnon.png</file>
         <file>sprites/sun.png</file>
+        <file>sprites/players/player4.png</file>
+        <file>sprites/players/player5.png</file>
+        <file>sprites/players/player6.png</file>
+        <file>sprites/players/player7.png</file>
     </qresource>
 </RCC>
