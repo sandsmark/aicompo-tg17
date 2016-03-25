@@ -299,7 +299,7 @@ Rectangle {
                         anchors.bottom: parent.bottom
                         color: playerColors[modelData.id]
                         width: 500 * modelData.energy / 1000
-                        Behavior on width { NumberAnimation { duration: 60; } }
+                        Behavior on width { NumberAnimation { duration: 100; } }
                     }
                     Text {
                         id: playerName
@@ -467,5 +467,10 @@ Rectangle {
         text: GameManager.version()
         font.pointSize: 10
         opacity: 0.3
+    }
+
+    Text {
+        anchors.centerIn: parent
+        text: GameManager.timeElapsed
     }
 }

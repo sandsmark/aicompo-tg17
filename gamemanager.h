@@ -5,6 +5,7 @@
 #include "player.h"
 #include "parameters.h"
 
+#include <QElapsedTimer>
 #include <QObject>
 #include <QPointer>
 #include <QList>
@@ -27,6 +28,7 @@ class GameManager : public QObject
     Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
     Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
     Q_PROPERTY(int maxRounds READ maxRounds CONSTANT)
+    Q_PROPERTY(QString timeElapsed READ timeElapsed NOTIFY secondsElapsedChanged)
 
 public:
     explicit GameManager();
@@ -58,6 +60,7 @@ public slots:
     void kick(int index);
 
     int roundsPlayed() { return m_roundsPlayed; }
+    QString timeElapsed();
 
 signals:
     void gameRunningChanged();
@@ -69,6 +72,7 @@ signals:
     void missileCreated(QObject *missile);
     void showCountdown();
     void humanMove(QString move);
+    void secondsElapsedChanged();
 
 private slots:
     void gameTick();
@@ -82,6 +86,7 @@ private:
     QList<Player*> m_players;
     QList<Missile*> m_missiles;
     QTimer m_tickTimer;
+    QElapsedTimer m_elapsedTimer;
     QTcpServer m_server;
     int m_roundsPlayed;
     bool m_gameRunning;

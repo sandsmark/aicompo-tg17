@@ -27,6 +27,7 @@ GameManager::GameManager() : QObject(),
     // Set up gametick timer
     m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
     m_tickTimer.setSingleShot(false);
+    m_elapsedTimer.start();
 
     // Set up timer for delayed starting of rounds
     m_startTimer.setInterval(750);
@@ -186,6 +187,7 @@ void GameManager::startGame()
         emit showCountdown();
     }
 
+    m_elapsedTimer.restart();
     m_startTimer.start();
 }
 
@@ -224,7 +226,9 @@ void GameManager::gameTick()
             const qreal dy = m_players[i]->position().y() - missile->position().y();
             if (hypot(dx, dy) < 0.1) {
                 m_players[i]->decreaseEnergy(MISSILE_DAMAGE);
-                m_players[missile->owner()]->increaseEnergy(MISSILE_DAMAGE);
+                if (m_players[missile->owner()]->isAlive()) {
+                    m_players[missile->owner()]->increaseEnergy(MISSILE_DAMAGE);
+                }
                 m_players[missile->owner()]->addScore(1);
                 emit explosion(missile->position());
                 missile->deleteLater();
@@ -306,6 +310,8 @@ void GameManager::gameTick()
 
         player->networkClient()->sendState(serializeForPlayer(player));
     }
+
+    emit secondsElapsedChanged();
 }
 
 void GameManager::clientConnect()
@@ -393,6 +399,12 @@ void GameManager::kick(int index)
     }
 
     emit playersChanged();
+}
+
+QString GameManager::timeElapsed()
+{
+    const qint64 seconds = m_elapsedTimer.elapsed();
+    return QString::number(qFloor(seconds / 60000)).rightJustified(2, '0') + ':' + QString::number(seconds / 1000 % 60).rightJustified(2, '0');
 }
 
 void GameManager::removeHumanPlayer()
