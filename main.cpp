@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
     // Set up command line options
     QCommandLineOption autostartOption("start-at",
-                                       "Automatically start the game after <players> (1 - 4) have connected, default " + QString::number(MAX_PLAYERS),
+                                       "Automatically start the game after <players> (1 -" + QString::number(MAX_PLAYERS) + ") have connected, default " + QString::number(MAX_PLAYERS),
                                        "players", QString::number(MAX_PLAYERS));
     QCommandLineOption tickintervalOption(QStringList() << "tick-interval" << "i" ,
                                           "Set the tick interval to <ms> milliseconds (10 - 1000), default " + QString::number(DEFAULT_TICKINTERVAL),
