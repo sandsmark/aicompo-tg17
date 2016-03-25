@@ -91,19 +91,18 @@ Item {
 
         Emitter {
             id: accelerationEmitter
-            x: parent.width/2 - parent.width / 4
-            y: parent.height /2 - parent.height / 4
-            emitRate: 2000
-            lifeSpan: 50
-            lifeSpanVariation: 100
+            anchors.centerIn: parent
+            emitRate: 5000
+            lifeSpan: 15
+            lifeSpanVariation: 5
             enabled: false
-            velocity: AngleDirection{ angle: modelData.rotation + 180; magnitude: 1000; angleVariation: 15}
+            velocity: AngleDirection{ angle: modelData.rotation + 180; magnitude: 5000; angleVariation: 10}
             size: 50
-            sizeVariation: 5
+            sizeVariation: 30
             system: particleSystem
-            width: parent.width / 2
-            height: parent.height /2
-            group: particleSystem.particleGroups[playerId]
+            width: parent.width / 4
+            height: parent.height /4
+            group: "Stars"
         }
 
         Emitter {
