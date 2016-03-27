@@ -323,7 +323,7 @@ void GameManager::clientConnect()
         return;
     }
 
-    if (m_players.count() >= MAX_PLAYERS || m_tickTimer.isActive()) {
+    if (m_players.count() >= MAX_PLAYERS || m_tickTimer.isActive() || m_gameRunning) {
         socket->disconnect();
         socket->deleteLater();
         return;
