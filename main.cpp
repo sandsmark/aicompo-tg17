@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     }
 
     // Set application name and domain mainly for QSettings
-    app->setApplicationName("Turn On Me");
+    app->setApplicationName("Ghostly");
     app->setOrganizationDomain("gathering.org");
 
     GameManager manager;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     }
 
     if (!runHeadless) {
-        qmlRegisterSingletonType<Settings>("org.gathering.turnonme", 1, 0, "Settings", [](QQmlEngine *, QJSEngine*) -> QObject* {
+        qmlRegisterSingletonType<Settings>("org.gathering.ghostly", 1, 0, "Settings", [](QQmlEngine *, QJSEngine*) -> QObject* {
             return new Settings;
         });
 

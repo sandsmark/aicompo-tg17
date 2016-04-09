@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.0
-import org.gathering.turnonme 1.0
+import org.gathering.ghostly 1.0
 
 Item {
     id: startScreen
@@ -85,7 +85,7 @@ Item {
         anchors.bottom: settingsList.top
         anchors.horizontalCenter: parent.horizontalCenter
         verticalAlignment: Text.AlignVCenter
-        text: "TURN ON ME"
+        text: "ghostly"
         color: "black"
         font.pointSize: 30
         font.bold: true
