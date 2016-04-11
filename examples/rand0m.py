@@ -13,17 +13,14 @@ s.send(b"NAME rand0m\n")
 
 while True:
     sleep(0.1)
-    r = int(random() * 6)
+    r = int(random() * 4)
     if (r == 0):
-        s.send(b"ACCELERATE\n")
+        s.send(b"up\n")
     elif (r == 1):
-        s.send(b"MINE\n")
+        s.send(b"down\n")
     elif (r == 2):
-        s.send(b"RIGHT\n")
+        s.send(b"right\n")
     elif (r == 3):
-        s.send(b"LEFT\n")
-    elif (r == 4):
-        s.send(b"MISSILE\n")
-    elif (r == 5):
-        s.send(b"SEEKING\n")
+        s.send(b"left\n")
+
 s.close                     # Close the socket when done
