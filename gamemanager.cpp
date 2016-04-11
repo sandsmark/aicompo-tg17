@@ -22,8 +22,11 @@ GameManager::GameManager() : QObject(),
     m_roundsPlayed(0),
     m_gameRunning(false),
     m_maxRounds(MAX_ROUNDS),
-    m_randomGenerator(m_randomDevice())
+    m_randomGenerator(m_randomDevice()),
+    m_map(new Map(this))
 {
+    m_map->loadMap(":/map1.map");
+
     // Set up gametick timer
     m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
     m_tickTimer.setSingleShot(false);

@@ -4,6 +4,7 @@
 #include "missile.h"
 #include "player.h"
 #include "parameters.h"
+#include "map.h"
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -39,6 +40,8 @@ public:
     Q_INVOKABLE void setTickInterval(int interval);
 
     Q_INVOKABLE QString version();
+
+    Q_INVOKABLE QObject *map() { return m_map; }
 
     bool isGameRunning() const { return m_gameRunning; }
 
@@ -94,6 +97,7 @@ private:
     int m_maxRounds;
     std::random_device m_randomDevice;
     std::mt19937 m_randomGenerator;
+    Map *m_map;
 };
 
 #endif // GAMEMANAGER_H

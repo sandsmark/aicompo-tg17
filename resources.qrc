@@ -6,22 +6,27 @@
         <file>qml/main.qml</file>
         <file>qml/PlayerSprite.qml</file>
         <file>qml/StartScreen.qml</file>
-        <file>sprites/starfield.jpg</file>
-        <file>sprites/star.png</file>
-        <file>sprites/players/player0.png</file>
-        <file>sprites/players/player1.png</file>
-        <file>sprites/players/player2.png</file>
-        <file>sprites/players/player3.png</file>
         <file>qml/MissileSprite.qml</file>
         <file>Aldrich_Regular.ttf</file>
-        <file>sprites/missile-empty.png</file>
-        <file>sprites/missile-full.png</file>
-        <file>sprites/missile-half.png</file>
-        <file>sprites/turnon.png</file>
-        <file>sprites/sun.png</file>
-        <file>sprites/players/player4.png</file>
-        <file>sprites/players/player5.png</file>
-        <file>sprites/players/player6.png</file>
-        <file>sprites/players/player7.png</file>
+        <file>map1.map</file>
+        <file>sprites/players/player0-down-0.png</file>
+        <file>sprites/players/player0-down-1.png</file>
+        <file>sprites/players/player0-left-0.png</file>
+        <file>sprites/players/player0-left-1.png</file>
+        <file>sprites/players/player0-right-0.png</file>
+        <file>sprites/players/player0-right-1.png</file>
+        <file>sprites/players/player0-up-0.png</file>
+        <file>sprites/players/player0-up-1.png</file>
+        <file>sprites/map/floor.png</file>
+        <file>sprites/map/door-horizontal.png</file>
+        <file>sprites/map/door-vertical.png</file>
+        <file>sprites/map/invalid.png</file>
+        <file>sprites/map/pellet.png</file>
+        <file>sprites/map/superpellet.png</file>
+        <file>sprites/map/wall-corner-inverted.png</file>
+        <file>sprites/map/wall-corner.png</file>
+        <file>sprites/map/wall-full.png</file>
+        <file>sprites/map/wall-horizontal.png</file>
+        <file>sprites/map/wall-vertical.png</file>
     </qresource>
 </RCC>

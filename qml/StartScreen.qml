@@ -68,7 +68,7 @@ Item {
         sizeVariation: 15
 
         shape: MaskShape {
-            source: "qrc:///sprites/turnon.png"
+//            source: "qrc:///sprites/turnon.png"
         }
 
         velocity: PointDirection {

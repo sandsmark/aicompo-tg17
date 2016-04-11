@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     gamemanager.cpp \
     networkclient.cpp \
     missile.cpp \
-    settings.cpp
+    settings.cpp \
+    map.cpp
 
 HEADERS += \
     player.h \
@@ -24,7 +25,8 @@ HEADERS += \
     networkclient.h \
     parameters.h \
     missile.h \
-    settings.h
+    settings.h \
+    map.h
 
 RESOURCES += \
     resources.qrc
@@ -43,4 +45,7 @@ DISTFILES += \
     sprites/missile-full.png \
     sprites/missile-half.png \
     sprites/turnon.png \
-    sprites/sun.png
+    sprites/sun.png \
+    sprites/map/wall-north-south.png \
+    sprites/map/wall-south-west-southwest.png \
+    sprites/map/wall-north-south-east-southeast-southwest-northeast.png

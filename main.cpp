@@ -1,6 +1,7 @@
 #include "gamemanager.h"
 #include "settings.h"
 #include "parameters.h"
+#include "map.h"
 
 #include <QGuiApplication>
 #include <QQmlContext>
@@ -158,6 +159,7 @@ int main(int argc, char *argv[])
         view->setResizeMode(QQuickView::SizeRootObjectToView);
 
         view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(&manager));
+        view->rootContext()->setContextProperty("Map", QVariant::fromValue(manager.map()));
         view->setSource(QUrl("qrc:/qml/main.qml"));
         QObject::connect(view->rootObject(), SIGNAL(userMove(QString)), &manager, SIGNAL(humanMove(QString)));
 

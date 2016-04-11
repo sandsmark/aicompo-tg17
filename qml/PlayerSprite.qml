@@ -11,7 +11,8 @@ Item {
     x: main.width / 2 + targetX * main.width / 2 - width / 2
     y: main.height / 2 + targetY * main.height / 2 - height / 2
 
-    height: main.scaleSize / 15
+    height: playingField.tileSize + 15
+//    height: main.scaleSize / 15
     width: height
 
     property real targetX: 0
@@ -57,21 +58,13 @@ Item {
     }
 
 
-    Rectangle {
-        anchors.centerIn: parent
-        height: width
-        width: parent.width
-        radius: width/2
-        visible: alive
-        color: playerColors[playerId]
-    }
-
     Image {
         id: image
         anchors.centerIn: parent
         width: parent.width
         height: parent.height
-        source: modelData.spritePath
+        source: "qrc:///sprites/players/player" + modelData.id + "-down-0.png"
+//        source: modelData.spritePath
         smooth: false
         visible: false
     }
@@ -86,24 +79,7 @@ Item {
             }
         }
         source: image
-        rotation: modelData.rotation + 90
         desaturation: 1 - (modelData.energy / 1000)
-
-        Emitter {
-            id: accelerationEmitter
-            anchors.centerIn: parent
-            emitRate: 5000
-            lifeSpan: 15
-            lifeSpanVariation: 5
-            enabled: false
-            velocity: AngleDirection{ angle: modelData.rotation + 180; magnitude: 5000; angleVariation: 10}
-            size: 50
-            sizeVariation: 30
-            system: particleSystem
-            width: parent.width / 4
-            height: parent.height /4
-            group: "Stars"
-        }
 
         Emitter {
             id: deathEmitter

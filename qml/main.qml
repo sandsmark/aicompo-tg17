@@ -2,6 +2,7 @@ import QtQuick 2.2
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 import QtQuick.Particles 2.0
+import org.gathering.ghostly 1.0
 
 Rectangle {
     id: main
@@ -26,8 +27,8 @@ Rectangle {
 
     signal userMove(string direction)
 
-    Keys.onDownPressed: userMove("DOWN")
-    Keys.onUpPressed: userMove("ACCELERATE")
+    Keys.onDownPressed: userMove("UP")
+    Keys.onUpPressed: userMove("DOWN")
     Keys.onRightPressed: userMove("RIGHT")
     Keys.onLeftPressed: userMove("LEFT")
     Keys.onEscapePressed: {
@@ -132,7 +133,7 @@ Rectangle {
 
         Image {
             id: sun
-            source: "qrc:///sprites/sun.png"
+//            source: "qrc:///sprites/sun.png"
             anchors.centerIn: parent
             width: main.scaleSize / 10
             height: width
@@ -247,14 +248,14 @@ Rectangle {
             }
             ImageParticle {
                 opacity: 0.5
-                source: "qrc:///sprites/star.png"
+//                source: "qrc:///sprites/star.png"
                 alpha: 0.1
                 alphaVariation: 0.1
                 color: "white"
                 groups: ["Explosion", "Logo", "Stars"]
             }
             ImageParticle {
-                source: "qrc:///sprites/star.png"
+//                source: "qrc:///sprites/star.png"
                 alphaVariation: 0.1
                 colorVariation: 0.5
                 color: "#0fffff00"
@@ -474,6 +475,84 @@ Rectangle {
         contrast: 1
     }
 
+    Item {
+        id: playingField
+        anchors.centerIn: parent
+        property int maxSize: Math.min(parent.height, parent.width) - 20
+        property int maxTiles: Math.max(Map.width, Map.height) - 1
+        height: maxSize * Map.height / maxTiles
+        width: maxSize * Map.width / maxTiles
+
+        property int tileSize: maxSize / maxTiles
+
+        Grid {
+            anchors.fill: parent
+            columns: Map.width
+            rows: Map.height
+
+            Repeater {
+                anchors.horizontalCenter: parent.horizontalCenter
+                model: Map.height
+                delegate: Repeater {
+                    property int spriteY: modelData
+                    model: Map.width
+                    delegate: Item {
+                        width: playingField.tileSize
+                        height: width
+                        property int spriteX: modelData
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                top: parent.top
+                                left: parent.left
+                            }
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 0) + ".png"
+                        }
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                top: parent.top
+                                right: parent.right
+                            }
+                            mirror: true
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 1) + ".png"
+                        }
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                bottom: parent.bottom
+                                left: parent.left
+                            }
+                            rotation: 180
+                            mirror: true
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 2) + ".png"
+                        }
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                bottom: parent.bottom
+                                right: parent.right
+                            }
+                            rotation: 180
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 3) + ".png"
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // List of player sprites
     Repeater {
