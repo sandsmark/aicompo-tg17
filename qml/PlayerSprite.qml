@@ -124,20 +124,18 @@ Item {
         font.strikeout: !modelData.alive
     }
 
-//    Emitter {
-//        id: trailEmitter
-//        anchors.fill: parent
-//        emitRate: 1000
+    Emitter {
+        id: trailEmitter
+        anchors.fill: parent
+        emitRate: 50
 
-//        lifeSpan: 5000
-//        lifeSpanVariation: 90
-//        enabled: modelData.energy > 1
-//        velocity: AngleDirection{ magnitude: 10; magnitudeVariation: 10; angleVariation: 360}
-//        size: 8
-//        sizeVariation: 4
-//        system: particleSystem
-//        group: particleSystem.particleGroups[playerId]
-//        endSize: 0
-//        shape: EllipseShape { }
-//    }
+        lifeSpan: 10000
+        lifeSpanVariation: 1000
+        enabled: alive && (yAnimation.running || xAnimation.running)
+        velocity: AngleDirection{ magnitude: 2; magnitudeVariation: 1; angleVariation: 360}
+        size: 1
+        system: particleSystem
+        group: particleSystem.particleGroups[playerId]
+        shape: EllipseShape { }
+    }
 }

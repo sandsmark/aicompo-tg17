@@ -51,5 +51,6 @@
         <file>sprites/players/player3-up-0.png</file>
         <file>sprites/players/player3-up-1.png</file>
         <file>sprites/rect.png</file>
+        <file>sprites/logo.png</file>
     </qresource>
 </RCC>

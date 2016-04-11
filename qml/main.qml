@@ -82,6 +82,11 @@ Rectangle {
 
         property int tileSize: maxSize / maxTiles
 
+        opacity: startScreen.visible ? 0.1 : 1
+        Behavior on opacity {
+            NumberAnimation { duration: 500 }
+        }
+
         Grid {
             anchors.fill: parent
             columns: Map.width
@@ -241,7 +246,7 @@ Rectangle {
             id: particleSystem
             anchors.fill: parent
 
-            property var particleGroups: ["Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"]
+            property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
 
             ImageParticle {
                 opacity: 0.5
@@ -249,123 +254,43 @@ Rectangle {
                 alpha: 0.1
                 alphaVariation: 0.1
                 colorVariation: 0.3
-                color: "red"
+                color: playerColors[0]
                 groups: ["Player1"]
             }
             ImageParticle {
                 opacity: 0.5
-                source: "qrc:///sprites/star.png"
+                source: "qrc:///sprites/rect.png"
                 alpha: 0.1
                 alphaVariation: 0.1
-                colorVariation: 0.5
+                colorVariation: 0.3
                 color: playerColors[1]
                 groups: ["Player2"]
             }
             ImageParticle {
                 opacity: 0.5
-                source: "qrc:///sprites/star.png"
+                source: "qrc:///sprites/rect.png"
                 alpha: 0.1
                 alphaVariation: 0.1
-                colorVariation: 0.5
+                colorVariation: 0.3
                 color: playerColors[2]
                 groups: ["Player3"]
             }
             ImageParticle {
                 opacity: 0.5
-                source: "qrc:///sprites/star.png"
+                source: "qrc:///sprites/rect.png"
                 alpha: 0.1
                 alphaVariation: 0.1
-                colorVariation: 0.5
+                colorVariation: 0.3
                 color: playerColors[3]
                 groups: ["Player4"]
             }
             ImageParticle {
                 opacity: 0.5
-                source: "qrc:///sprites/star.png"
+                source: "qrc:///sprites/rect.png"
                 alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.5
-                color: playerColors[4]
-                groups: ["Player5"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/star.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.5
-                color: playerColors[4]
-                groups: ["Player5"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/star.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.5
-                color: playerColors[5]
-                groups: ["Player6"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/star.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.5
-                color: playerColors[6]
-                groups: ["Player7"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/star.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.5
-                color: playerColors[7]
-                groups: ["Player8"]
-            }
-            ImageParticle {
-                opacity: 0.5
-//                source: "qrc:///sprites/star.png"
-                alpha: 0.1
-                alphaVariation: 0.1
+                alphaVariation: 0.9
                 color: "white"
-                groups: ["Explosion", "Logo", "Stars"]
-            }
-            ImageParticle {
-//                source: "qrc:///sprites/star.png"
-                alphaVariation: 0.1
-                colorVariation: 0.5
-                color: "#0fffff00"
-                groups: ["Sun"]
-            }
-            ImageParticle {
-                source: "qrc:///particleresources/fuzzydot.png"
-                alpha: 0.0
-                groups: ["Petal"]
-            }
-
-            Emitter {
-                group: "Stars"
-                emitRate: 40
-                lifeSpan: 40000
-                enabled: true
-                size: 5
-                sizeVariation: 3
-                velocity: PointDirection { x: 50; xVariation: 10 }
-                height: parent.height
-            }
-
-            Emitter {
-                group: "Stars"
-                emitRate: 40
-                lifeSpan: 40000
-                enabled: true
-                size: 10
-                sizeVariation: 5
-                velocity: PointDirection { x: -100; xVariation: 10 }
-                height: parent.height
-                anchors.right: parent.right
+                groups: ["Explosion", "Logo"]
             }
         }
 
