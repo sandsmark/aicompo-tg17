@@ -34,5 +34,21 @@
         <file>sprites/players/player1-right-1.png</file>
         <file>sprites/players/player1-up-0.png</file>
         <file>sprites/players/player1-up-1.png</file>
+        <file>sprites/players/player2-down-0.png</file>
+        <file>sprites/players/player2-down-1.png</file>
+        <file>sprites/players/player2-left-0.png</file>
+        <file>sprites/players/player2-left-1.png</file>
+        <file>sprites/players/player2-right-0.png</file>
+        <file>sprites/players/player2-right-1.png</file>
+        <file>sprites/players/player2-up-0.png</file>
+        <file>sprites/players/player2-up-1.png</file>
+        <file>sprites/players/player3-down-0.png</file>
+        <file>sprites/players/player3-down-1.png</file>
+        <file>sprites/players/player3-left-0.png</file>
+        <file>sprites/players/player3-left-1.png</file>
+        <file>sprites/players/player3-right-0.png</file>
+        <file>sprites/players/player3-right-1.png</file>
+        <file>sprites/players/player3-up-0.png</file>
+        <file>sprites/players/player3-up-1.png</file>
     </qresource>
 </RCC>

@@ -221,6 +221,9 @@ void GameManager::gameTick()
         }
 
         if (m_map->isValidPosition(newX, newY)) {
+            if (m_map->takePellet(newX, newY)) {
+                player->addScore(1);
+            }
             player->setPosition(newX, newY);
         }
     }

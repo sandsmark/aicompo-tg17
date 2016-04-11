@@ -50,6 +50,8 @@ public:
 
     QString name() const;
 
+    bool takePellet(int x, int y);
+    Q_INVOKABLE bool tileHasPellet(int x, int y) const;
     Q_INVOKABLE TileType tileAt(int x, int y) const;
 
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
@@ -58,10 +60,12 @@ public:
 
 signals:
     void mapChanged();
+    void pelletTaken(int x, int y);
 
 private:
     int m_width;
     int m_height;
+    QVector<bool> m_tileHasPellet;
     QVector<TileType> m_tiles;
     QVector<QPoint> m_startingPositions;
     QString m_name;

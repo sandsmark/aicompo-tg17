@@ -508,6 +508,24 @@ Rectangle {
                             smooth: false
                             source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 3) + ".png"
                         }
+
+                        Rectangle {
+                            id: pellet
+                            anchors.centerIn: parent
+                            width: 5
+                            height: 5
+                            color: "white"
+                            visible: Map.tileHasPellet(spriteX, spriteY)
+                            Connections {
+                                target: Map
+                                onPelletTaken: {
+                                    if (x != spriteX || y != spriteY) {
+                                        return
+                                    }
+                                    pellet.visible = false
+                                }
+                            }
+                        }
                     }
                 }
             }

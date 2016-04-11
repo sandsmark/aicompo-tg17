@@ -21,6 +21,7 @@ bool Map::loadMap(const QString filepath)
     m_name = file.fileName();
     m_tiles.clear();
     m_startingPositions.clear();
+    m_tileHasPellet.clear();
 
     QVector<TileType> tiles;
     QByteArray line = file.readLine().trimmed();
@@ -29,6 +30,7 @@ bool Map::loadMap(const QString filepath)
     while (!file.atEnd()) {
         int x = 0;
         for (const char tile : line) {
+            m_tileHasPellet.append(false);
             switch(tile) {
             case '_':
                 tiles.append(Floor);
@@ -40,6 +42,8 @@ bool Map::loadMap(const QString filepath)
                 tiles.append(Door);
                 break;
             case '.':
+                m_tileHasPellet.takeLast();
+                m_tileHasPellet.append(true);
                 tiles.append(Pellet);
                 break;
             case 'o':
@@ -98,6 +102,30 @@ bool Map::isWithinBounds(int x, int y) const
 QString Map::name() const
 {
     return m_name;
+}
+
+bool Map::takePellet(int x, int y)
+{
+    if (!tileHasPellet(x, y)) {
+        return false;
+    }
+
+    m_tileHasPellet[y * m_width + x] = false;
+    emit pelletTaken(x, y);
+    return true;
+}
+
+bool Map::tileHasPellet(int x, int y) const
+{
+    if (!isWithinBounds(x, y)) {
+        return false;
+    }
+    const int pos = y * m_width + x;
+    if (pos >= m_tileHasPellet.length()) {
+        return false;
+    }
+
+    return m_tileHasPellet[pos];
 }
 
 Map::TileType Map::tileAt(int x, int y) const

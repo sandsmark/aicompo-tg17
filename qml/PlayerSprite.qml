@@ -15,8 +15,8 @@ Item {
 
     property real targetX: 0
     property real targetY: 0
-    property real playerX: (modelData.x / Map.width) * playingField.width
-    property real playerY: (modelData.y / Map.height) * playingField.height
+    property real playerX: modelData.x * width
+    property real playerY: modelData.y * height
     property real lastPlayerX: 0
     property real lastPlayerY: 0
 
