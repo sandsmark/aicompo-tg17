@@ -27,10 +27,10 @@ Rectangle {
 
     signal userMove(string direction)
 
-    Keys.onDownPressed: userMove("UP")
-    Keys.onUpPressed: userMove("DOWN")
-    Keys.onRightPressed: userMove("RIGHT")
-    Keys.onLeftPressed: userMove("LEFT")
+    Keys.onUpPressed: userMove("up")
+    Keys.onDownPressed: userMove("down")
+    Keys.onRightPressed: userMove("right")
+    Keys.onLeftPressed: userMove("left")
     Keys.onEscapePressed: {
         GameManager.stopGame();
     }
@@ -129,34 +129,6 @@ Rectangle {
             font.pointSize: 40
             z: 10
             opacity: (GameManager.roundsPlayed < GameManager.maxRounds) ? 0.7 : 0
-        }
-
-        Image {
-            id: sun
-//            source: "qrc:///sprites/sun.png"
-            anchors.centerIn: parent
-            width: main.scaleSize / 10
-            height: width
-
-            Emitter {
-                anchors.fill: parent
-                emitRate: 1000
-                lifeSpan: 2000
-                size: 20
-                sizeVariation: 5
-                endSize: 0
-
-                shape: EllipseShape {fill: false}
-                velocity: TargetDirection {
-                    targetX: sun.width/2
-                    targetY: sun.height/2
-                    proportionalMagnitude: true
-                    magnitude: 0.5
-                    magnitudeVariation: 0.9
-                }
-                system: particleSystem
-                group: "Sun"
-            }
         }
 
         ParticleSystem {
@@ -315,58 +287,45 @@ Rectangle {
             }
         }
 
-        Component {
-            id: missileSpriteSpawner
 
-            MissileSprite {
-            }
-        }
-        Connections {
-            target: GameManager
-            onMissileCreated: {
-                missileSpriteSpawner.createObject(gameArea, {"missileData": missile})
-            }
-        }
-
-
-        // List of names of players
-        Column {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            height: 100
-            width: 100
-            Repeater {
-                model: GameManager.players
-                delegate: Image {
-                    source: modelData.spritePath
-                    height: 45
-                    width: height
+//        // List of names of players
+//        Column {
+//            anchors.left: parent.left
+//            anchors.top: parent.top
+//            height: 100
+//            width: 100
+//            Repeater {
+//                model: GameManager.players
+//                delegate: Image {
+//                    source: modelData.spritePath
+//                    height: 45
+//                    width: height
 
 
-                    Rectangle {
-                        anchors.left: parent.right
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        color: playerColors[modelData.id]
-                        width: 500 * modelData.energy / 1000
-                        Behavior on width { NumberAnimation { duration: 100; } }
-                    }
-                    Text {
-                        id: playerName
-                        anchors.verticalCenter: parent.verticalCenter
-                        anchors.left: parent.right
-                        width: 500
-                        text: modelData.name + " (" + modelData.wins + ")"
-                        color: "white"
-                        style: Text.Outline
-                        styleColor: "black"
-                        font.family: "Aldrich"
-                        font.pointSize: 20
-                        font.strikeout: !modelData.alive
-                    }
-                }
-            }
-        }
+//                    Rectangle {
+//                        anchors.left: parent.right
+//                        anchors.top: parent.top
+//                        anchors.bottom: parent.bottom
+//                        color: playerColors[modelData.id]
+//                        width: 500 * modelData.energy / 1000
+//                        Behavior on width { NumberAnimation { duration: 100; } }
+//                    }
+//                    Text {
+//                        id: playerName
+//                        anchors.verticalCenter: parent.verticalCenter
+//                        anchors.left: parent.right
+//                        width: 500
+//                        text: modelData.name + " (" + modelData.wins + ")"
+//                        color: "white"
+//                        style: Text.Outline
+//                        styleColor: "black"
+//                        font.family: "Aldrich"
+//                        font.pointSize: 20
+//                        font.strikeout: !modelData.alive
+//                    }
+//                }
+//            }
+//        }
 
         Rectangle {
             id: startCountdown
@@ -475,7 +434,8 @@ Rectangle {
         contrast: 1
     }
 
-    Item {
+    Rectangle {
+        color: "#aa000000"
         id: playingField
         anchors.centerIn: parent
         property int maxSize: Math.min(parent.height, parent.width) - 20
@@ -552,13 +512,13 @@ Rectangle {
                 }
             }
         }
-    }
 
-    // List of player sprites
-    Repeater {
-        model: GameManager.players
-        delegate: PlayerSprite {
-            playerId: model.modelData.id
+        // Create player sprites
+        Repeater {
+            model: GameManager.players
+            delegate: PlayerSprite {
+                playerId: model.modelData.id
+            }
         }
     }
 

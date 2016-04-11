@@ -1,7 +1,6 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
-#include "missile.h"
 #include "player.h"
 #include "parameters.h"
 #include "map.h"
@@ -72,7 +71,6 @@ signals:
     void roundsPlayedChanged();
     void playersChanged();
     void explosion(QPointF position);
-    void missileCreated(QObject *missile);
     void showCountdown();
     void humanMove(QString move);
     void secondsElapsedChanged();
@@ -87,7 +85,6 @@ private:
     QJsonObject serializeForPlayer(Player *player);
 
     QList<Player*> m_players;
-    QList<Missile*> m_missiles;
     QTimer m_tickTimer;
     QElapsedTimer m_elapsedTimer;
     QTcpServer m_server;

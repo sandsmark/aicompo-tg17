@@ -220,14 +220,14 @@ Item {
                 delegate: Item {
                     height: 40
                     width: userListColumn.width
-                    Image {
-                        source: modelData.spritePath
-                        width: 30
-                        height: width
-                        anchors {
-                            left: parent.left
-                            verticalCenter: parent.verticalCenter
-                        }
+//                    Image {
+//                        source: modelData.spritePath
+//                        width: 30
+//                        height: width
+//                        anchors {
+//                            left: parent.left
+//                            verticalCenter: parent.verticalCenter
+//                        }
 
                         Text {
                             anchors.left: parent.right
@@ -236,7 +236,7 @@ Item {
                             font.pixelSize: 20
                             text: modelData.name
                         }
-                    }
+//                    }
 
                     Button {
                         visible: !modelData.isHuman()

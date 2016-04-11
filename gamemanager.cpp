@@ -15,7 +15,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include <cmath>
+#include <qmath.h> // Fuck windows aight
+
 #include <algorithm>
 
 GameManager::GameManager() : QObject(),
@@ -86,11 +87,6 @@ void GameManager::endRound()
 
     emit roundOver();
 
-    for (int i=0; i<m_missiles.count(); i++) {
-        m_missiles[i]->deleteLater();
-    }
-    m_missiles.clear();
-
     for (int i=0; i<m_players.count(); i++) {
         if (!m_players[i]->networkClient()) continue;
         m_players[i]->networkClient()->sendEndOfRound();
@@ -124,12 +120,10 @@ void GameManager::endRound()
         for(Player *player : playerList) {
             qDebug() << player->name()
                      << "Wins:" << player->wins()
-                     << "Score:" << player->score()
-                     << "Energy:" << player->energy();
+                     << "Score:" << player->score();
             scoreFile.write(player->name().toUtf8() + ' ' +
                             QByteArray::number(player->wins()) + ' ' +
-                            QByteArray::number(player->score()) + ' ' +
-                            QByteArray::number(player->energy()) + '\n');
+                            QByteArray::number(player->score()));
         }
     }
 }
@@ -149,7 +143,6 @@ void GameManager::startRound()
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setCommand(QString());
         m_players[i]->setAlive(true);
-        m_players[i]->setEnergy(START_ENERGY);
     }
 
     // Do not allow to change name after game has started
@@ -175,11 +168,6 @@ void GameManager::startGame()
     }
 
 
-    for (int i=0; i<m_missiles.count(); i++) {
-        m_missiles[i]->deleteLater();
-    }
-    m_missiles.clear();
-
     m_roundsPlayed = 0;
     emit roundsPlayedChanged();
 
@@ -196,64 +184,6 @@ void GameManager::startGame()
 
 void GameManager::gameTick()
 {
-    QMutableListIterator<Missile*> missileIterator(m_missiles);
-    while (missileIterator.hasNext()) {
-        Missile *missile = missileIterator.next();
-
-        missile->doMove();
-
-        // The missile doMove() checks if it has hit the sun, and if so sets alive to false
-        if (!missile->isAlive()) {
-            emit explosion(missile->position());
-            missile->deleteLater();
-            missileIterator.remove();
-            continue;
-        }
-
-        // For seeking missiles, we need to find the closest player
-        Player *closest = nullptr;
-        qreal closestDX = 0, closestDY = 0;
-
-        for(int i=0; i<m_players.count(); i++) {
-            if (!m_players[i]->isAlive()) {
-                continue;
-            }
-
-            // Missiles can't hit and seeking missiles won't target their own player
-            if (missile->owner() == m_players[i]->id()) {
-                continue;
-            }
-
-            // Check if missile has hit a player
-            const qreal dx = m_players[i]->position().x() - missile->position().x();
-            const qreal dy = m_players[i]->position().y() - missile->position().y();
-            if (hypot(dx, dy) < 0.1) {
-                m_players[i]->decreaseEnergy(MISSILE_DAMAGE);
-                if (m_players[missile->owner()]->isAlive()) {
-                    m_players[missile->owner()]->increaseEnergy(MISSILE_DAMAGE);
-                }
-                m_players[missile->owner()]->addScore(1);
-                emit explosion(missile->position());
-                missile->deleteLater();
-                missileIterator.remove();
-                break;
-            }
-
-            // For seeking missiles
-            if (!closest || hypot(dx, dy) < hypot(closestDX, closestDY)) {
-                closest = m_players[i];
-                closestDX = dx;
-                closestDY = dy;
-                continue;
-            }
-        }
-
-        if (missile->type() == Missile::Seeking && closest) {
-            missile->setRotation(atan2(closestDY, closestDX));
-        }
-    }
-
-
     // Randomize the order we process players in
     QList<Player*> players = m_players;
     std::shuffle(players.begin(), players.end(), m_randomGenerator);
@@ -265,9 +195,6 @@ void GameManager::gameTick()
             continue;
         }
 
-        player->doMove();
-        player->decreaseEnergy(1);
-
         // Get last command from player, and if there is one do the appropriate thing
         // This also resets the command to "", so we don't do a command more than once
         QString command = player->command();
@@ -275,27 +202,26 @@ void GameManager::gameTick()
             continue;
         }
 
-        if (command == "ACCELERATE") {
-            player->accelerate();
-        } else if (command == "LEFT") {
-            player->rotate(-ROTATE_AMOUNT);
-        } else if (command == "RIGHT") {
-            player->rotate(ROTATE_AMOUNT);
-        } else if (command == "MISSILE") {
-            player->decreaseEnergy(MISSILE_COST);
-            Missile *missile = new Missile(Missile::Normal, player->position(), player->rotation(), player->id(), this);
-            m_missiles.append(missile);
-            emit missileCreated(missile);
-        } else if (command == "SEEKING") {
-            player->decreaseEnergy(SEEKING_MISSILE_COST);
-            Missile *missile = new Missile(Missile::Seeking, player->position(), player->rotation(), player->id(), this);
-            m_missiles.append(missile);
-            emit missileCreated(missile);
-        } else if (command == "MINE") {
-            player->decreaseEnergy(MINE_COST);
-            Missile *missile = new Missile(Missile::Mine, player->position(), player->rotation(), player->id(), this);
-            m_missiles.append(missile);
-            emit missileCreated(missile);
+        int newX = player->x();
+        int newY = player->y();
+        if (command == "up") {
+            newY--;
+        } else if (command == "down") {
+            newY++;
+        } else if (command == "left") {
+            newX--;
+        } else if (command == "right") {
+            newX++;
+        }
+        if (newX < 0) {
+            newX = m_map->width() - 1;
+        }
+        if (newX >= m_map->width()) {
+            newX = 0;
+        }
+
+        if (m_map->isValidPosition(newX, newY)) {
+            player->setPosition(newX, newY);
         }
     }
 
@@ -471,13 +397,8 @@ void GameManager::resetPositions()
     std::shuffle(players.begin(), players.end(), m_randomGenerator);
     int playerCount = players.count();
 
-    // Rotate by a random amount
-    std::uniform_real_distribution<qreal> randomDistribution(0, M_PI / 2.0);
-    qreal angleOffset = randomDistribution(m_randomGenerator);
-
     for (int i=0; i<playerCount; i++) {
-        qreal angle = i * M_PI * 2.0 / playerCount + angleOffset;
-        players[i]->setPosition(QPointF(cos(angle) * 0.5, sin(angle) * 0.5));
+        players[i]->setPosition(10, 11);
     }
 }
 
@@ -498,12 +419,6 @@ QJsonObject GameManager::serializeForPlayer(Player *player)
         playersArray.append(otherPlayer->serialize());
     }
     gamestateObject["others"] = playersArray;
-
-    QJsonArray missilesArray;
-    for (Missile *missile : m_missiles) {
-        missilesArray.append(missile->serialize());
-    }
-    gamestateObject["missiles"] = missilesArray;
 
     return gamestateObject;
 }

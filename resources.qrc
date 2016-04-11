@@ -6,7 +6,6 @@
         <file>qml/main.qml</file>
         <file>qml/PlayerSprite.qml</file>
         <file>qml/StartScreen.qml</file>
-        <file>qml/MissileSprite.qml</file>
         <file>Aldrich_Regular.ttf</file>
         <file>map1.map</file>
         <file>sprites/players/player0-down-0.png</file>
@@ -25,7 +24,6 @@
         <file>sprites/map/superpellet.png</file>
         <file>sprites/map/wall-corner-inverted.png</file>
         <file>sprites/map/wall-corner.png</file>
-        <file>sprites/map/wall-full.png</file>
         <file>sprites/map/wall-horizontal.png</file>
         <file>sprites/map/wall-vertical.png</file>
     </qresource>

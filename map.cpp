@@ -108,23 +108,14 @@ Map::TileType Map::tileAt(int x, int y) const
 QString Map::tileSprite(int x, int y, TileCorner corner) const
 {
     TileType tile = tileAt(x,y);
-    switch (tile) {
-    case Floor:
-        return "floor";
-    case Door:
+    if (tile == Door) {
         if (tileAt(x + 1, y) == Wall || tileAt(x - 1, y) == Wall) {
             return "door-horizontal";
         } else {
             return "door-vertical";
         }
-    case Pellet :
-        return "pellet";
-    case Superpellet :
-        return "superpellet";
-    case Wall:
-        break;
-    default:
-        return "invalid";
+    } else if (tile != Wall) {
+        return "floor";
     }
 
     const bool wallNorth = (tileAt(x, y - 1) == Wall);
@@ -147,7 +138,7 @@ QString Map::tileSprite(int x, int y, TileCorner corner) const
         } else if (wallWest && wallNorth && !wallNorthWest) {
             return "wall-corner-inverted";
         } else if (wallNorth && wallWest && wallNorthWest) {
-            return "wall-full";
+            return "floor";
         }
         break;
     case UpperRight:
@@ -160,7 +151,7 @@ QString Map::tileSprite(int x, int y, TileCorner corner) const
         } else if (wallEast && wallNorth && !wallNorthEast) {
             return "wall-corner-inverted";
         } else if (wallNorth && wallEast && wallNorthEast) {
-            return "wall-full";
+            return "floor";
         }
         break;
     case BottomLeft:
@@ -173,7 +164,7 @@ QString Map::tileSprite(int x, int y, TileCorner corner) const
         } else if (wallWest && wallSouth && !wallSouthWest) {
             return "wall-corner-inverted";
         } else if (wallSouth && wallWest && wallSouthWest) {
-            return "wall-full";
+            return "floor";
         }
         break;
     case BottomRight:
@@ -186,10 +177,9 @@ QString Map::tileSprite(int x, int y, TileCorner corner) const
         } else if (wallEast && wallSouth && !wallSouthEast) {
             return "wall-corner-inverted";
         } else if (wallSouth && wallEast && wallSouthEast) {
-            return "wall-full";
+            return "floor";
         }
         break;
     }
-    return "pellet";
-   // return "qrc:///sprites/map/" + sprite + ".png";
+    return "invalid";
 }

@@ -15,7 +15,6 @@ SOURCES += main.cpp \
     player.cpp \
     gamemanager.cpp \
     networkclient.cpp \
-    missile.cpp \
     settings.cpp \
     map.cpp
 
@@ -24,7 +23,6 @@ HEADERS += \
     gamemanager.h \
     networkclient.h \
     parameters.h \
-    missile.h \
     settings.h \
     map.h
 
@@ -38,7 +36,6 @@ OTHER_FILES += \
     qml/PlayerSprite.qml \
     qml/StartScreen.qml \
     qml/Checkbox.qml \
-    qml/MissileSprite.qml \
 
 DISTFILES += \
     sprites/missile-empty.png \
