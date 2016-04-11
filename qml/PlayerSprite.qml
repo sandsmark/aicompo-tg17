@@ -76,38 +76,33 @@ Item {
         source: "qrc:///sprites/players/player" + modelData.id + "-" + modelData.direction + "-" + walkCycle + ".png"
         smooth: false
         visible: true
+        opacity: alive
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 500
+            }
+        }
+
     }
 
-//    Desaturate {
-//        anchors.fill: image
-//        opacity: alive ? 1 : 0
-//        Behavior on opacity {
-//            NumberAnimation {
-//                easing.type: Easing.Linear
-//                duration: 100
-//            }
-//        }
-//        source: image
-//        desaturation: 1 - (modelData.energy / 1000)
 
-////        Emitter {
-////            id: deathEmitter
-////            anchors.fill: parent
-////            emitRate: 1000
-////            lifeSpan: 2000
-////            lifeSpanVariation: 1000
-////            enabled: false
-////            velocity: AngleDirection{magnitude: 8; magnitudeVariation: 20; angleVariation: 360}
-////            size: 24
-////            sizeVariation: 16
+    Emitter {
+        id: deathEmitter
+        anchors.fill: parent
+        emitRate: 1000
+        lifeSpan: 2000
+        lifeSpanVariation: 1000
+        enabled: false
+        velocity: AngleDirection{magnitude: 1; magnitudeVariation: 4; angleVariation: 360}
+        size: 2
+        sizeVariation: 4
 
-////            shape: MaskShape {
-////                source: image.source
-////            }
-////            group: particleSystem.particleGroups[playerId]
-////            system: particleSystem
-////        }
-//    }
+        shape: MaskShape {
+            source: image.source
+        }
+        group: particleSystem.particleGroups[playerId]
+        system: particleSystem
+    }
 
     property bool alive: modelData.alive
     onAliveChanged: {
@@ -117,17 +112,17 @@ Item {
         }
     }
 
-//    Text {
-//        anchors.horizontalCenter: image.horizontalCenter
-//        anchors.bottom: parent.bottom
-//        text: modelData.name
-//        color: "white"
-//        style: Text.Outline
-//        styleColor: "black"
-//        font.family: "Aldrich"
-//        font.pointSize: 10
-//        font.strikeout: !modelData.alive
-//    }
+    Text {
+        anchors.horizontalCenter: image.horizontalCenter
+        anchors.top: parent.bottom
+        text: modelData.name
+        color: "white"
+        style: Text.Outline
+        styleColor: "black"
+        font.family: "Aldrich"
+        font.pointSize: 10
+        font.strikeout: !modelData.alive
+    }
 
 //    Emitter {
 //        id: trailEmitter

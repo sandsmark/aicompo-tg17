@@ -50,5 +50,6 @@
         <file>sprites/players/player3-right-1.png</file>
         <file>sprites/players/player3-up-0.png</file>
         <file>sprites/players/player3-up-1.png</file>
+        <file>sprites/rect.png</file>
     </qresource>
 </RCC>

@@ -71,6 +71,112 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        color: "#aa000000"
+        id: playingField
+        anchors.centerIn: parent
+        property int maxSize: Math.min(parent.height, parent.width) - 20
+        property int maxTiles: Math.max(Map.width, Map.height) - 1
+        height: maxSize * Map.height / maxTiles
+        width: maxSize * Map.width / maxTiles
+
+        property int tileSize: maxSize / maxTiles
+
+        Grid {
+            anchors.fill: parent
+            columns: Map.width
+            rows: Map.height
+
+            Repeater {
+                anchors.horizontalCenter: parent.horizontalCenter
+                model: Map.height
+                delegate: Repeater {
+                    property int spriteY: modelData
+                    model: Map.width
+                    delegate: Item {
+                        width: playingField.tileSize
+                        height: width
+                        property int spriteX: modelData
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                top: parent.top
+                                left: parent.left
+                            }
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 0) + ".png"
+                        }
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                top: parent.top
+                                right: parent.right
+                            }
+                            mirror: true
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 1) + ".png"
+                        }
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                bottom: parent.bottom
+                                left: parent.left
+                            }
+                            rotation: 180
+                            mirror: true
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 2) + ".png"
+                        }
+                        Image {
+                            width: parent.width / 2
+                            height: width
+                            anchors {
+                                bottom: parent.bottom
+                                right: parent.right
+                            }
+                            rotation: 180
+
+                            smooth: false
+                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 3) + ".png"
+                        }
+
+                        Rectangle {
+                            id: pellet
+                            anchors.centerIn: parent
+                            width: 5
+                            height: 5
+                            color: "white"
+                            visible: Map.tileHasPellet(spriteX, spriteY)
+                            Connections {
+                                target: Map
+                                onPelletTaken: {
+                                    if (x != spriteX || y != spriteY) {
+                                        return
+                                    }
+                                    pellet.visible = false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Create player sprites
+        Repeater {
+            model: GameManager.players
+            delegate: PlayerSprite {
+                playerId: model.modelData.id
+            }
+        }
+    }
+
     Item {
         id: gameArea
         anchors.fill: parent
@@ -139,11 +245,11 @@ Rectangle {
 
             ImageParticle {
                 opacity: 0.5
-                source: "qrc:///sprites/star.png"
+                source: "qrc:///sprites/rect.png"
                 alpha: 0.1
                 alphaVariation: 0.1
-                colorVariation: 0.5
-                color: playerColors[0]
+                colorVariation: 0.3
+                color: "red"
                 groups: ["Player1"]
             }
             ImageParticle {
@@ -434,111 +540,6 @@ Rectangle {
         contrast: 1
     }
 
-    Rectangle {
-        color: "#aa000000"
-        id: playingField
-        anchors.centerIn: parent
-        property int maxSize: Math.min(parent.height, parent.width) - 20
-        property int maxTiles: Math.max(Map.width, Map.height) - 1
-        height: maxSize * Map.height / maxTiles
-        width: maxSize * Map.width / maxTiles
-
-        property int tileSize: maxSize / maxTiles
-
-        Grid {
-            anchors.fill: parent
-            columns: Map.width
-            rows: Map.height
-
-            Repeater {
-                anchors.horizontalCenter: parent.horizontalCenter
-                model: Map.height
-                delegate: Repeater {
-                    property int spriteY: modelData
-                    model: Map.width
-                    delegate: Item {
-                        width: playingField.tileSize
-                        height: width
-                        property int spriteX: modelData
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                top: parent.top
-                                left: parent.left
-                            }
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 0) + ".png"
-                        }
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                top: parent.top
-                                right: parent.right
-                            }
-                            mirror: true
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 1) + ".png"
-                        }
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                bottom: parent.bottom
-                                left: parent.left
-                            }
-                            rotation: 180
-                            mirror: true
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 2) + ".png"
-                        }
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                bottom: parent.bottom
-                                right: parent.right
-                            }
-                            rotation: 180
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 3) + ".png"
-                        }
-
-                        Rectangle {
-                            id: pellet
-                            anchors.centerIn: parent
-                            width: 5
-                            height: 5
-                            color: "white"
-                            visible: Map.tileHasPellet(spriteX, spriteY)
-                            Connections {
-                                target: Map
-                                onPelletTaken: {
-                                    if (x != spriteX || y != spriteY) {
-                                        return
-                                    }
-                                    pellet.visible = false
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Create player sprites
-        Repeater {
-            model: GameManager.players
-            delegate: PlayerSprite {
-                playerId: model.modelData.id
-            }
-        }
-    }
 
     focus: true
 
