@@ -391,6 +391,11 @@ void GameManager::resetPositions()
     if (m_players.count() == 0) {
         return;
     }
+    QVector<QPoint> positions = m_map->startingPositions();
+    if (m_players.count() > positions.count()) {
+        qWarning() << "Too many players";
+        return;
+    }
 
     // Randomize the position processing order
     QList<Player*> players = m_players;
@@ -398,7 +403,7 @@ void GameManager::resetPositions()
     int playerCount = players.count();
 
     for (int i=0; i<playerCount; i++) {
-        players[i]->setPosition(10, 11);
+        players[i]->setPosition(positions[i].x(), positions[i].y());
     }
 }
 

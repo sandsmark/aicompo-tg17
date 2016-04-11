@@ -20,12 +20,14 @@ bool Map::loadMap(const QString filepath)
 
     m_name = file.fileName();
     m_tiles.clear();
+    m_startingPositions.clear();
 
     QVector<TileType> tiles;
     QByteArray line = file.readLine().trimmed();
     m_width = line.length();
     m_height = 0;
     while (!file.atEnd()) {
+        int x = 0;
         for (const char tile : line) {
             switch(tile) {
             case '_':
@@ -43,11 +45,16 @@ bool Map::loadMap(const QString filepath)
             case 'o':
                 tiles.append(Superpellet);
                 break;
+            case '#':
+                tiles.append(Floor);
+                m_startingPositions.append(QPoint(x, m_height));
+                break;
             default:
                 qWarning() << "Invalid tile: '" << tile << "'";
                 tiles.append(Invalid);
                 break;
             }
+            x++;
         }
         m_height++;
         line = file.readLine().trimmed();

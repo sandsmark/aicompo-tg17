@@ -45,8 +45,6 @@ public:
 
     QList<QObject*> tiles();
 
-    const QList<QPoint> &startingPositions() const;
-
     bool isValidPosition(int x, int y) const;
     bool isWithinBounds(int x, int y) const;
 
@@ -56,23 +54,7 @@ public:
 
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
 
-    Q_INVOKABLE QColor colorAt(int x, int y) {
-        TileType tile = tileAt(x,y);
-        switch (tile) {
-        case Floor :
-            return Qt::blue;
-        case Wall :
-            return Qt::red;
-        case Door :
-            return Qt::green;
-        case Pellet :
-            return Qt::white;
-        case Superpellet :
-            return Qt::gray;
-        default:
-            return Qt::cyan;
-        }
-    }
+    QVector<QPoint> startingPositions() { return m_startingPositions; }
 
 signals:
     void mapChanged();
@@ -81,7 +63,7 @@ private:
     int m_width;
     int m_height;
     QVector<TileType> m_tiles;
-    QList<QPoint> m_startingPositions;
+    QVector<QPoint> m_startingPositions;
     QString m_name;
 };
 

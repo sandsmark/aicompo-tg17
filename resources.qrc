@@ -26,5 +26,13 @@
         <file>sprites/map/wall-corner.png</file>
         <file>sprites/map/wall-horizontal.png</file>
         <file>sprites/map/wall-vertical.png</file>
+        <file>sprites/players/player1-down-0.png</file>
+        <file>sprites/players/player1-down-1.png</file>
+        <file>sprites/players/player1-left-0.png</file>
+        <file>sprites/players/player1-left-1.png</file>
+        <file>sprites/players/player1-right-0.png</file>
+        <file>sprites/players/player1-right-1.png</file>
+        <file>sprites/players/player1-up-0.png</file>
+        <file>sprites/players/player1-up-1.png</file>
     </qresource>
 </RCC>
