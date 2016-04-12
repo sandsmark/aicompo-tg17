@@ -52,5 +52,13 @@
         <file>sprites/players/player3-up-1.png</file>
         <file>sprites/rect.png</file>
         <file>sprites/logo.png</file>
+        <file>sprites/players/player0-aggr-0.png</file>
+        <file>sprites/players/player0-aggr-1.png</file>
+        <file>sprites/players/player1-aggr-0.png</file>
+        <file>sprites/players/player1-aggr-1.png</file>
+        <file>sprites/players/player2-aggr-0.png</file>
+        <file>sprites/players/player2-aggr-1.png</file>
+        <file>sprites/players/player3-aggr-0.png</file>
+        <file>sprites/players/player3-aggr-1.png</file>
     </qresource>
 </RCC>
