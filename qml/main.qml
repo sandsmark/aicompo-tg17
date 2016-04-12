@@ -151,20 +151,18 @@ Rectangle {
                             source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 3) + ".png"
                         }
 
-                        Rectangle {
+                        Image {
                             id: pellet
-                            anchors.centerIn: parent
-                            width: 5
-                            height: 5
-                            color: "white"
-                            visible: Map.tileHasPellet(spriteX, spriteY)
+                            anchors.fill: parent
+                            source: "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
+                            smooth: false
                             Connections {
                                 target: Map
-                                onPelletTaken: {
+                                onPowerupChanged: {
                                     if (x != spriteX || y != spriteY) {
                                         return
                                     }
-                                    pellet.visible = false
+                                    pellet.source = "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
                                 }
                             }
                         }

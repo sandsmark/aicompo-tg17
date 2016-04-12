@@ -23,19 +23,27 @@ public:
     };
     Q_ENUM(TileCorner)
 
+    enum Powerup {
+        NoPowerup,
+        NormalPellet,
+        SuperPellet
+    };
+    Q_ENUM(Powerup)
+
     enum TileType {
-        Floor = 0,
-        Wall,
-        Door,
-        Pellet,
-        Superpellet,
-        Invalid = -1
+        FloorTile = 0,
+        WallTile,
+        DoorTile,
+        PelletTile,
+        SuperPelletTile,
+        InvalidTile = -1
     };
     Q_ENUM(TileType)
 
     explicit Map(QObject *parent);
 
     bool loadMap(const QString filepath);
+    void resetPowerups();
 
     int width() const { return m_width; }
     int height() const { return m_height; }
@@ -50,22 +58,22 @@ public:
 
     QString name() const;
 
-    bool takePellet(int x, int y);
-    Q_INVOKABLE bool tileHasPellet(int x, int y) const;
-    Q_INVOKABLE TileType tileAt(int x, int y) const;
-
+    Powerup takePowerup(int x, int y);
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
+    Q_INVOKABLE QString powerupSprite(int x, int y) const;
 
     QVector<QPoint> startingPositions() { return m_startingPositions; }
 
 signals:
     void mapChanged();
-    void pelletTaken(int x, int y);
+    void powerupChanged(int x, int y);
 
 private:
+    TileType tileAt(int x, int y) const;
+
     int m_width;
     int m_height;
-    QVector<bool> m_tileHasPellet;
+    QVector<Powerup> m_powerups;
     QVector<TileType> m_tiles;
     QVector<QPoint> m_startingPositions;
     QString m_name;

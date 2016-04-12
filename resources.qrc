@@ -60,5 +60,6 @@
         <file>sprites/players/player2-aggr-1.png</file>
         <file>sprites/players/player3-aggr-0.png</file>
         <file>sprites/players/player3-aggr-1.png</file>
+        <file>sprites/map/nopowerup.png</file>
     </qresource>
 </RCC>

@@ -221,8 +221,11 @@ void GameManager::gameTick()
         }
 
         if (m_map->isValidPosition(newX, newY)) {
-            if (m_map->takePellet(newX, newY)) {
+            Map::Powerup powerup = m_map->takePowerup(newX, newY);
+            if (powerup == Map::NormalPellet) {
                 player->addScore(1);
+            } else if (powerup == Map::SuperPellet) {
+                player->addScore(10);
             }
             player->setPosition(newX, newY);
         }

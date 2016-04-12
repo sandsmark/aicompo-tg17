@@ -21,7 +21,6 @@ bool Map::loadMap(const QString filepath)
     m_name = file.fileName();
     m_tiles.clear();
     m_startingPositions.clear();
-    m_tileHasPellet.clear();
 
     QVector<TileType> tiles;
     QByteArray line = file.readLine().trimmed();
@@ -30,32 +29,29 @@ bool Map::loadMap(const QString filepath)
     while (!file.atEnd()) {
         int x = 0;
         for (const char tile : line) {
-            m_tileHasPellet.append(false);
             switch(tile) {
             case '_':
-                tiles.append(Floor);
+                tiles.append(FloorTile);
                 break;
             case '|':
-                tiles.append(Wall);
+                tiles.append(WallTile);
                 break;
             case '-':
-                tiles.append(Door);
+                tiles.append(DoorTile);
                 break;
             case '.':
-                m_tileHasPellet.takeLast();
-                m_tileHasPellet.append(true);
-                tiles.append(Pellet);
+                tiles.append(PelletTile);
                 break;
             case 'o':
-                tiles.append(Superpellet);
+                tiles.append(SuperPelletTile);
                 break;
             case '#':
-                tiles.append(Floor);
+                tiles.append(FloorTile);
                 m_startingPositions.append(QPoint(x, m_height));
                 break;
             default:
                 qWarning() << "Invalid tile: '" << tile << "'";
-                tiles.append(Invalid);
+                tiles.append(InvalidTile);
                 break;
             }
             x++;
@@ -67,10 +63,32 @@ bool Map::loadMap(const QString filepath)
             return false;
         }
     }
-
     m_tiles = tiles;
+
+    resetPowerups();
+
     emit mapChanged();
     return true;
+}
+
+void Map::resetPowerups()
+{
+    m_powerups.clear();
+    for (int y=0; y<m_height; y++) {
+        for (int x=0; x<m_width; x++) {
+            switch(tileAt(x, y)) {
+            case PelletTile:
+                m_powerups.append(NormalPellet);
+                break;
+            case SuperPelletTile:
+                m_powerups.append(SuperPellet);
+                break;
+            default:
+                m_powerups.append(NoPowerup);
+            }
+            emit powerupChanged(x, y);
+        }
+    }
 }
 
 bool Map::isValid()
@@ -85,7 +103,7 @@ bool Map::isValidPosition(int x, int y) const
     }
 
     TileType tile = tileAt(x, y);
-    return (tile != Wall && tile != Invalid);
+    return (tile != WallTile && tile != InvalidTile);
 }
 
 bool Map::isWithinBounds(int x, int y) const
@@ -104,38 +122,33 @@ QString Map::name() const
     return m_name;
 }
 
-bool Map::takePellet(int x, int y)
-{
-    if (!tileHasPellet(x, y)) {
-        return false;
-    }
-
-    m_tileHasPellet[y * m_width + x] = false;
-    emit pelletTaken(x, y);
-    return true;
-}
-
-bool Map::tileHasPellet(int x, int y) const
+Map::Powerup Map::takePowerup(int x, int y)
 {
     if (!isWithinBounds(x, y)) {
-        return false;
+        return NoPowerup;
     }
     const int pos = y * m_width + x;
-    if (pos >= m_tileHasPellet.length()) {
-        return false;
+    if (pos >= m_powerups.size()) {
+        return NoPowerup;
+    }
+    Powerup powerup = m_powerups[pos];
+    if (powerup == NoPowerup) {
+        return powerup;
     }
 
-    return m_tileHasPellet[pos];
+    m_powerups[pos] = NoPowerup;
+    emit powerupChanged(x, y);
+    return powerup;
 }
 
 Map::TileType Map::tileAt(int x, int y) const
 {
     if (!isWithinBounds(x, y)) {
-        return Invalid;
+        return InvalidTile;
     }
     const int pos = y * m_width + x;
     if (pos >= m_tiles.length()) {
-        return Invalid;
+        return InvalidTile;
     }
     return m_tiles[pos];
 }
@@ -143,24 +156,24 @@ Map::TileType Map::tileAt(int x, int y) const
 QString Map::tileSprite(int x, int y, TileCorner corner) const
 {
     TileType tile = tileAt(x,y);
-    if (tile == Door) {
-        if (tileAt(x + 1, y) == Wall || tileAt(x - 1, y) == Wall) {
+    if (tile == DoorTile) {
+        if (tileAt(x + 1, y) == WallTile || tileAt(x - 1, y) == WallTile) {
             return "door-horizontal";
         } else {
             return "door-vertical";
         }
-    } else if (tile != Wall) {
+    } else if (tile != WallTile) {
         return "floor";
     }
 
-    const bool wallNorth = (tileAt(x, y - 1) == Wall);
-    const bool wallSouth = (tileAt(x, y + 1) == Wall);
-    const bool wallWest = (tileAt(x - 1, y) == Wall);
-    const bool wallEast = (tileAt(x + 1, y) == Wall);
-    const bool wallSouthEast = (tileAt(x + 1, y + 1) == Wall);
-    const bool wallSouthWest = (tileAt(x - 1, y + 1) == Wall);
-    const bool wallNorthEast = (tileAt(x + 1, y - 1) == Wall);
-    const bool wallNorthWest = (tileAt(x - 1, y - 1) == Wall);
+    const bool wallNorth = (tileAt(x, y - 1) == WallTile);
+    const bool wallSouth = (tileAt(x, y + 1) == WallTile);
+    const bool wallWest = (tileAt(x - 1, y) == WallTile);
+    const bool wallEast = (tileAt(x + 1, y) == WallTile);
+    const bool wallSouthEast = (tileAt(x + 1, y + 1) == WallTile);
+    const bool wallSouthWest = (tileAt(x - 1, y + 1) == WallTile);
+    const bool wallNorthEast = (tileAt(x + 1, y - 1) == WallTile);
+    const bool wallNorthWest = (tileAt(x - 1, y - 1) == WallTile);
 
     switch (corner) {
     case UpperLeft:
@@ -215,6 +228,26 @@ QString Map::tileSprite(int x, int y, TileCorner corner) const
             return "floor";
         }
         break;
+    }
+    return "invalid";
+}
+
+QString Map::powerupSprite(int x, int y) const
+{
+    if (!isWithinBounds(x, y)) {
+        return QString("nopowerup");
+    }
+    const int pos = y * m_width + x;
+    if (pos >= m_powerups.size()) {
+        return QString("nopowerup");
+    }
+    switch(m_powerups[pos]) {
+    case NoPowerup:
+        return QString("nopowerup");
+    case NormalPellet:
+        return "pellet";
+    case SuperPellet:
+        return "superpellet";
     }
     return "invalid";
 }
