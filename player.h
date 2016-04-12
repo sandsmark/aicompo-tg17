@@ -22,6 +22,11 @@ class Player : public QObject
     Q_PROPERTY(int y READ y NOTIFY positionChanged)
 
 public:
+    enum Power {
+        NoPower,
+        SuperPellet
+    };
+
     explicit Player(QObject *parent, int id, NetworkClient *networkClient = 0);
     virtual ~Player() {}
     int id();
@@ -30,7 +35,8 @@ public:
 
     QString lastCommand();
     QString command();
-    QString direction() { return m_direction; }
+    QString direction();
+    void setPower(Power power);
 
     QString name();
 
@@ -61,6 +67,8 @@ public:
 
         return a->score() > b->score();
     }
+
+    void gameTick();
 
 public slots:
     void setCommand(QString command);
@@ -99,6 +107,8 @@ private:
     int m_score;
 
     NetworkClient *m_networkClient;
+    Power m_power;
+    int m_powerLeft;
 };
 
 #endif // PLAYER_H

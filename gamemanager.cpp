@@ -143,6 +143,7 @@ void GameManager::startRound()
     for (int i=0; i<m_players.count(); i++) {
         m_players[i]->setCommand(QString());
         m_players[i]->setAlive(true);
+        m_players[i]->setPower(Player::NoPower);
     }
 
     // Do not allow to change name after game has started
@@ -195,6 +196,8 @@ void GameManager::gameTick()
             continue;
         }
 
+        player->gameTick();
+
         // Get last command from player, and if there is one do the appropriate thing
         // This also resets the command to "", so we don't do a command more than once
         QString command = player->command();
@@ -225,6 +228,7 @@ void GameManager::gameTick()
             if (powerup == Map::NormalPellet) {
                 player->addScore(1);
             } else if (powerup == Map::SuperPellet) {
+                player->setPower(Player::SuperPellet);
                 player->addScore(10);
             }
             player->setPosition(newX, newY);

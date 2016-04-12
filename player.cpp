@@ -15,7 +15,9 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) : QObject(
     m_x(0),
     m_y(0),
     m_score(0),
-    m_networkClient(networkClient)
+    m_networkClient(networkClient),
+    m_power(NoPower),
+    m_powerLeft(0)
 {
     if (networkClient) {
         networkClient->setParent(this); // automatically delete
@@ -54,6 +56,26 @@ QString Player::command()
     }
 
     return command;
+}
+
+QString Player::direction()
+{
+    if (m_power == SuperPellet && (m_powerLeft > 50 || (m_powerLeft % 10 > 5))) {
+        return "aggr";
+    }
+    return m_direction;
+}
+
+void Player::setPower(Player::Power power)
+{
+    if (power == SuperPellet) {
+        m_powerLeft = SUPERPELLET_DURATION;
+    }
+    if (power == m_power) {
+        return;
+    }
+    m_power = power;
+    emit directionChanged();
 }
 
 QString Player::name()
@@ -135,4 +157,14 @@ QJsonObject Player::serialize()
     playerObject["y"] = m_y;
 
     return playerObject;
+}
+
+void Player::gameTick()
+{
+    if (m_power != NoPower) {
+        m_powerLeft--;
+        if (m_powerLeft < 0) {
+            setPower(NoPower);
+        }
+    }
 }
