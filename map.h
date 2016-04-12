@@ -13,6 +13,8 @@ class Map : public QObject
     Q_PROPERTY(int width READ width() NOTIFY mapChanged)
     Q_PROPERTY(int height READ height() NOTIFY mapChanged)
     Q_PROPERTY(QString name READ name() NOTIFY mapChanged)
+    Q_PROPERTY(int pelletsLeft READ pelletsLeft NOTIFY pelletsLeftChanged)
+    Q_PROPERTY(int totalPellets MEMBER m_totalPellets NOTIFY totalPelletsChanged)
 
 public:
     enum TileCorner {
@@ -62,11 +64,15 @@ public:
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
     Q_INVOKABLE QString powerupSprite(int x, int y) const;
 
+    int pelletsLeft() { return m_pelletsLeft; }
+
     QVector<QPoint> startingPositions() { return m_startingPositions; }
 
 signals:
     void mapChanged();
     void powerupChanged(int x, int y);
+    void pelletsLeftChanged();
+    void totalPelletsChanged();
 
 private:
     TileType tileAt(int x, int y) const;
@@ -77,6 +83,8 @@ private:
     QVector<TileType> m_tiles;
     QVector<QPoint> m_startingPositions;
     QString m_name;
+    int m_pelletsLeft;
+    int m_totalPellets;
 };
 
 #endif // MAP_H

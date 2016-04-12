@@ -5,7 +5,9 @@
 
 Map::Map(QObject *parent) : QObject(parent),
     m_width(0),
-    m_height(0)
+    m_height(0),
+    m_pelletsLeft(0),
+    m_totalPellets(0)
 {
 }
 
@@ -21,6 +23,7 @@ bool Map::loadMap(const QString filepath)
     m_name = file.fileName();
     m_tiles.clear();
     m_startingPositions.clear();
+    m_totalPellets = 0;
 
     QVector<TileType> tiles;
     QByteArray line = file.readLine().trimmed();
@@ -41,6 +44,7 @@ bool Map::loadMap(const QString filepath)
                 break;
             case '.':
                 tiles.append(PelletTile);
+                m_totalPellets++;
                 break;
             case 'o':
                 tiles.append(SuperPelletTile);
@@ -68,17 +72,20 @@ bool Map::loadMap(const QString filepath)
     resetPowerups();
 
     emit mapChanged();
+    emit totalPelletsChanged();
     return true;
 }
 
 void Map::resetPowerups()
 {
     m_powerups.clear();
+    m_pelletsLeft = 0;
     for (int y=0; y<m_height; y++) {
         for (int x=0; x<m_width; x++) {
             switch(tileAt(x, y)) {
             case PelletTile:
                 m_powerups.append(NormalPellet);
+                m_pelletsLeft++;
                 break;
             case SuperPelletTile:
                 m_powerups.append(SuperPellet);
@@ -134,6 +141,11 @@ Map::Powerup Map::takePowerup(int x, int y)
     Powerup powerup = m_powerups[pos];
     if (powerup == NoPowerup) {
         return powerup;
+    }
+
+    if (powerup == NormalPellet) {
+        m_pelletsLeft--;
+        emit pelletsLeftChanged();
     }
 
     m_powerups[pos] = NoPowerup;

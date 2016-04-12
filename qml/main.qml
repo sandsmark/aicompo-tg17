@@ -171,6 +171,28 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: pelletBar
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+            }
+            height: 20
+            width: 500
+            color: "transparent"
+            border.color: "white"
+            border.width: 4
+
+            Rectangle {
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: parent.width * Math.max(Map.pelletsLeft, 1) / Map.totalPellets
+            }
+        }
+
         // Create player sprites
         Repeater {
             model: GameManager.players
