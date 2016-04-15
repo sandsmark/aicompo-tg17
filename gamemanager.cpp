@@ -223,16 +223,45 @@ void GameManager::gameTick()
             newX = 0;
         }
 
-        if (m_map->isValidPosition(newX, newY)) {
-            Map::Powerup powerup = m_map->takePowerup(newX, newY);
-            if (powerup == Map::NormalPellet) {
-                player->addScore(1);
-            } else if (powerup == Map::SuperPellet) {
-                player->setPower(Player::SuperPellet);
-                player->addScore(10);
-            }
-            player->setPosition(newX, newY);
+        if (!m_map->isValidPosition(newX, newY)) {
+            continue;
         }
+
+        // Check for collisions
+        bool collided = false;
+        for (Player *otherPlayer : players) {
+            if (otherPlayer == player || !otherPlayer->isAlive()) {
+                continue;
+            }
+            if (otherPlayer->x() != newX || otherPlayer->y() != newY) {
+                continue;
+            }
+            if (otherPlayer->currentPower() == player->currentPower()) {
+                collided = true;
+                break;
+            }
+
+            if (player->currentPower() == Player::SuperPellet) {
+                otherPlayer->setAlive(false);
+            } else if (otherPlayer->currentPower() == Player::SuperPellet) {
+                player->setAlive(false);
+                break;
+            }
+        }
+
+        if (collided) {
+            continue;
+        }
+
+        Map::Powerup powerup = m_map->takePowerup(newX, newY);
+        if (powerup == Map::NormalPellet) {
+            player->addScore(1);
+        } else if (powerup == Map::SuperPellet) {
+            player->setPower(Player::SuperPellet);
+            player->addScore(10);
+        }
+
+        player->setPosition(newX, newY);
     }
 
     // Check if there's only one player left, but only if there is more than one player playing

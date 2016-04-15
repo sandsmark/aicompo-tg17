@@ -37,6 +37,7 @@ public:
     QString command();
     QString direction();
     void setPower(Power power);
+    Power currentPower() const;
 
     QString name();
 

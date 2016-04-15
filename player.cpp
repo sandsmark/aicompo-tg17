@@ -78,6 +78,15 @@ void Player::setPower(Player::Power power)
     emit directionChanged();
 }
 
+Player::Power Player::currentPower() const
+{
+    if (m_powerLeft <= 0) {
+        return NoPower;
+    }
+
+    return m_power;
+}
+
 QString Player::name()
 {
     return m_name;
