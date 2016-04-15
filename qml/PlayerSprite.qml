@@ -57,7 +57,7 @@ Item {
 
     property int walkCycle: 0
     Timer {
-        interval: 200
+        interval: 100
         repeat: true
         running: true
         onTriggered: {

@@ -61,5 +61,27 @@
         <file>sprites/players/player3-aggr-0.png</file>
         <file>sprites/players/player3-aggr-1.png</file>
         <file>sprites/map/nopowerup.png</file>
+        <file>sprites/monster/down-0.png</file>
+        <file>sprites/monster/down-1.png</file>
+        <file>sprites/monster/full.png</file>
+        <file>sprites/monster/left-0.png</file>
+        <file>sprites/monster/left-1.png</file>
+        <file>sprites/monster/right-0.png</file>
+        <file>sprites/monster/right-1.png</file>
+        <file>sprites/monster/up-0.png</file>
+        <file>sprites/monster/up-1.png</file>
+        <file>sprites/monster/spawn-0.png</file>
+        <file>sprites/monster/spawn-1.png</file>
+        <file>sprites/monster/spawn-2.png</file>
+        <file>sprites/monster/spawn-3.png</file>
+        <file>sprites/monster/spawn-4.png</file>
+        <file>sprites/monster/spawn-5.png</file>
+        <file>sprites/monster/spawn-6.png</file>
+        <file>sprites/monster/spawn-7.png</file>
+        <file>sprites/monster/spawn-8.png</file>
+        <file>sprites/monster/spawn-9.png</file>
+        <file>sprites/monster/spawn-10.png</file>
+        <file>sprites/monster/spawn-11.png</file>
+        <file>sprites/monster/spawn-12.png</file>
     </qresource>
 </RCC>
