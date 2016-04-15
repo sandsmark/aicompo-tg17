@@ -71,6 +71,41 @@ Rectangle {
         }
     }
 
+    Text {
+        id: timerText
+        anchors {
+            top: parent.top
+            horizontalCenter: parent.horizontalCenter
+        }
+
+        font.pointSize: 20
+        text: GameManager.timeElapsed
+        color: "white"
+    }
+
+    Rectangle {
+        id: pelletBar
+        anchors {
+            top: timerText.bottom
+            horizontalCenter: parent.horizontalCenter
+        }
+        height: 20
+        width: 500
+        color: "transparent"
+        border.color: "white"
+        border.width: 4
+
+        Rectangle {
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: parent.bottom
+            }
+            width: parent.width * Math.max(Map.pelletsLeft, 1) / Map.totalPellets
+        }
+    }
+
+
     Rectangle {
         color: "#aa000000"
         id: playingField
@@ -171,27 +206,6 @@ Rectangle {
             }
         }
 
-        Rectangle {
-            id: pelletBar
-            anchors {
-                top: parent.top
-                horizontalCenter: parent.horizontalCenter
-            }
-            height: 20
-            width: 500
-            color: "transparent"
-            border.color: "white"
-            border.width: 4
-
-            Rectangle {
-                anchors {
-                    left: parent.left
-                    top: parent.top
-                    bottom: parent.bottom
-                }
-                width: parent.width * Math.max(Map.pelletsLeft, 1) / Map.totalPellets
-            }
-        }
 
         // Create player sprites
         Repeater {
@@ -519,10 +533,5 @@ Rectangle {
         text: GameManager.version()
         font.pointSize: 10
         opacity: 0.3
-    }
-
-    Text {
-        anchors.centerIn: parent
-        text: GameManager.timeElapsed
     }
 }
