@@ -1,34 +1,9 @@
-CHANGELOG:
-=========
-
-List of changes that **affect development of bots**:
-
- * Saturday 13.02.2016: Changed the value sent for the rotation of missiles from radians to degrees, to match the value sent for players.
- * Sunday 28.02.2016: Increased damage from missiles from 10 to 50 energy. Before this firing a homing missile or hovermine cost more than what you could gain from hitting something.
-
-
-Turn On Me
+Ghostly
 ============
 
-This is a game where you circle a sun and try to shoot down the other players.
+You kek and eat other ghosts and pellets and shit.
 
-All players have an amount of energy, which is used for both the anti-gravity engine that allows the extremely heavy ships to stay in orbit, as well as doing actions.
-
-All players start the round with 1000 energy.
-
-The anti-gravity engine uses 1 energy for each game tick, and as the energy goes lower your ship gets heavier, and therefore circles closer to the sun.
-
-Turning your ship with your thrusters costs 1 energy.
-
-Accelerating forward costs 2 energy.
-
-Firing a normal missile costs 10 energy, firing a homing missile costs 15 energy and dropping a hovermine costs 20 energy.
-
-If you hit another player with either a missile or a hovermine, that player loses 50 energy, and you get 50 energy.
-
-**These values are subject to change, until we freeze them sometime before The Gathering 2016.**
-
-We might also add more weapons, if we find some fun ideas.
+Graphics are from http://pacman.shaunew.com/redmine/projects/pacman and licensed under the GPLv3
 
 ## Windows binary
 
