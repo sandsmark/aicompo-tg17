@@ -5,6 +5,7 @@ Rectangle {
     height: 20
     width: 20
     border.color: "white"
+    border.width: 4
     color: "transparent"
 
     signal clicked
@@ -20,9 +21,6 @@ Rectangle {
         id: checkMark
         anchors.fill: parent
         anchors.margins: 3
-        border.color: "white"
-        opacity: checkbox.checked ? (mouseArea.containsMouse ? 1.0 : 0.7) : (mouseArea.containsMouse ? 0.3 : 0.0)
-        border.width: 1
         color: checkbox.checked ? "white" : "black"
     }
     

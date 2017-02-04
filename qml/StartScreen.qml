@@ -42,17 +42,17 @@ Item {
 
     Text {
         id: titleText
-        anchors.bottom: settingsList.top
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors {
+            bottom: settingsList.top
+            bottomMargin: 20
+            horizontalCenter: parent.horizontalCenter
+        }
         verticalAlignment: Text.AlignVCenter
         text: "ghostly"
-        color: "black"
-        font.pointSize: 30
-        font.bold: true
-        style: Text.Outline
-        styleColor: "white"
-
-
+        color: "white"
+        font.pixelSize: 160
+        antialiasing: false
+        renderType: Text.NativeRendering
     }
 
     Rectangle {
@@ -67,14 +67,14 @@ Item {
             bottomMargin: 10
         }
 
-        border.width: 1
+        border.width: 4
         border.color: "white"
         color: "#7f000000"
 
         Checkbox {
             id: humanPlayerCheckbox
             anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.topMargin: 15
             anchors.right: parent.right
             anchors.rightMargin: 10
             opacity: (GameManager.players.length < GameManager.maxPlayers || checked) ? 1 : 0
@@ -92,13 +92,16 @@ Item {
             }
 
             Text {
-                anchors.right: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.rightMargin: 10
-                text: "Enable human player:"
-                font.pixelSize: 20
+                anchors {
+                    right: parent.left
+                    rightMargin: 10
+                    bottom: parent.bottom
+                }
+                text: "Enable human"
                 color: "white"
                 opacity: humanPlayerCheckbox.opacity
+                antialiasing: false
+                renderType: Text.NativeRendering
             }
         }
 
@@ -127,9 +130,10 @@ Item {
                 anchors.right: parent.left
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.rightMargin: 10
-                text: "Enable effects:"
-                font.pixelSize: 20
+                text: "Enable effects"
                 color: "white"
+                antialiasing: false
+                renderType: Text.NativeRendering
             }
         }
     }
@@ -145,16 +149,17 @@ Item {
         }
         height: 40
         color: "#7f000000"
-        border.width: 1
+        border.width: 4
         border.color: "white"
 
         Text {
-            font.pixelSize: 20
             color: "white"
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.margins: 10
-            text: "Connected users: " + GameManager.players.length + "/" + GameManager.maxPlayers;
+            text: "Connected: " + GameManager.players.length + "/" + GameManager.maxPlayers;
+            antialiasing: false
+            renderType: Text.NativeRendering
         }
     }
 
@@ -168,7 +173,7 @@ Item {
         height: 400
         anchors.bottomMargin: 100
         border.color: "white"
-        border.width: 1
+        border.width: 4
 
         Column {
             id: userListColumn
@@ -180,23 +185,29 @@ Item {
                 delegate: Item {
                     height: 40
                     width: userListColumn.width
-//                    Image {
-//                        source: modelData.spritePath
-//                        width: 30
-//                        height: width
-//                        anchors {
-//                            left: parent.left
-//                            verticalCenter: parent.verticalCenter
-//                        }
+                    Image {
+                        source: "qrc:///sprites/players/player" + modelData.id + "-" + modelData.direction + "-" + "0" + ".png"
+                        width: 30
+                        height: width
+                        anchors {
+                            left: parent.left
+                            verticalCenter: parent.verticalCenter
+                        }
 
                         Text {
-                            anchors.left: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            anchors {
+                                left: parent.right
+                                leftMargin: 20
+                                verticalCenter: parent.verticalCenter
+                            }
                             color: "white"
-                            font.pixelSize: 20
+                            font.pixelSize: 32
+                            font.family: "Perfect DOS VGA 437 Win"
                             text: modelData.name
+                            antialiasing: false
+                            renderType: Text.NativeRendering
                         }
-//                    }
+                    }
 
                     Button {
                         visible: !modelData.isHuman()
@@ -241,7 +252,7 @@ Item {
             horizontalCenter: parent.horizontalCenter
             bottomMargin: 10
         }
-        height: 40
+        height: 50
         width: 200
         text: "Quit"
         onClicked: {

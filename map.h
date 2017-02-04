@@ -26,9 +26,9 @@ public:
     Q_ENUM(TileCorner)
 
     enum Powerup {
-        NoPowerup,
-        NormalPellet,
-        SuperPellet
+        NoPowerup = 0,
+        NormalPellet = 1,
+        SuperPellet = 2
     };
     Q_ENUM(Powerup)
 
@@ -60,6 +60,7 @@ public:
 
     QString name() const;
 
+    Powerup powerupAt(int x, int y) const;
     Powerup takePowerup(int x, int y);
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
     Q_INVOKABLE QString powerupSprite(int x, int y) const;
@@ -67,6 +68,7 @@ public:
     int pelletsLeft() { return m_pelletsLeft; }
 
     QVector<QPoint> startingPositions() { return m_startingPositions; }
+    QPoint monsterSpawn() { return m_monsterSpawn; }
 
 signals:
     void mapChanged();
@@ -82,9 +84,12 @@ private:
     QVector<Powerup> m_powerups;
     QVector<TileType> m_tiles;
     QVector<QPoint> m_startingPositions;
+    QPoint m_monsterSpawn;
     QString m_name;
     int m_pelletsLeft;
     int m_totalPellets;
+    int m_arenaTop;
+    int m_arenaBottom;
 };
 
 #endif // MAP_H

@@ -5,20 +5,22 @@ import QtQuick.Particles 2.0
 Item {
     id: playerSprite
 
-    property int playerId
-
-    x: targetX
-    y: targetY
+    property real playerX
+    property real playerY
+    property string spriteBase
+    property bool alive
+    property string name: ""
 
     height: playingField.tileSize
     width: height
 
     property real targetX: 0
     property real targetY: 0
-    property real playerX: modelData.x * width
-    property real playerY: modelData.y * height
     property real lastPlayerX: 0
     property real lastPlayerY: 0
+    property bool moving: yAnimation.running || xAnimation.running
+
+    property alias spriteImageSource: image.source
 
     onPlayerXChanged: {
         if (Math.abs(playerX - lastPlayerX) > width * 2) {
@@ -73,7 +75,7 @@ Item {
     Image {
         id: image
         anchors.fill: parent
-        source: "qrc:///sprites/players/player" + modelData.id + "-" + modelData.direction + "-" + walkCycle + ".png"
+        source: "qrc:///sprites/" + playerSprite.spriteBase +  "-" + walkCycle + ".png"
         smooth: false
         visible: true
         opacity: alive
@@ -85,57 +87,16 @@ Item {
 
     }
 
-
-    Emitter {
-        id: deathEmitter
-        anchors.fill: parent
-        emitRate: 1000
-        lifeSpan: 2000
-        lifeSpanVariation: 1000
-        enabled: false
-        velocity: AngleDirection{magnitude: 1; magnitudeVariation: 4; angleVariation: 360}
-        size: 2
-        sizeVariation: 4
-
-        shape: MaskShape {
-            source: image.source
-        }
-        group: particleSystem.particleGroups[playerId]
-        system: particleSystem
-    }
-
-    property bool alive: modelData.alive
-    onAliveChanged: {
-        if (!alive) {
-            deathEmitter.pulse(500);
-            blurAnimation.restart()
-        }
-    }
-
     Text {
+        visible: text !== ""
         anchors.horizontalCenter: image.horizontalCenter
         anchors.top: parent.bottom
-        text: modelData.name
+        text: playerSprite.name
         color: "white"
-        style: Text.Outline
-        styleColor: "black"
-        font.family: "Aldrich"
-        font.pointSize: 10
-        font.strikeout: !modelData.alive
-    }
-
-    Emitter {
-        id: trailEmitter
-        anchors.fill: parent
-        emitRate: 50
-
-        lifeSpan: 10000
-        lifeSpanVariation: 1000
-        enabled: alive && (yAnimation.running || xAnimation.running)
-        velocity: AngleDirection{ magnitude: 2; magnitudeVariation: 1; angleVariation: 360}
-        size: 1
-        system: particleSystem
-        group: particleSystem.particleGroups[playerId]
-        shape: EllipseShape { }
+        font.strikeout: !playerSprite.alive
+        antialiasing: false
+        font.pointSize: 16
+        font.family: "Perfect DOS VGA 437 Win"
+        renderType: Text.NativeRendering
     }
 }

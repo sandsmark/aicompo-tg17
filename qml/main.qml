@@ -58,7 +58,7 @@ Rectangle {
 
     ColorAnimation on color {
         id: backgroundColorAnimation
-        from: "red"
+        from: "white"
         to: "black"
         duration: 1000
         running: false
@@ -71,154 +71,58 @@ Rectangle {
         }
     }
 
-    Text {
-        id: timerText
-        anchors {
-            top: parent.top
-            horizontalCenter: parent.horizontalCenter
-        }
 
-        font.pointSize: 20
-        text: GameManager.timeElapsed
-        color: "white"
-    }
-
-    Rectangle {
-        id: pelletBar
-        anchors {
-            top: timerText.bottom
-            horizontalCenter: parent.horizontalCenter
-        }
-        height: 20
-        width: 500
-        color: "transparent"
-        border.color: "white"
-        border.width: 4
-
-        Rectangle {
-            anchors {
-                left: parent.left
-                top: parent.top
-                bottom: parent.bottom
-            }
-            width: parent.width * Math.max(Map.pelletsLeft, 1) / Map.totalPellets
-        }
-    }
-
-
-    Rectangle {
-        color: "#aa000000"
-        id: playingField
-        anchors.centerIn: parent
-        property int maxSize: Math.min(parent.height, parent.width) - 20
-        property int maxTiles: Math.max(Map.width, Map.height) - 1
-        height: maxSize * Map.height / maxTiles
-        width: maxSize * Map.width / maxTiles
-
-        property int tileSize: maxSize / maxTiles
-
-        opacity: startScreen.visible ? 0.1 : 1
-        Behavior on opacity {
-            NumberAnimation { duration: 500 }
-        }
-
-        Grid {
-            anchors.fill: parent
-            columns: Map.width
-            rows: Map.height
-
-            Repeater {
-                anchors.horizontalCenter: parent.horizontalCenter
-                model: Map.height
-                delegate: Repeater {
-                    property int spriteY: modelData
-                    model: Map.width
-                    delegate: Item {
-                        width: playingField.tileSize
-                        height: width
-                        property int spriteX: modelData
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                top: parent.top
-                                left: parent.left
-                            }
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 0) + ".png"
-                        }
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                top: parent.top
-                                right: parent.right
-                            }
-                            mirror: true
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 1) + ".png"
-                        }
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                bottom: parent.bottom
-                                left: parent.left
-                            }
-                            rotation: 180
-                            mirror: true
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 2) + ".png"
-                        }
-                        Image {
-                            width: parent.width / 2
-                            height: width
-                            anchors {
-                                bottom: parent.bottom
-                                right: parent.right
-                            }
-                            rotation: 180
-
-                            smooth: false
-                            source: "qrc:///sprites/map/" + Map.tileSprite(spriteX, spriteY, 3) + ".png"
-                        }
-
-                        Image {
-                            id: pellet
-                            anchors.fill: parent
-                            source: "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
-                            smooth: false
-                            Connections {
-                                target: Map
-                                onPowerupChanged: {
-                                    if (x != spriteX || y != spriteY) {
-                                        return
-                                    }
-                                    pellet.source = "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // Create player sprites
-        Repeater {
-            model: GameManager.players
-            delegate: PlayerSprite {
-                playerId: model.modelData.id
-            }
-        }
-    }
 
     Item {
         id: gameArea
         anchors.fill: parent
+
+        PlayingField {
+            id: playingField
+            anchors {
+                top: pelletBar.bottom
+                bottom: roundsPlayed.top
+                left: parent.left
+                right: parent.right
+            }
+        }
+
+        Text {
+            id: timerText
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+            }
+
+            font.pixelSize: 64
+            text: GameManager.timeElapsed
+            color: "white"
+            antialiasing: false
+            renderType: Text.NativeRendering
+        }
+
+        Rectangle {
+            id: pelletBar
+            anchors {
+                top: timerText.bottom
+                horizontalCenter: parent.horizontalCenter
+            }
+            height: 20
+            width: 500
+            color: "transparent"
+            border.color: "white"
+            border.width: 4
+
+            Rectangle {
+                anchors {
+                    left: parent.left
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: parent.width * Math.max(Map.pelletsLeft, 1) / Map.totalPellets
+            }
+        }
+
 
         Text {
             id: pauseText
@@ -226,7 +130,8 @@ Rectangle {
             anchors.right: parent.right
             text: "PAUSED"
             color: "white"
-            font.bold: true
+            antialiasing: false
+            renderType: Text.NativeRendering
             font.pointSize: 40
             opacity: 0.7
             visible: false
@@ -241,6 +146,8 @@ Rectangle {
                 text: parent.text
                 visible: opacity > 0
                 font.bold: true
+                antialiasing: false
+                renderType: Text.NativeRendering
 
                 ParallelAnimation {
                     id: pauseAnimation
@@ -267,13 +174,11 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             text: "round: " + (GameManager.roundsPlayed + 1) + "/" + GameManager.maxRounds
-            color: "#7f000000"
+            color: "white"
             font.bold: true
-            style: Text.Outline
-            styleColor: "white"
             font.pointSize: 40
-            z: 10
-            opacity: (GameManager.roundsPlayed < GameManager.maxRounds) ? 0.7 : 0
+            antialiasing: false
+            renderType: Text.NativeRendering
         }
 
         ParticleSystem {
@@ -319,10 +224,7 @@ Rectangle {
                 groups: ["Player4"]
             }
             ImageParticle {
-                opacity: 0.5
                 source: "qrc:///sprites/rect.png"
-                alpha: 0.1
-                alphaVariation: 0.9
                 color: "white"
                 groups: ["Explosion", "Logo"]
             }
@@ -399,7 +301,7 @@ Rectangle {
             width: height / 3
             color: "#a0000000"
             border.color: "white"
-            border.width: 2
+            border.width: 4
 
             opacity: countdownTimer.running ? 1 : 0
 
@@ -411,7 +313,7 @@ Rectangle {
 
             Rectangle {
                 id: countdownFirst
-                color: "yellow"
+                color: "white"
                 opacity: 0
                 width: parent.width
                 height: width
@@ -423,7 +325,7 @@ Rectangle {
 
             Rectangle {
                 id: countdownSecond
-                color: "yellow"
+                color: "white"
                 opacity: 0
                 width: parent.width
                 height: width
@@ -436,7 +338,7 @@ Rectangle {
 
             Rectangle {
                 id: countdownThird
-                color: "green"
+                color: "white"
                 opacity: 0
                 width: parent.width
                 height: width
@@ -469,11 +371,11 @@ Rectangle {
 
                 onTriggered: {
                     if (progress === 0) {
-                        countdownFirst.opacity = 0.5
+                        countdownFirst.opacity = 1
                     } else if (progress === 1) {
-                        countdownSecond.opacity = 0.5
+                        countdownSecond.opacity = 1
                     } else {
-                        countdownThird.opacity = 0.5
+                        countdownThird.opacity = 1
                         countdownTimer.stop()
                     }
 
@@ -521,6 +423,8 @@ Rectangle {
         color: "white"
         text: "code:martin^remarkable"
         font.pointSize: 10
+        antialiasing: false
+        renderType: Text.NativeRendering
         opacity: 0.5
     }
 
@@ -532,6 +436,8 @@ Rectangle {
         color: "white"
         text: GameManager.version()
         font.pointSize: 10
+        antialiasing: false
+        renderType: Text.NativeRendering
         opacity: 0.3
     }
 }

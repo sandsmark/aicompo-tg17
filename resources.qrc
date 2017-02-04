@@ -5,8 +5,6 @@
         <file>qml/EndScreen.qml</file>
         <file>qml/main.qml</file>
         <file>qml/PlayerSprite.qml</file>
-        <file>qml/StartScreen.qml</file>
-        <file>Aldrich_Regular.ttf</file>
         <file>map1.map</file>
         <file>sprites/players/player0-down-0.png</file>
         <file>sprites/players/player0-down-1.png</file>
@@ -83,5 +81,8 @@
         <file>sprites/monster/spawn-10.png</file>
         <file>sprites/monster/spawn-11.png</file>
         <file>sprites/monster/spawn-12.png</file>
+        <file>qml/StartScreen.qml</file>
+        <file>font/Perfect DOS VGA 437 Win.ttf</file>
+        <file>qml/PlayingField.qml</file>
     </qresource>
 </RCC>

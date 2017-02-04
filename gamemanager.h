@@ -4,6 +4,7 @@
 #include "player.h"
 #include "parameters.h"
 #include "map.h"
+#include "monster.h"
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -25,14 +26,14 @@ class GameManager : public QObject
 
     Q_PROPERTY(bool gameRunning READ isGameRunning NOTIFY gameRunningChanged)
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
-    Q_PROPERTY(QList<QObject*> players READ players NOTIFY playersChanged)
+    Q_PROPERTY(QList<QObject*> players READ playerObjects NOTIFY playersChanged)
     Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
     Q_PROPERTY(int maxRounds READ maxRounds CONSTANT)
     Q_PROPERTY(QString timeElapsed READ timeElapsed NOTIFY secondsElapsedChanged)
 
 public:
-    explicit GameManager();
-    ~GameManager();
+    static GameManager *instance();
+    void terminate();
 
     Q_INVOKABLE void removeHumanPlayer();
 
@@ -42,9 +43,12 @@ public:
 
     Q_INVOKABLE QObject *map() { return m_map; }
 
+    Q_INVOKABLE QObject *monster() { return m_monster; }
+
     bool isGameRunning() const { return m_gameRunning; }
 
-    QList<QObject *> players() const;
+    QList<QObject *> playerObjects() const;
+    QList<Player *> getPlayers() const {return m_players; }
 
     int maxPlayerCount() { return MAX_PLAYERS; }
     int maxRounds() { return m_maxRounds; }
@@ -81,6 +85,8 @@ private slots:
     void clientDisconnected();
 
 private:
+    explicit GameManager();
+
     void resetPositions();
     QJsonObject serializeForPlayer(Player *player);
 
@@ -95,6 +101,7 @@ private:
     std::random_device m_randomDevice;
     std::mt19937 m_randomGenerator;
     Map *m_map;
+    Monster *m_monster;
 };
 
 #endif // GAMEMANAGER_H

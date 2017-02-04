@@ -53,6 +53,10 @@ bool Map::loadMap(const QString filepath)
                 tiles.append(FloorTile);
                 m_startingPositions.append(QPoint(x, m_height));
                 break;
+            case '@':
+                tiles.append(FloorTile);
+                m_monsterSpawn = QPoint(x, m_height);
+                break;
             default:
                 qWarning() << "Invalid tile: '" << tile << "'";
                 tiles.append(InvalidTile);
@@ -127,6 +131,18 @@ bool Map::isWithinBounds(int x, int y) const
 QString Map::name() const
 {
     return m_name;
+}
+
+Map::Powerup Map::powerupAt(int x, int y) const
+{
+    if (!isWithinBounds(x, y)) {
+        return NoPowerup;
+    }
+    const int pos = y * m_width + x;
+    if (pos >= m_powerups.size()) {
+        return NoPowerup;
+    }
+    return m_powerups[pos];
 }
 
 Map::Powerup Map::takePowerup(int x, int y)

@@ -9,6 +9,7 @@ Rectangle {
 
     color: "#7f000000"
     border.color: "white"
+    border.width: 4
     enabled: visible && active
     visible: opacity > 0
     MouseArea {
@@ -31,5 +32,7 @@ Rectangle {
         text: parent.text
         color: button.active ? (mouseArea.containsMouse ? "black" : "white") : "gray"
         font.pointSize: button.fontSize
+        antialiasing: false
+        renderType: Text.NativeRendering
     }
 }

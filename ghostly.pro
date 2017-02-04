@@ -16,7 +16,8 @@ SOURCES += main.cpp \
     gamemanager.cpp \
     networkclient.cpp \
     settings.cpp \
-    map.cpp
+    map.cpp \
+    monster.cpp
 
 HEADERS += \
     player.h \
@@ -24,7 +25,8 @@ HEADERS += \
     networkclient.h \
     parameters.h \
     settings.h \
-    map.h
+    map.h \
+    monster.h
 
 RESOURCES += \
     resources.qrc

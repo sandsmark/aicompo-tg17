@@ -24,9 +24,12 @@ GameManager::GameManager() : QObject(),
     m_gameRunning(false),
     m_maxRounds(MAX_ROUNDS),
     m_randomGenerator(m_randomDevice()),
-    m_map(new Map(this))
+    m_map(new Map(this)),
+    m_monster(new Monster(this))
 {
     m_map->loadMap(":/map1.map");
+
+    m_monster->setMap(m_map);
 
     // Set up gametick timer
     m_tickTimer.setInterval(DEFAULT_TICKINTERVAL);
@@ -44,7 +47,15 @@ GameManager::GameManager() : QObject(),
     connect(&m_server, &QTcpServer::newConnection, this, &GameManager::clientConnect);
 }
 
-GameManager::~GameManager()
+GameManager *GameManager::instance()
+{
+    // This is threadsafe
+    static GameManager me;
+
+    return &me;
+}
+
+void GameManager::terminate()
 {
     // Ensure we don't crash because we delete stuff before it disconnects
     for (int i=0; i<m_players.count(); i++) {
@@ -52,9 +63,10 @@ GameManager::~GameManager()
             disconnect(m_players[i]->networkClient(), &NetworkClient::clientDisconnected, this, &GameManager::clientDisconnected);
         }
     }
+
 }
 
-QList<QObject*> GameManager::players() const
+QList<QObject*> GameManager::playerObjects() const
 {
     QList<Player*> playerList = m_players;
 
@@ -185,6 +197,8 @@ void GameManager::startGame()
 
 void GameManager::gameTick()
 {
+    m_monster->doMove();
+
     // Randomize the order we process players in
     QList<Player*> players = m_players;
     std::shuffle(players.begin(), players.end(), m_randomGenerator);
@@ -192,6 +206,12 @@ void GameManager::gameTick()
     int dead = 0;
     for(Player *player : players) {
         if (!player->isAlive()) {
+            dead++;
+            continue;
+        }
+
+        if (m_monster->isActive() && m_monster->getX() == player->x() && m_monster->getY() == player->y()) {
+            player->setAlive(false);
             dead++;
             continue;
         }
@@ -245,6 +265,7 @@ void GameManager::gameTick()
                 otherPlayer->setAlive(false);
             } else if (otherPlayer->currentPower() == Player::SuperPellet) {
                 player->setAlive(false);
+                collided = true;
                 break;
             }
         }
@@ -430,6 +451,9 @@ void GameManager::resetPositions()
     if (m_players.count() == 0) {
         return;
     }
+
+    m_monster->setPosition(m_map->monsterSpawn().x(), m_map->monsterSpawn().y());
+
     QVector<QPoint> positions = m_map->startingPositions();
     if (m_players.count() > positions.count()) {
         qWarning() << "Too many players";

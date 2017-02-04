@@ -59,8 +59,11 @@ int main(int argc, char *argv[])
         QGuiApplication *guiApp = new QGuiApplication(argc, argv);
         app = guiApp;
 
-        QFontDatabase::addApplicationFont(":/Aldrich_Regular.ttf");
-        guiApp->setFont(QFont("Aldrich"));
+        const int fontId = QFontDatabase::addApplicationFont(":/font/Perfect DOS VGA 437 Win.ttf");
+        QStringList families = QFontDatabase::applicationFontFamilies(fontId);
+        QFont font(families.first());
+        font.setPixelSize(32);
+        guiApp->setFont(font);
     }
 
     // Install custom message handler for logging to a file
@@ -93,56 +96,54 @@ int main(int argc, char *argv[])
     int startAtPlayers = parser.value(autostartOption).toInt();
     if (startAtPlayers < 1 || startAtPlayers > MAX_PLAYERS) {
         qWarning() << "Invalid number of players:" << startAtPlayers;
-        parser.showHelp(EINVAL);
+        parser.showHelp(-1);
     }
 
     int rounds = parser.value(roundsOption).toInt();
     if (rounds < 1) {
         qWarning() << "Invalid number of rounds:" << rounds;
-        parser.showHelp(EINVAL);
+        parser.showHelp(-1);
     }
 
     int tickInterval = parser.value(tickintervalOption).toInt();
     if (tickInterval < 10 || tickInterval > 1000) {
         qWarning() << "Invalid tick interval:" << tickInterval;
-        parser.showHelp(EINVAL);
+        parser.showHelp(-1);
     }
 
     // Set application name and domain mainly for QSettings
     app->setApplicationName("Ghostly");
     app->setOrganizationDomain("gathering.org");
 
-    GameManager manager;
-    manager.setMaxRounds(rounds);
+    GameManager *manager = GameManager::instance();
+    manager->setMaxRounds(rounds);
 
     if (parser.isSet(autostartOption) || runHeadless) {
-        manager.setCountdownDuration(500);
+        manager->setCountdownDuration(500);
 
         qDebug() << "Waiting for" << startAtPlayers << "players...";
 
-        QObject::connect(&manager, &GameManager::playersChanged, [&]{
-
-            if (manager.roundsPlayed() < manager.maxRounds()) {
-                qDebug() << "Player" << manager.players().count() << "of" << startAtPlayers << "connected...";
+        QObject::connect(manager, &GameManager::playersChanged, [&]{
+            if (manager->roundsPlayed() < manager->maxRounds()) {
+                qDebug() << "Player" << manager->playerObjects().count() << "of" << startAtPlayers << "connected...";
             }
 
-            if (manager.players().count() >= startAtPlayers) {
+            if (manager->playerObjects().count() >= startAtPlayers) {
                 qDebug() << "All players connected, starting game";
-                manager.startGame();
+                manager->startGame();
             }
         });
     }
 
-    manager.setTickInterval(tickInterval);
+    manager->setTickInterval(tickInterval);
 
     if (parser.isSet(quitOnFinishOption) || runHeadless) {
-        QObject::connect(&manager, &GameManager::roundsPlayedChanged, [&] {
-
-            if (manager.roundsPlayed() > 0) {
-                qDebug() << "Round" << manager.roundsPlayed() << "of" << rounds << "finished";
+        QObject::connect(manager, &GameManager::roundsPlayedChanged, [&] {
+            if (manager->roundsPlayed() > 0) {
+                qDebug() << "Round" << manager->roundsPlayed() << "of" << rounds << "finished";
             }
 
-            if (manager.roundsPlayed() >= rounds) {
+            if (manager->roundsPlayed() >= rounds) {
                 qDebug() << "Game over.";
                 app->quit();
             }
@@ -154,14 +155,15 @@ int main(int argc, char *argv[])
             return new Settings;
         });
 
+//        qmlRegisterType<Player>();//"org.gathering.ghostly", 1, 0, "Player");
         QQuickView *view = new QQuickView; // we leak this on exit, yolo
         QObject::connect(view->engine(), &QQmlEngine::quit, app, &QGuiApplication::quit);
         view->setResizeMode(QQuickView::SizeRootObjectToView);
 
-        view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(&manager));
-        view->rootContext()->setContextProperty("Map", QVariant::fromValue(manager.map()));
+        view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(manager));
+        view->rootContext()->setContextProperty("Map", QVariant::fromValue(manager->map()));
         view->setSource(QUrl("qrc:/qml/main.qml"));
-        QObject::connect(view->rootObject(), SIGNAL(userMove(QString)), &manager, SIGNAL(humanMove(QString)));
+        QObject::connect(view->rootObject(), SIGNAL(userMove(QString)), manager, SIGNAL(humanMove(QString)));
 
         if (parser.isSet(fullscreenOption)) {
             view->showFullScreen();
@@ -169,11 +171,13 @@ int main(int argc, char *argv[])
             view->show();
         }
         int ret = app->exec();
+        manager->terminate();
         delete view;
         delete app;
         return ret;
     } else {
         int ret = app->exec();
+        manager->terminate();
         delete app;
         return ret;
     }

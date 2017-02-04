@@ -19,10 +19,10 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 20
         font.pointSize: 25
-        font.bold: true
         text: "Game Over"
         color: "white"
-        style: Text.Outline
+        antialiasing: false
+        renderType: Text.NativeRendering
     }
 
     // List of players
@@ -43,9 +43,8 @@ Rectangle {
                 delegate: Text {
                     horizontalAlignment: Text.AlignHCenter
                     color: "white"
-                    font.pointSize: 20
-                    font.bold: true
-                    font.family: "Aldrich"
+                    antialiasing: false
+                    renderType: Text.NativeRendering
                     text: (index + 1) + ". " + model.modelData.name + ": " + model.modelData.wins + " wins" + " (" + model.modelData.score + " hits)"
                 }
             }
