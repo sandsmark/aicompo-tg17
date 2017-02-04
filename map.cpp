@@ -73,15 +73,9 @@ bool Map::loadMap(const QString filepath)
     }
     m_tiles = tiles;
 
-    resetPowerups();
-
     emit mapChanged();
     emit totalPelletsChanged();
-    return true;
-}
 
-void Map::resetPowerups()
-{
     m_powerups.clear();
     m_pelletsLeft = 0;
     for (int y=0; y<m_height; y++) {
@@ -98,6 +92,47 @@ void Map::resetPowerups()
                 m_powerups.append(NoPowerup);
             }
             emit powerupChanged(x, y);
+        }
+    }
+    return true;
+}
+
+void Map::resetPowerups()
+{
+    if (m_pelletsLeft == m_totalPellets) {
+        return;
+    }
+
+    qDebug() << "Resetting powerups";
+    if (m_powerups.size() != m_tiles.size()) {
+        m_powerups.resize(m_tiles.size());
+    }
+
+    m_pelletsLeft = 0;
+
+    for (int y=0; y<m_height; y++) {
+        for (int x=0; x<m_width; x++) {
+            const int pos = y * m_width + x;
+
+            Powerup type;
+            switch(m_tiles[pos]) {
+            case PelletTile:
+                type = NormalPellet;
+                m_pelletsLeft++;
+                break;
+            case SuperPelletTile:
+                type = SuperPellet;
+                break;
+            default:
+                continue;
+            }
+
+            if (type == m_powerups[pos]) {
+                continue;
+            }
+
+            m_powerups[pos] = type;
+            emit powerupVisibleChanged(x, y, true);
         }
     }
 }
@@ -165,7 +200,7 @@ Map::Powerup Map::takePowerup(int x, int y)
     }
 
     m_powerups[pos] = NoPowerup;
-    emit powerupChanged(x, y);
+    emit powerupVisibleChanged(x, y, false);
     return powerup;
 }
 
@@ -262,20 +297,12 @@ QString Map::tileSprite(int x, int y, TileCorner corner) const
 
 QString Map::powerupSprite(int x, int y) const
 {
-    if (!isWithinBounds(x, y)) {
-        return QString("nopowerup");
-    }
-    const int pos = y * m_width + x;
-    if (pos >= m_powerups.size()) {
-        return QString("nopowerup");
-    }
-    switch(m_powerups[pos]) {
-    case NoPowerup:
-        return QString("nopowerup");
-    case NormalPellet:
+    switch(tileAt(x, y)) {
+    case PelletTile:
         return "pellet";
-    case SuperPellet:
+    case SuperPelletTile:
         return "superpellet";
+    default:
+        return QString();
     }
-    return "invalid";
 }

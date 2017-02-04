@@ -160,8 +160,10 @@ int main(int argc, char *argv[])
         QObject::connect(view->engine(), &QQmlEngine::quit, app, &QGuiApplication::quit);
         view->setResizeMode(QQuickView::SizeRootObjectToView);
 
-        view->rootContext()->setContextProperty("GameManager", QVariant::fromValue(manager));
-        view->rootContext()->setContextProperty("Map", QVariant::fromValue(manager->map()));
+        view->rootContext()->setContextProperty("GameManager", manager);
+        // Fuck you
+        qmlRegisterUncreatableType<Map>("org.gathering.ghostly", 1, 0, "MapType", "Instantiate from C++");
+        view->rootContext()->setContextProperty("Map", manager->map());
         view->setSource(QUrl("qrc:/qml/main.qml"));
         QObject::connect(view->rootObject(), SIGNAL(userMove(QString)), manager, SIGNAL(humanMove(QString)));
 

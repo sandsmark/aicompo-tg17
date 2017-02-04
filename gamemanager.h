@@ -41,7 +41,7 @@ public:
 
     Q_INVOKABLE QString version();
 
-    Q_INVOKABLE QObject *map() { return m_map; }
+    Map *map() const { return m_map; }
 
     Q_INVOKABLE QObject *monster() { return m_monster; }
 

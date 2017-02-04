@@ -53,14 +53,12 @@ public:
     bool isNull();
     bool isValid();
 
-    QList<QObject*> tiles();
-
     bool isValidPosition(int x, int y) const;
     bool isWithinBounds(int x, int y) const;
 
     QString name() const;
 
-    Powerup powerupAt(int x, int y) const;
+    Q_INVOKABLE Powerup powerupAt(int x, int y) const;
     Powerup takePowerup(int x, int y);
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
     Q_INVOKABLE QString powerupSprite(int x, int y) const;
@@ -73,6 +71,7 @@ public:
 signals:
     void mapChanged();
     void powerupChanged(int x, int y);
+    void powerupVisibleChanged(int x, int y, bool visible);
     void pelletsLeftChanged();
     void totalPelletsChanged();
 

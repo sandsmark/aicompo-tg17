@@ -167,6 +167,8 @@ void GameManager::startRound()
         m_players[i]->networkClient()->disconnect(m_players[i]->networkClient(), &NetworkClient::nameChanged, m_players[i], &Player::setName);
     }
 
+    m_map->resetPowerups();
+
     m_tickTimer.start();
 }
 

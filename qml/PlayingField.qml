@@ -89,15 +89,24 @@ Item {
                     Image {
                         id: pellet
                         anchors.fill: parent
-                        source: "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
+                        source: sprite === "" ? "" : "qrc:///sprites/map/" + sprite + ".png"
+                        property string sprite: Map.powerupSprite(spriteX, spriteY)
                         smooth: false
                         Connections {
                             target: Map
+                            onPowerupVisibleChanged: {
+                                if (x != spriteX || y != spriteY) {
+                                    return
+                                }
+                                pellet.visible = visible
+                            }
                             onPowerupChanged: {
                                 if (x != spriteX || y != spriteY) {
                                     return
                                 }
+
                                 pellet.source = "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
+                                pellet.visible = true
                             }
                         }
                     }
