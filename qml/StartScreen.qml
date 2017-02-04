@@ -21,20 +21,22 @@ Item {
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
         width: height
-        enabled: parent.visible
-        emitRate: 5000
-        lifeSpan: 1000
+        enabled: parent.opacity > 0.5
+        emitRate: 1000
+        lifeSpan: 500
         size: 15
-        sizeVariation: 15
+//        sizeVariation: 5
 
         shape: MaskShape {
             source: "qrc:///sprites/logo.png"
         }
+//        shape: EllipseShape { }
 
-        velocity: PointDirection {
-            xVariation: 10
-            yVariation: 10
-        }
+//        velocity: PointDirection {
+//            xVariation: 10
+//            yVariation: 10
+//        }
+                velocity: AngleDirection{ magnitude: 2; magnitudeVariation: 1; angleVariation: 360}
 
         system: particleSystem
         group: "Logo"
@@ -112,10 +114,12 @@ Item {
             checked: Settings.getValue(Settings.EnableEffects, true)
 
             function handleValue() {
-                particleSystem.restart() // quick hack to kill all particles
-                particleSystem.running = checked
+                // Force kill all particles
+                particleSystem.stop()
+                if (checked) {
+                    particleSystem.start()
+                }
                 particleSystem.visible = checked
-                gameFilter.visible = checked
             }
 
             Component.onCompleted: handleValue()

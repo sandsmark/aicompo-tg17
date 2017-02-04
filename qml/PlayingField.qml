@@ -157,11 +157,12 @@ Item {
             Emitter {
                 id: trailEmitter
                 anchors.fill: parent
-                emitRate: 50
+                emitRate: 500
 
-                lifeSpan: 10000
-                lifeSpanVariation: 1000
-                enabled: playerSprite.alive && playerSprite.moving
+                lifeSpan: 5000
+                lifeSpanVariation: 2500
+
+                enabled: playerSprite.alive && playerSprite.moving && GameManager.gameRunning
                 velocity: AngleDirection{ magnitude: 2; magnitudeVariation: 1; angleVariation: 360}
                 size: 1
                 system: particleSystem
@@ -183,5 +184,19 @@ Item {
 
         spriteBase: "monster/" +  monsterData.direction
         alive: true
+
+        Emitter {
+            anchors.fill: parent
+            emitRate: 500
+
+            lifeSpan: 5000
+            lifeSpanVariation: 2500
+            enabled: monsterSprite.alive && monsterSprite.moving && GameManager.gameRunning
+            velocity: AngleDirection{ magnitude: 2; magnitudeVariation: 1; angleVariation: 360}
+            size: 1
+            system: particleSystem
+            group: "Monster"
+            shape: EllipseShape { }
+        }
     }
 }

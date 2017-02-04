@@ -99,6 +99,7 @@ Rectangle {
             color: "white"
             antialiasing: false
             renderType: Text.NativeRendering
+            visible: GameManager.gameRunning
         }
 
         Rectangle {
@@ -112,6 +113,7 @@ Rectangle {
             color: "transparent"
             border.color: "white"
             border.width: 4
+            visible: GameManager.gameRunning
 
             Rectangle {
                 anchors {
@@ -185,6 +187,10 @@ Rectangle {
             id: particleSystem
             anchors.fill: parent
 
+            // Less ugly
+            onWidthChanged: restart()
+            onHeightChanged: restart()
+
             property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
 
             ImageParticle {
@@ -222,6 +228,14 @@ Rectangle {
                 colorVariation: 0.3
                 color: playerColors[3]
                 groups: ["Player4"]
+            }
+            ImageParticle {
+                opacity: 0.5
+                source: "qrc:///sprites/rect.png"
+                alpha: 0.1
+                alphaVariation: 0.1
+                color: "yellow"
+                groups: ["Monster"]
             }
             ImageParticle {
                 source: "qrc:///sprites/rect.png"
