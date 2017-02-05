@@ -21,8 +21,8 @@ Item {
                 
                 alive: modelData.alive
                 onAliveChanged: {
-                    if (!alive && GameManager.roundRunning && main.effectsEnabled) {
-                        deathEmitter.pulse(250);
+                    if (!alive && GameManager.roundRunning && deathEmitter.item) {
+                        deathEmitter.item.pulse(250);
                     }
                 }
                 
@@ -35,22 +35,21 @@ Item {
                 
                 // Have to wrap these in loaders because crashy shit
                 Loader {
+                    id: deathEmitter
                     active: main.effectsEnabled
+                    anchors.fill: parent
                     sourceComponent: Component {
                         // Black wave
                         Emitter {
-                            id: deathEmitter
-                            anchors.fill: parent
                             emitRate: 1000
                             enabled: false
                             lifeSpan: 1000
-                            lifeSpanVariation: 1000
-                            velocity: AngleDirection{magnitude: 100; magnitudeVariation: 10; angleVariation: 360}
+                            lifeSpanVariation: 500
+                            velocity: AngleDirection{ magnitude: 100; magnitudeVariation: 10; angleVariation: 360}
                             size: 128
 
-                            shape: MaskShape {
-                                source: playerSprite.spriteImageSource
-                            }
+                            shape: EllipseShape { }
+
                             group: "Monster"
                             system: particles
                         }

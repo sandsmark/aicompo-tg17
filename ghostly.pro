@@ -4,7 +4,7 @@ CONFIG += c++11
 
 linux: QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
 
-win32:RC_ICONS += turnon.ico
+win32:RC_ICONS += ghostly.ico
 
 lessThan(QT_MAJOR_VERSION, 5): error("Requires Qt 5!")
 
@@ -30,20 +30,3 @@ HEADERS += \
 
 RESOURCES += \
     resources.qrc
-
-OTHER_FILES += \
-    qml/Button.qml \
-    qml/EndScreen.qml \
-    qml/main.qml \
-    qml/StartScreen.qml \
-    qml/Checkbox.qml \
-
-DISTFILES += \
-    sprites/missile-empty.png \
-    sprites/missile-full.png \
-    sprites/missile-half.png \
-    sprites/turnon.png \
-    sprites/sun.png \
-    sprites/map/wall-north-south.png \
-    sprites/map/wall-south-west-southwest.png \
-    sprites/map/wall-north-south-east-southeast-southwest-northeast.png

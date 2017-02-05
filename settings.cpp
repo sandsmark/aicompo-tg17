@@ -2,6 +2,8 @@
 #include <QSettings>
 #include <QDebug>
 #include <QMetaEnum>
+#include <QCoreApplication>
+#include <QFile>
 
 static QString getName(Settings::Key key)
 {
@@ -9,24 +11,20 @@ static QString getName(Settings::Key key)
     return QString::fromUtf8(metaEnum.valueToKey(key));
 }
 
-Settings::Settings(QObject *parent) : QObject(parent)
+Settings::Settings(QObject *parent) : QObject(parent),
+    m_settings(qApp->applicationDirPath() + "/settings.ini", QSettings::IniFormat)
 {
 }
 
 void Settings::setValue(Key key, QVariant value)
 {
-    QSettings settings;
-    QString keyString = getName(key);
-
-    settings.setValue(keyString, value);
+    m_settings.setValue(getName(key), value);
+    m_settings.sync();
 }
 
 QVariant Settings::getValue(Settings::Key key, QVariant defaultValue)
 {
-    QSettings settings;
-
-    QString keyString = getName(key);
-    QVariant value = settings.value(keyString, defaultValue);
+    QVariant value = m_settings.value(getName(key), defaultValue);
 
     // Ugly hack because QSettings doesn't store type info,
     // and returns stored bools as strings.

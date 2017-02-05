@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QSettings>
 
 class Settings : public QObject
 {
@@ -22,6 +23,9 @@ public:
 signals:
 
 public slots:
+
+private:
+    QSettings m_settings;
 };
 
 #endif // SETTINGS_H

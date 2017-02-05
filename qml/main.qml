@@ -13,7 +13,7 @@ Rectangle {
     width: 1600
 
     property int scaleSize: (width < height) ? width : height
-    property bool effectsEnabled: true
+    property bool effectsEnabled: Settings.getValue(Settings.EnableEffects, true)
 
     property var playerColors: [
         "#ff400f", // red
