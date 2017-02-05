@@ -66,6 +66,11 @@ void Monster::verifyTarget()
 
     // Just hunt a random player when there's no more candy
     if (!m_map->pelletsLeft()) {
+        // We already have a potential target
+        if (m_targetX != -1 && m_targetY != -1) {
+            return;
+        }
+
         // The players are always shuffled by the game manager
         QList<Player*> victims = GameManager::instance()->getPlayers();
         for (const Player *victim : victims) {
@@ -77,9 +82,7 @@ void Monster::verifyTarget()
         }
 
         // This sucks, find a random place to go
-        if (m_targetX == -1 || m_targetY == -1) {
-            findRandomTarget();
-        }
+        findRandomTarget();
 
         return;
     }
