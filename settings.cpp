@@ -1,8 +1,13 @@
 #include "settings.h"
 #include <QSettings>
 #include <QDebug>
+#include <QMetaEnum>
 
-#define KEY_EFFECTS "EnableEffects"
+static QString getName(Settings::Key key)
+{
+    static QMetaEnum metaEnum = QMetaEnum::fromType<Settings::Key>();
+    return QString::fromUtf8(metaEnum.valueToKey(key));
+}
 
 Settings::Settings(QObject *parent) : QObject(parent)
 {
@@ -11,15 +16,7 @@ Settings::Settings(QObject *parent) : QObject(parent)
 void Settings::setValue(Key key, QVariant value)
 {
     QSettings settings;
-    QString keyString;
-    switch(key) {
-    case EnableEffects:
-        keyString = KEY_EFFECTS;
-        break;
-    default:
-        qWarning() << Q_FUNC_INFO << "invalid key" << key;
-        return;
-    }
+    QString keyString = getName(key);
 
     settings.setValue(keyString, value);
 }
@@ -28,15 +25,7 @@ QVariant Settings::getValue(Settings::Key key, QVariant defaultValue)
 {
     QSettings settings;
 
-    QString keyString;
-    switch(key) {
-    case EnableEffects:
-        keyString = KEY_EFFECTS;
-        break;
-    default:
-        qWarning() << Q_FUNC_INFO << "invalid key" << key;
-        return QVariant();
-    }
+    QString keyString = getName(key);
     QVariant value = settings.value(keyString, defaultValue);
 
     // Ugly hack because QSettings doesn't store type info,

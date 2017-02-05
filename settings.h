@@ -9,9 +9,10 @@ class Settings : public QObject
     Q_OBJECT
 public:
     enum Key {
-        EnableEffects
+        EnableEffects,
+        EnableRetro
     };
-    Q_ENUMS(Key)
+    Q_ENUM(Key)
 
     explicit Settings(QObject *parent = 0);
 
