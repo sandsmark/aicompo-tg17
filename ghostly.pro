@@ -35,7 +35,6 @@ OTHER_FILES += \
     qml/Button.qml \
     qml/EndScreen.qml \
     qml/main.qml \
-    qml/PlayerSprite.qml \
     qml/StartScreen.qml \
     qml/Checkbox.qml \
 

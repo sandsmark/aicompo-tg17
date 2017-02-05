@@ -38,6 +38,7 @@ public slots:
 
 private:
     void verifyTarget();
+    void findRandomTarget();
 
     Map *m_map;
     int m_x;

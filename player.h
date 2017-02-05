@@ -39,7 +39,7 @@ public:
     void setPower(Power power);
     Power currentPower() const;
 
-    QString name();
+    QString name() const;
 
     void addWin() { m_wins++; emit winsChanged(); }
     int wins() { return m_wins; }
@@ -51,10 +51,10 @@ public:
     void resetScore() { m_score = 0; m_wins = 0; emit scoreChanged(); emit winsChanged(); }
 
     void setAlive(bool alive);
-    bool isAlive();
+    bool isAlive() const;
 
-    int x() { return m_x; }
-    int y() { return m_y; }
+    int x() const { return m_x; }
+    int y() const { return m_y; }
     void setPosition(int x, int y);
 
     QJsonObject serialize();

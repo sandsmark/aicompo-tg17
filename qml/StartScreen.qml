@@ -5,41 +5,53 @@ import org.gathering.ghostly 1.0
 
 Item {
     id: startScreen
-    anchors.fill: parent
 
     visible: opacity > 0
 
     Behavior on opacity {
         NumberAnimation {
-            duration: 500
+            duration: 1500
         }
     }
 
-    Emitter {
+    Image {
         anchors.top: parent.top
         anchors.bottom: titleText.top
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
         width: height
-        enabled: parent.opacity > 0.5
-        emitRate: 1000
-        lifeSpan: 500
-        size: 15
-//        sizeVariation: 5
+        source: "qrc:///sprites/logo.png"
+        visible: !main.effectsEnabled
+        smooth: false
 
-        shape: MaskShape {
-            source: "qrc:///sprites/logo.png"
+    }
+
+    Loader {
+        anchors.top: parent.top
+        anchors.bottom: titleText.top
+        anchors.bottomMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        active: main.effectsEnabled
+        sourceComponent: Component{
+            Emitter {
+                width: height
+                enabled: startScreen.opacity > 0.5
+                emitRate: 1000
+                lifeSpan: startScreen.opacity == 1 ? 1000 : 500
+                size: 50
+                //        sizeVariation: startScreen.opacity == 1 ? 5 : 100
+
+                shape: MaskShape {
+                    source: "qrc:///sprites/logo.png"
+                }
+
+                velocity: AngleDirection{ magnitude: startScreen.opacity == 1 ? 2 : 2; magnitudeVariation: 1; angleVariation: 360}
+
+                system: particles
+                group: "Logo"
+            }
         }
-//        shape: EllipseShape { }
-
-//        velocity: PointDirection {
-//            xVariation: 10
-//            yVariation: 10
-//        }
-                velocity: AngleDirection{ magnitude: 2; magnitudeVariation: 1; angleVariation: 360}
-
-        system: particleSystem
-        group: "Logo"
     }
 
     Text {
@@ -115,11 +127,12 @@ Item {
 
             function handleValue() {
                 // Force kill all particles
-                particleSystem.stop()
+                particles.stop()
                 if (checked) {
-                    particleSystem.start()
+                    particles.start()
                 }
-                particleSystem.visible = checked
+                particles.visible = checked
+                main.effectsEnabled = checked
             }
 
             Component.onCompleted: handleValue()
@@ -138,6 +151,118 @@ Item {
                 color: "white"
                 antialiasing: false
                 renderType: Text.NativeRendering
+            }
+        }
+
+        Checkbox {
+            anchors {
+                bottom: parent.bottom
+                bottomMargin: 10
+                right: parent.right
+                rightMargin: 10
+            }
+            checked: Settings.getValue(Settings.EnableRetro, false)
+
+            function handleValue() {
+                if (checked) {
+                    retroShaderLoader.sourceComponent = retroShaderComponent
+                } else {
+                    retroShaderLoader.sourceComponent = undefined
+                }
+            }
+
+            Component.onCompleted: handleValue()
+
+            onClicked: {
+                checked = !checked
+                Settings.setValue(Settings.EnableRetro, checked)
+                handleValue()
+            }
+
+            Text {
+                anchors.right: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 10
+                text: "Go retro"
+                color: "white"
+                antialiasing: false
+                renderType: Text.NativeRendering
+            }
+        }
+    }
+
+    Rectangle {
+        id: speedSelect
+        anchors {
+            top: settingsList.top
+            left: playerList.left
+            right: playerList.horizontalCenter
+            bottomMargin: 10
+            rightMargin: 5
+        }
+        height: 40
+        color: "#7f000000"
+        border.width: 4
+        border.color: "white"
+
+        property int tickInterval: 100
+        onTickIntervalChanged: GameManager.setTickInterval(tickInterval)
+
+        Rectangle {
+            anchors {
+                left: parent.left
+                top: parent.top
+                bottom: parent.bottom
+            }
+            width: parent.width / 3
+            color: speedSelect.tickInterval === 500 ? "white" : "transparent"
+            Text {
+                anchors.centerIn: parent
+                text: "Slow"
+                color: speedSelect.tickInterval === 500 ? "black" : "white"
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: MouseArea.PointingHandCursor
+                onClicked: speedSelect.tickInterval = 500
+            }
+        }
+        Rectangle {
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                bottom: parent.bottom
+            }
+            width: parent.width / 3
+            color: speedSelect.tickInterval === 100 ? "white" : "transparent"
+            Text {
+                anchors.centerIn: parent
+                text: "Med"
+                color: speedSelect.tickInterval === 100 ? "black" : "white"
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: MouseArea.PointingHandCursor
+                onClicked: speedSelect.tickInterval = 100
+            }
+        }
+        Rectangle {
+            anchors {
+                right: parent.right
+                top: parent.top
+                bottom: parent.bottom
+            }
+            width: parent.width / 3
+            color: speedSelect.tickInterval === 50 ? "white" : "transparent"
+            Text {
+                anchors.centerIn: parent
+                text: "Fast"
+                color: speedSelect.tickInterval === 50 ? "black" : "white"
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: MouseArea.PointingHandCursor
+                onClicked: speedSelect.tickInterval = 50
             }
         }
     }
@@ -173,7 +298,7 @@ Item {
         id: playerList
         color: "#7f000000"
         anchors.centerIn: parent
-        width: 600
+        width: 640
         height: 400
         anchors.bottomMargin: 100
         border.color: "white"

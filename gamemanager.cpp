@@ -37,7 +37,7 @@ GameManager::GameManager() : QObject(),
     m_elapsedTimer.start();
 
     // Set up timer for delayed starting of rounds
-    m_startTimer.setInterval(750);
+    m_startTimer.setInterval(1500);
     m_startTimer.setSingleShot(true);
 
     m_server.listen(QHostAddress::Any, 54321);
@@ -45,6 +45,12 @@ GameManager::GameManager() : QObject(),
     connect(&m_startTimer, &QTimer::timeout, this, &GameManager::startRound);
     connect(&m_tickTimer, &QTimer::timeout, this, &GameManager::gameTick);
     connect(&m_server, &QTcpServer::newConnection, this, &GameManager::clientConnect);
+
+    connect(this, &GameManager::roundStarted, this, &GameManager::roundRunningChanged);
+    connect(this, &GameManager::roundOver, this, &GameManager::roundRunningChanged);
+
+    connect(this, &GameManager::gameStarted, this, &GameManager::gameRunningChanged);
+    connect(this, &GameManager::gameOver, this, &GameManager::gameRunningChanged);
 }
 
 GameManager *GameManager::instance()
@@ -96,7 +102,6 @@ QString GameManager::version()
 void GameManager::endRound()
 {
     m_tickTimer.stop();
-
     emit roundOver();
 
     for (int i=0; i<m_players.count(); i++) {
@@ -170,6 +175,7 @@ void GameManager::startRound()
     m_map->resetPowerups();
 
     m_tickTimer.start();
+    emit roundStarted();
 }
 
 void GameManager::startGame()
@@ -187,7 +193,7 @@ void GameManager::startGame()
     emit roundsPlayedChanged();
 
     m_gameRunning = true;
-    emit gameRunningChanged();
+    emit gameStarted();
 
     if (m_startTimer.interval() > 0) {
         emit showCountdown();
@@ -329,7 +335,6 @@ void GameManager::clientDisconnected()
         return;
     }
 
-    // FIXME fix this shit
     Player *playerObject = qobject_cast<Player*>(sender());
     if (!playerObject) {
         qWarning() << "GameManager: invalid sender for disconnect signal";
@@ -413,21 +418,32 @@ void GameManager::setTickInterval(int interval)
     m_tickTimer.setInterval(interval);
 }
 
+qreal GameManager::getTickRate()
+{
+    return 1000. / m_tickTimer.interval();
+}
+
 void GameManager::togglePause()
 {
+    if (!m_gameRunning) {
+        return;
+    }
+
     if (m_tickTimer.isActive()) {
         m_tickTimer.stop();
     } else {
         m_tickTimer.start();
     }
+    emit roundRunningChanged();
 }
 
 void GameManager::stopGame()
 {
     m_startTimer.stop(); // Just in case
     m_tickTimer.stop();
+    emit roundOver();
     m_gameRunning = false;
-    emit gameRunningChanged();
+    emit gameOver();
 
     QMutableListIterator<Player*> it(m_players);
     while(it.hasNext()) {

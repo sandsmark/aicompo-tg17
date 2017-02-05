@@ -25,6 +25,7 @@ class GameManager : public QObject
     Q_OBJECT
 
     Q_PROPERTY(bool gameRunning READ isGameRunning NOTIFY gameRunningChanged)
+    Q_PROPERTY(bool roundRunning READ isRoundRunning NOTIFY roundRunningChanged)
     Q_PROPERTY(int roundsPlayed READ roundsPlayed() NOTIFY roundsPlayedChanged())
     Q_PROPERTY(QList<QObject*> players READ playerObjects NOTIFY playersChanged)
     Q_PROPERTY(int maxPlayers READ maxPlayerCount CONSTANT)
@@ -38,6 +39,7 @@ public:
     Q_INVOKABLE void removeHumanPlayer();
 
     Q_INVOKABLE void setTickInterval(int interval);
+    Q_INVOKABLE qreal getTickRate();
 
     Q_INVOKABLE QString version();
 
@@ -56,6 +58,8 @@ public:
 
     void setCountdownDuration(int duration) { m_startTimer.setInterval(duration); }
 
+    bool isRoundRunning() { return m_tickTimer.isActive(); }
+
 public slots:
     void endRound();
     void startRound();
@@ -70,7 +74,13 @@ public slots:
 
 signals:
     void gameRunningChanged();
+    void gameStarted();
+    void gameOver();
+
+    void roundRunningChanged();
+    void roundStarted();
     void roundOver();
+
     void clientConnected();
     void roundsPlayedChanged();
     void playersChanged();

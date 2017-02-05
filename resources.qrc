@@ -4,7 +4,7 @@
         <file>qml/Checkbox.qml</file>
         <file>qml/EndScreen.qml</file>
         <file>qml/main.qml</file>
-        <file>qml/PlayerSprite.qml</file>
+        <file>qml/CharacterSprite.qml</file>
         <file>map1.map</file>
         <file>sprites/players/player0-down-0.png</file>
         <file>sprites/players/player0-down-1.png</file>
@@ -70,19 +70,20 @@
         <file>sprites/monster/up-1.png</file>
         <file>sprites/monster/spawn-0.png</file>
         <file>sprites/monster/spawn-1.png</file>
-        <file>sprites/monster/spawn-2.png</file>
-        <file>sprites/monster/spawn-3.png</file>
-        <file>sprites/monster/spawn-4.png</file>
-        <file>sprites/monster/spawn-5.png</file>
-        <file>sprites/monster/spawn-6.png</file>
-        <file>sprites/monster/spawn-7.png</file>
-        <file>sprites/monster/spawn-8.png</file>
-        <file>sprites/monster/spawn-9.png</file>
-        <file>sprites/monster/spawn-10.png</file>
-        <file>sprites/monster/spawn-11.png</file>
-        <file>sprites/monster/spawn-12.png</file>
         <file>qml/StartScreen.qml</file>
         <file>font/Perfect DOS VGA 437 Win.ttf</file>
-        <file>qml/PlayingField.qml</file>
+        <file>sprites/star.png</file>
+        <file>qml/GameGrid.qml</file>
+        <file>sprites/allNoise512.png</file>
+        <file>qml/CharactersContainer.qml</file>
+        <file>qml/Particles.qml</file>
+        <file>qml/PlayerNameList.qml</file>
+        <file>sprites/players/player2-dead.png</file>
+        <file>sprites/players/player0-dead.png</file>
+        <file>sprites/players/player1-dead.png</file>
+        <file>sprites/players/player3-dead.png</file>
+        <file>qml/StartCountdown.qml</file>
+        <file>qml/PauseText.qml</file>
+        <file>qml/OldSchoolShader.qml</file>
     </qresource>
 </RCC>

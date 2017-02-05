@@ -87,7 +87,7 @@ Player::Power Player::currentPower() const
     return m_power;
 }
 
-QString Player::name()
+QString Player::name() const
 {
     return m_name;
 }
@@ -138,7 +138,7 @@ void Player::setAlive(bool alive)
     }
 }
 
-bool Player::isAlive()
+bool Player::isAlive() const
 {
     if (m_disconnected) {
         return false;

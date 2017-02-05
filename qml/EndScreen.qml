@@ -2,7 +2,6 @@ import QtQuick 2.0
 
 Rectangle {
     id: endScreen
-    anchors.fill: parent
     enabled: visible
     visible: opacity > 0
 

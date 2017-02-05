@@ -13,20 +13,22 @@ Rectangle {
     width: 1600
 
     property int scaleSize: (width < height) ? width : height
+    property bool effectsEnabled: true
 
     property var playerColors: [
-        "#c0ff400f", // red
-        "#c0400fff", // blue
-        "#c040ff0f", // green
-        "#c0f0ff40", // yellow
-        "#c0f601ff", // pink
-        "#c0ffa201", // brown
-        "#c001ffde", // cyan
-        "#c0a801ff"  // purple
+        "#ff400f", // red
+        "#f601ff", // pink
+        "#01ffde", // cyan
+        "#f0ff40", // yellow
+        "#400fff", // blue
+        "#40ff0f", // green
+        "#ffa201", // brown
+        "#a801ff"  // purple
     ]
 
     signal userMove(string direction)
 
+    focus: true
     Keys.onUpPressed: userMove("up")
     Keys.onDownPressed: userMove("down")
     Keys.onRightPressed: userMove("right")
@@ -38,54 +40,19 @@ Rectangle {
     Keys.onPressed: {
         if (event.key === Qt.Key_F5) {
             GameManager.endRound();
-            return true;
+            event.accepted = true
         } else if (event.key === Qt.Key_P) {
             GameManager.togglePause()
-            pauseText.visible = !pauseText.visible
-            pauseAnimation.restart()
-            return true;
-        } else if (event.key === Qt.Key_Period) {
-            userMove("SEEKING")
-        } else if (event.key === Qt.Key_Comma) {
-            userMove("MINE")
-        } else if (event.key === Qt.Key_M) {
-            userMove("MISSILE")
-        }
-
-        return false;
-    }
-
-
-    ColorAnimation on color {
-        id: backgroundColorAnimation
-        from: "white"
-        to: "black"
-        duration: 1000
-        running: false
-    }
-
-    Connections {
-        target: GameManager
-        onRoundOver: {
-            backgroundColorAnimation.restart()
+            event.accepted = true
+        } else {
+            event.accepted = false
         }
     }
 
-
-
-    Item {
+    Rectangle {
         id: gameArea
         anchors.fill: parent
-
-        PlayingField {
-            id: playingField
-            anchors {
-                top: pelletBar.bottom
-                bottom: roundsPlayed.top
-                left: parent.left
-                right: parent.right
-            }
-        }
+        color: "black"
 
         Text {
             id: timerText
@@ -126,49 +93,13 @@ Rectangle {
         }
 
 
-        Text {
+        PauseText {
             id: pauseText
-            anchors.top: parent.top
-            anchors.right: parent.right
-            text: "PAUSED"
-            color: "white"
-            antialiasing: false
-            renderType: Text.NativeRendering
-            font.pointSize: 40
-            opacity: 0.7
-            visible: false
-            z: 10
-
-
-            Text {
-                id: pauseOverlay
-                anchors.top: parent.top
-                anchors.right: parent.right
-                color: "white"
-                text: parent.text
-                visible: opacity > 0
-                font.bold: true
-                antialiasing: false
-                renderType: Text.NativeRendering
-
-                ParallelAnimation {
-                    id: pauseAnimation
-                    NumberAnimation {
-                        target: pauseOverlay
-                        property: "opacity"
-                        from: 1
-                        to: 0
-                        duration: 200
-                    }
-                    NumberAnimation {
-                        target: pauseOverlay
-                        property: "font.pointSize"
-                        from: 40
-                        to: 200
-                        duration: 300
-                    }
-                }
+            anchors {
+                right: parent.right
+                top: parent.top
             }
+            visible: GameManager.gameRunning && !GameManager.roundRunning && !startCountdown.visible
         }
 
         Text {
@@ -183,275 +114,238 @@ Rectangle {
             renderType: Text.NativeRendering
         }
 
-        ParticleSystem {
-            id: particleSystem
+        Item {
+            id: playingField
+            anchors {
+                top: pelletBar.bottom
+                bottom: roundsPlayed.top
+                left: parent.left
+                right: parent.right
+            }
+
+            opacity: startScreen.visible ? 0.1 : 1
+            Behavior on opacity {
+                NumberAnimation { duration: 500 }
+            }
+
+            GameGrid {
+                id: gameGrid
+                anchors.centerIn: parent
+            }
+        }
+
+
+        Particles {
+            id: particles
+
             anchors.fill: parent
+        }
 
-            // Less ugly
-            onWidthChanged: restart()
-            onHeightChanged: restart()
+        // Create player sprites
+        CharactersContainer {
+            id: charactersContainer
 
-            property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]
+            x: gameGrid.x + playingField.x
+            y: gameGrid.y + playingField.y
+            spriteSize: gameGrid.tileSize
+        }
 
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/rect.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.3
-                color: playerColors[0]
-                groups: ["Player1"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/rect.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.3
-                color: playerColors[1]
-                groups: ["Player2"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/rect.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.3
-                color: playerColors[2]
-                groups: ["Player3"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/rect.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                colorVariation: 0.3
-                color: playerColors[3]
-                groups: ["Player4"]
-            }
-            ImageParticle {
-                opacity: 0.5
-                source: "qrc:///sprites/rect.png"
-                alpha: 0.1
-                alphaVariation: 0.1
-                color: "yellow"
-                groups: ["Monster"]
-            }
-            ImageParticle {
-                source: "qrc:///sprites/rect.png"
-                color: "white"
-                groups: ["Explosion", "Logo"]
+        // List of names of players
+        PlayerNameList {
+            id: playerNameList
+            anchors {
+                top: parent.top
+                left: parent.left
             }
         }
 
 
-        Emitter {
-            id: crashEmitter
-            anchors.centerIn: parent
-            width: 10
-            height: 10
-            emitRate: 1000
-            lifeSpan: 250
-            lifeSpanVariation: 100
-            enabled: false
-            velocity: AngleDirection{magnitude: 128; angleVariation: 360}
-            size: 16
-            sizeVariation: 16
-            system: particleSystem
-            group: "Explosion"
-
-            Connections {
-                target: GameManager
-                onExplosion: {
-                    crashEmitter.burst(500, main.width / 2 + position.x * main.width / 2, main.height/ 2 + position.y * main.height/ 2)
-                }
-            }
-        }
-
-
-//        // List of names of players
-//        Column {
-//            anchors.left: parent.left
-//            anchors.top: parent.top
-//            height: 100
-//            width: 100
-//            Repeater {
-//                model: GameManager.players
-//                delegate: Image {
-//                    source: modelData.spritePath
-//                    height: 45
-//                    width: height
-
-
-//                    Rectangle {
-//                        anchors.left: parent.right
-//                        anchors.top: parent.top
-//                        anchors.bottom: parent.bottom
-//                        color: playerColors[modelData.id]
-//                        width: 500 * modelData.energy / 1000
-//                        Behavior on width { NumberAnimation { duration: 100; } }
-//                    }
-//                    Text {
-//                        id: playerName
-//                        anchors.verticalCenter: parent.verticalCenter
-//                        anchors.left: parent.right
-//                        width: 500
-//                        text: modelData.name + " (" + modelData.wins + ")"
-//                        color: "white"
-//                        style: Text.Outline
-//                        styleColor: "black"
-//                        font.family: "Aldrich"
-//                        font.pointSize: 20
-//                        font.strikeout: !modelData.alive
-//                    }
-//                }
-//            }
-//        }
-
-        Rectangle {
+        StartCountdown {
             id: startCountdown
             anchors.centerIn: parent
             height: parent.height / 2
             width: height / 3
-            color: "#a0000000"
-            border.color: "white"
-            border.width: 4
-
-            opacity: countdownTimer.running ? 1 : 0
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 500
-                }
-            }
-
-            Rectangle {
-                id: countdownFirst
-                color: "white"
-                opacity: 0
-                width: parent.width
-                height: width
-                anchors {
-                    top: parent.top
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
-
-            Rectangle {
-                id: countdownSecond
-                color: "white"
-                opacity: 0
-                width: parent.width
-                height: width
-                anchors {
-                    verticalCenter: parent.verticalCenter
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
+        }
 
 
-            Rectangle {
-                id: countdownThird
-                color: "white"
-                opacity: 0
-                width: parent.width
-                height: width
-                anchors {
-                    bottom: parent.bottom
-                    horizontalCenter: parent.horizontalCenter
-                }
-            }
+        EndScreen {
+            opacity: (GameManager.roundsPlayed >= GameManager.maxRounds) ? 1 : 0
+            anchors.fill: parent
+            objectName: "endScreen"
+        }
 
-            Connections {
-                target: GameManager
-                onShowCountdown: {
-                    countdownFirst.opacity = 0
-                    countdownSecond.opacity = 0
-                    countdownThird.opacity = 0
-                    countdownTimer.progress = 0
-                    countdownTimer.restart()
-                }
-                onGameRunningChanged: {
-                    countdownTimer.stop()
-                }
-            }
+        StartScreen {
+            id: startScreen
+            anchors.fill: parent
+            opacity: GameManager.gameRunning ? 0 : 1
+        }
 
-            Timer {
-                id: countdownTimer
-                interval: 250
-                running: false
-                repeat: true
-                property int progress: 0
+        Text {
+            id: aboutText
+            anchors.bottom: buildId.top
+            anchors.right: parent.right
+            anchors.margins: 10
+            color: "white"
+            text: "code:martin^reMarkable"
+            font.pointSize: 10
+            antialiasing: false
+            renderType: Text.NativeRendering
+            opacity: 0.5
+        }
 
-                onTriggered: {
-                    if (progress === 0) {
-                        countdownFirst.opacity = 1
-                    } else if (progress === 1) {
-                        countdownSecond.opacity = 1
-                    } else {
-                        countdownThird.opacity = 1
-                        countdownTimer.stop()
-                    }
-
-                    progress++
-                }
-            }
+        Text {
+            id: buildId
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: 10
+            color: "white"
+            text: GameManager.version()
+            font.pointSize: 10
+            antialiasing: false
+            renderType: Text.NativeRendering
+            opacity: 0.3
         }
     }
 
-    BrightnessContrast {
-        id: gameFilter
-        source: gameArea
+//    FastBlur {
+//        id: blurFilter
+//        anchors.fill: gameArea
+//        source: gameArea
+//        radius: 8
+//    }
+//    BrightnessContrast {
+//        id: gameFilter
+//        source: blurFilter
+//        anchors.fill: blurFilter
+//        opacity: 1
+////        NumberAnimation on opacity {
+////            running: false
+////            id: blurAnimation
+////            duration: 250
+////            from: 0.7
+////            to: 0
+////        }
+//        brightness: 0.9
+//        contrast: 1
+//    }
+
+    Loader {
+        id: retroShaderLoader
         anchors.fill: gameArea
-        opacity: 0
-        NumberAnimation on opacity {
-            running: false
-            id: blurAnimation
-            duration: 250
-            from: 0.7
-            to: 0
+    }
+
+    Component {
+        id: retroShaderComponent
+
+        Item {
+            OldSchoolShader {
+                id: retroShader
+                anchors.fill: parent
+                source: ShaderEffectSource {
+                    id: mainSource
+                    sourceItem: gameArea
+                    width: gameArea.width
+                    height: gameArea.height
+                    hideSource: true
+                }
+                burninSource: burninTexture
+            }
+
+            // Need to have these parented outside the main shader above, to avoid crashings
+            ShaderEffectSource {
+                id: burninTexture
+                hideSource: true
+                sourceItem: burninShader
+                recursive: true
+            }
+
+            ShaderEffect {
+                id: burninShader
+                property variant txt_source: retroShader.source
+                property variant blurredSource: burninTexture
+                property real fps: 60
+                property real blurCoefficient: 1.0 / (fps * 0.64)
+                width: gameArea.width
+                height: gameArea.height
+                blending: false
+
+                fragmentShader:
+                    "#ifdef GL_ES
+                    precision mediump float;
+                #endif\n" +
+
+                "uniform lowp float qt_Opacity;" +
+                "uniform lowp sampler2D txt_source;" +
+
+                "varying highp vec2 qt_TexCoord0;
+
+                 uniform lowp sampler2D blurredSource;
+                 uniform highp float blurCoefficient;" +
+
+                "float rgb2grey(vec3 v){
+                    return dot(v, vec3(0.21, 0.72, 0.04));
+                }" +
+
+                "void main() {" +
+                "vec2 coords = qt_TexCoord0;" +
+                "vec3 origColor = texture2D(txt_source, coords).rgb;" +
+                "vec3 blur_color = texture2D(blurredSource, coords).rgb - vec3(blurCoefficient);" +
+                "vec3 color = min(origColor + blur_color, max(origColor, blur_color));" +
+
+                "gl_FragColor = vec4(color, rgb2grey(color - origColor));" +
+                "}"
+            }
         }
-        brightness: 0.9
-        contrast: 1
     }
 
+//    ShaderEffect {
+//        id: gameFilter
+//        //        visible: false
+//        //        source: gameArea
+//        property variant source: ShaderEffectSource {
+//            sourceItem: gameArea
+//            width: gameArea.width
+//            height: gameArea.height
+//        }
 
-    focus: true
+//        anchors.fill: gameArea
+//        property real targetWidth: width
+//        property real targetHeight: height
+//        property real granularity: GameManager.gameRunning ? 1 : 10
+//        visible: granularity > 1
+//        Behavior on granularity { NumberAnimation { easing.type: "InExpo"; duration: 1000 } }
 
 
-    EndScreen {
-        opacity: (GameManager.roundsPlayed >= GameManager.maxRounds) ? 1 : 0
-        objectName: "endScreen"
-    }
+//        vertexShader: "
+//            uniform highp mat4 qt_Matrix;
+//            attribute highp vec4 qt_Vertex;
+//            attribute highp vec2 qt_MultiTexCoord0;
+//            varying highp vec2 qt_TexCoord0;
+//            void main() {
+//                qt_TexCoord0 = qt_MultiTexCoord0;
+//                gl_Position = qt_Matrix * qt_Vertex;
+//            }"
 
-    StartScreen {
-        id: startScreen
-        opacity: GameManager.gameRunning ? 0 : 1
-    }
+//        fragmentShader: "
+//            uniform float granularity;
+//            uniform float targetWidth;
+//            uniform float targetHeight;
 
-    Text {
-        id: aboutText
-        anchors.bottom: buildId.top
-        anchors.right: parent.right
-        anchors.margins: 10
-        color: "white"
-        text: "code:martin^remarkable"
-        font.pointSize: 10
-        antialiasing: false
-        renderType: Text.NativeRendering
-        opacity: 0.5
-    }
+//            uniform sampler2D source;
+//            uniform float qt_Opacity;
+//            varying vec2 qt_TexCoord0;
 
-    Text {
-        id: buildId
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: 10
-        color: "white"
-        text: GameManager.version()
-        font.pointSize: 10
-        antialiasing: false
-        renderType: Text.NativeRendering
-        opacity: 0.3
-    }
+//            void main()
+//            {
+//                vec2 uv = qt_TexCoord0.xy;
+//                vec2 tc = qt_TexCoord0;
+//                if (granularity > 0.0) {
+//                    float dx = granularity / targetWidth;
+//                    float dy = granularity / targetHeight;
+//                    tc = vec2(dx*(floor(uv.x/dx) + 0.5),
+//                              dy*(floor(uv.y/dy) + 0.5));
+//                }
+//                gl_FragColor = qt_Opacity * texture2D(source, tc);
+//            }"
+//    }
 }

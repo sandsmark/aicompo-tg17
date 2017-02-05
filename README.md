@@ -21,12 +21,10 @@ There are also automatically built and untested pre-release builds available her
 
 ### Keys for human player
 
+ * Up: Go up.
  * Left: turn left
  * Right: turn right
- * Forward: Accelerate
- * m: Fire normal missile.
- * ,: Drop mine.
- * .: Fire homing missile.
+ * Down: Go Down.
 
 ---
 

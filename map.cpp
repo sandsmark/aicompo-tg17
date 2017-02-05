@@ -26,10 +26,18 @@ bool Map::loadMap(const QString filepath)
     m_totalPellets = 0;
 
     QVector<TileType> tiles;
-    QByteArray line = file.readLine().trimmed();
-    m_width = line.length();
+    m_width = -1;
     m_height = 0;
     while (!file.atEnd()) {
+        QByteArray line = file.readLine().trimmed();
+        if (m_width == -1) {
+            m_width = line.length();
+        }
+
+        if (line.length() > 0 && line.length() != m_width) {
+            qWarning() << "Invalid map line at line" << m_height << "width:" << line.length() << line;
+            return false;
+        }
         int x = 0;
         for (const char tile : line) {
             switch(tile) {
@@ -65,11 +73,6 @@ bool Map::loadMap(const QString filepath)
             x++;
         }
         m_height++;
-        line = file.readLine().trimmed();
-        if (line.length() > 0 && line.length() != m_width) {
-            qWarning() << "Invalid map line at line" << m_height << "width:" << line.length() << line;
-            return false;
-        }
     }
     m_tiles = tiles;
 

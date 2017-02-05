@@ -67,9 +67,20 @@ void Monster::verifyTarget()
     // Just hunt a random player when there's no more candy
     if (!m_map->pelletsLeft()) {
         // The players are always shuffled by the game manager
-        Player *victim = GameManager::instance()->getPlayers().first();
-        m_targetX = victim->x();
-        m_targetY = victim->y();
+        QList<Player*> victims = GameManager::instance()->getPlayers();
+        for (const Player *victim : victims) {
+            if (victim->isAlive()) {
+                m_targetX = victim->x();
+                m_targetY = victim->y();
+                return;
+            }
+        }
+
+        // This sucks, find a random place to go
+        if (m_targetX == -1 || m_targetY == -1) {
+            findRandomTarget();
+        }
+
         return;
     }
 
@@ -101,6 +112,17 @@ void Monster::verifyTarget()
     }
 }
 
+void Monster::findRandomTarget()
+{
+    for (int i=0; i<1000; i++) {
+        m_targetX = qrand() % m_map->width();
+        m_targetY = qrand() % m_map->height();
+        if (m_map->isValidPosition(m_targetX, m_targetY)) {
+            return;
+        }
+    }
+}
+
 void Monster::doMove()
 {
     if (!m_active) {
@@ -121,17 +143,14 @@ void Monster::doMove()
 
     QHash<PathPoint, PathPoint> cameFrom;
 
-    std::priority_queue<PathPoint> queue;
     // STL is a steaming pile of shit
-    QSet<PathPoint> queueContents;
+    std::priority_queue<PathPoint> queue;
     queue.push(currentPosition);
-    queueContents.insert(currentPosition);
 
     QSet<PathPoint> visited;
 
     while (!queue.empty()) {
         const PathPoint current = queue.top();
-        queueContents.remove(current);
         queue.pop();
 
         if (current.x == m_targetX && current.y == m_targetY) {
@@ -166,10 +185,7 @@ void Monster::doMove()
                 }
                 cameFrom[neighbor] = current;
 
-                if (!queueContents.contains(neighbor)) {
-                    queueContents.insert(neighbor);
-                    queue.push(neighbor);
-                }
+                queue.push(neighbor);
             }
         }
     }
@@ -177,7 +193,10 @@ void Monster::doMove()
     PathPoint pathPoint = PathPoint(m_targetX, m_targetY);
 
     if (!cameFrom.contains(pathPoint)) {
-        qWarning() << "Can't find target!" << m_targetX << m_targetY << m_x << m_y << m_map->powerupAt(m_targetX, m_targetY);
+        qWarning() << "Can't find path to target" << m_targetX << m_targetY << "from" << m_x << m_y;
+
+        // Try not to do this next time
+        findRandomTarget();
         return;
     }
 
@@ -188,11 +207,14 @@ void Monster::doMove()
             return;
         }
     }
+
     int newX = pathPoint.x;
     int newY = pathPoint.y;
 
     if (!m_map->isValidPosition(newX, newY)) {
         qWarning() << "New position is not valid!";
+        m_targetX = -1;
+        m_targetY = -1;
         return;
     }
 
@@ -205,13 +227,18 @@ void Monster::doMove()
     } else if (newY < m_y) {
         m_direction = "up";
     }
+
     emit directionChanged();
     m_x = newX;
     m_y = newY;
-
     emit positionChanged();
     m_map->takePowerup(m_x, m_y);
 
+    // Check if we need to find a new target next time
+    if (m_targetX == m_x && m_targetY == m_y) {
+        m_targetX = -1;
+        m_targetY = -1;
+    }
 }
 
 void Monster::setActive(bool active)
