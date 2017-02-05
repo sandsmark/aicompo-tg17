@@ -16,7 +16,7 @@ class NetworkClient : public QObject
 public:
     explicit NetworkClient(QTcpSocket *socket);
     QString remoteName();
-    void sendWelcome(const QByteArray &mapData, const QPoint &startData);
+    void sendWelcome(const QJsonObject &mapData, const QJsonObject &playerdata);
     void sendState(const QJsonObject gameState);
     void sendEndOfRound();
     void sendDead();
@@ -31,6 +31,7 @@ private slots:
     void dataReceived();
 
 private:
+    void sendMessage(const QJsonObject &message);
     void sendString(QByteArray string);
 
     QTcpSocket *m_socket;

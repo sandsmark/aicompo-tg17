@@ -137,6 +137,9 @@ void Player::setAlive(bool alive)
 
     if (!isAlive() && m_networkClient) {
         m_networkClient->sendDead();
+
+        // To make sure it is handled correctly in tickless mode
+        emit commandReceived();
     }
 }
 

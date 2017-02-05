@@ -154,9 +154,10 @@ void GameManager::endRound()
 
         qDebug() << "Result:";
         for(Player *player : playerList) {
-            qDebug() << player->name()
-                     << "Wins:" << player->wins()
-                     << "Score:" << player->score();
+            qInfo().noquote().nospace()
+                     << "name:" << player->name()
+                     << ";wins:" << player->wins()
+                     << ";score:" << player->score();
             scoreFile.write(player->name().toUtf8() + ' ' +
                             QByteArray::number(player->wins()) + ' ' +
                             QByteArray::number(player->score()));
@@ -235,6 +236,7 @@ void GameManager::gameTick()
         // We need to wait for all players to have sent a command
         for (const Player *player : m_players) {
             if (player->isAlive() && !player->hasCommand()) {
+                qDebug() << "Waiting for command from player";
                 return;
             }
         }
@@ -333,13 +335,16 @@ void GameManager::gameTick()
         return;
     }
 
+    const QJsonObject mapState = m_map->getSerialized();
     // Send status updates to all connected players
     for(Player *player : players) {
         if (!player->networkClient()) {
             continue;
         }
 
-        player->networkClient()->sendState(serializeForPlayer(player));
+        QJsonObject jsonState = serializeForPlayer(player);
+        jsonState["map"] = mapState;
+        player->networkClient()->sendState(jsonState);
     }
 
     emit secondsElapsedChanged();
@@ -405,6 +410,7 @@ void GameManager::addPlayer(NetworkClient *client)
         connect(this, &GameManager::humanMove, player, &Player::setCommand);
         player->setName("Local user");
     } else {
+        client->sendWelcome(m_map->getSerialized(), player->serialize());
         player->setName(client->remoteName());
         connect(player, &Player::clientDisconnected, this, &GameManager::onClientDisconnect);
         connect(player, &Player::clientDisconnected, this, &GameManager::clientDisconnected);

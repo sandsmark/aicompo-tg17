@@ -20,44 +20,40 @@ QString NetworkClient::remoteName()
     return m_name;
 }
 
+void NetworkClient::sendWelcome(const QJsonObject &mapData, const QJsonObject &playerdata)
+{
+    QJsonObject object;
+    object["messagetype"] = QStringLiteral("welcome");
+    object["you"] = playerdata;
+    object["map"] = mapData;
+    sendMessage(object);
+}
+
 void NetworkClient::kick()
 {
     m_socket->disconnectFromHost();
 }
 
-void NetworkClient::sendString(QByteArray string)
-{
-    if (!m_socket->isOpen()) {
-        return;
-    }
-
-    m_socket->write(string + '\n');
-}
-
 void NetworkClient::sendDead()
 {
-    QJsonObject object;
-    object["messagetype"] = QStringLiteral("dead");
-    QJsonDocument packet(object);
-    sendString(packet.toJson(QJsonDocument::Compact));
+    QJsonObject message;
+    message["messagetype"] = QStringLiteral("dead");
+    sendMessage(message);
 }
 
 void NetworkClient::sendEndOfRound()
 {
-    QJsonObject object;
-    object["messagetype"] = QStringLiteral("endofround");
-    QJsonDocument packet(object);
-    sendString(packet.toJson(QJsonDocument::Compact));
+    QJsonObject message;
+    message["messagetype"] = QStringLiteral("endofround");
+    sendMessage(message);
 }
 
 void NetworkClient::sendState(const QJsonObject gameState)
 {
-    QJsonObject stateObject;
-    stateObject["messagetype"] = QStringLiteral("stateupdate");
-
-    stateObject["gamestate"] = gameState;
-    QJsonDocument packet(stateObject);
-    sendString(packet.toJson(QJsonDocument::Compact));
+    QJsonObject message;
+    message["messagetype"] = QStringLiteral("stateupdate");
+    message["gamestate"] = gameState;
+    sendMessage(message);
 }
 
 void NetworkClient::dataReceived()
@@ -69,17 +65,30 @@ void NetworkClient::dataReceived()
     for (const QByteArray line : lines) {
         if (line.isEmpty()) continue;
 
-        if (line.startsWith("NAME ")) {
-            QList<QByteArray> splitLine = line.split(' ');
-            if (splitLine.length() < 2) continue;
-            m_name = splitLine[1];
+        static const QByteArray nameCommand("name ");
+        if (line.toLower().startsWith(nameCommand)) {
+            m_name = line.mid(nameCommand.length());
             if (m_name.length() > 10) {
                 m_name = m_name.left(10);
+            }
+            if (m_name.isEmpty()) {
+                static int dumbs = 0;
+                m_name = QString("Invalid %1").arg(++dumbs);
             }
             emit nameChanged(m_name);
             continue;
         }
 
-        emit commandReceived(QString::fromLatin1(line.trimmed()));
+        emit commandReceived(QString::fromUtf8(line.trimmed()).toLower());
     }
+}
+
+void NetworkClient::sendMessage(const QJsonObject &message)
+{
+    if (!m_socket->isOpen()) {
+        return;
+    }
+
+    QJsonDocument packet(message);
+    m_socket->write(packet.toJson(QJsonDocument::Compact) + '\n');
 }

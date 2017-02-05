@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QPoint>
 #include <QColor>
+#include <QJsonObject>
 
 class Map : public QObject
 {
@@ -50,8 +51,8 @@ public:
     int width() const { return m_width; }
     int height() const { return m_height; }
 
-    bool isNull();
-    bool isValid();
+    bool isNull() const;
+    bool isValid() const;
 
     bool isValidPosition(int x, int y) const;
     bool isWithinBounds(int x, int y) const;
@@ -63,10 +64,12 @@ public:
     Q_INVOKABLE QString tileSprite(int x, int y, TileCorner corner) const;
     Q_INVOKABLE QString powerupSprite(int x, int y) const;
 
-    int pelletsLeft() { return m_pelletsLeft; }
+    int pelletsLeft() const { return m_pelletsLeft; }
 
-    QVector<QPoint> startingPositions() { return m_startingPositions; }
-    QPoint monsterSpawn() { return m_monsterSpawn; }
+    QVector<QPoint> startingPositions() const { return m_startingPositions; }
+    QPoint monsterSpawn() const { return m_monsterSpawn; }
+
+    QJsonObject getSerialized() const;
 
 signals:
     void mapChanged();

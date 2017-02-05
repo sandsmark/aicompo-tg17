@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QJsonArray>
 
 Map::Map(QObject *parent) : QObject(parent),
     m_width(0),
@@ -140,7 +141,7 @@ void Map::resetPowerups()
     }
 }
 
-bool Map::isValid()
+bool Map::isValid() const
 {
     return (!m_tiles.isEmpty() && m_width * m_height == m_tiles.size());
 }
@@ -308,4 +309,41 @@ QString Map::powerupSprite(int x, int y) const
     default:
         return QString();
     }
+}
+
+QJsonObject Map::getSerialized() const
+{
+    QJsonObject ret;
+    ret["width"] = width();
+    ret["height"] = height();
+    ret["pelletsleft"] = pelletsLeft();
+
+    QJsonArray mapData;
+    for (int y=0; y<m_height; y++) {
+        QString mapRow;
+        for (int x=0; x<m_width; x++) {
+            const Powerup powerup = powerupAt(x, y);
+            if (powerup == NormalPellet) {
+                mapRow += ".";
+                continue;
+            } else if (powerup == SuperPellet) {
+                mapRow += "o";
+                continue;
+            }
+
+            const TileType tileType = tileAt(x, y);
+            if (tileType == WallTile) {
+                mapRow += "|";
+            } else if (tileType == DoorTile) {
+                mapRow += "-";
+            } else {
+                mapRow += "_";
+            }
+        }
+        mapData.append(mapRow);
+    }
+
+    ret["content"] = mapData;
+
+    return ret;
 }
