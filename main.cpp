@@ -81,6 +81,7 @@ int main(int argc, char *argv[])
     QCommandLineOption roundsOption("rounds", "Set the number of rounds to <rounds>, default " + QString::number(MAX_ROUNDS),
                                     "rounds", QString::number(MAX_ROUNDS));
     QCommandLineOption headlessOption("headless", "Run without showing the UI, e. g. for running on a server. This implies the start-at and quit-on-finish options.");
+    QCommandLineOption ticklessOption("tickless", "Run without a timer, execute a game tick as soon as it has received commands from all players");
 
     QCommandLineParser parser;
     parser.addHelpOption();
@@ -90,6 +91,7 @@ int main(int argc, char *argv[])
     parser.addOption(fullscreenOption);
     parser.addOption(roundsOption);
     parser.addOption(headlessOption);
+    parser.addOption(ticklessOption);
 
     parser.process(*app);
 
@@ -106,7 +108,7 @@ int main(int argc, char *argv[])
     }
 
     int tickInterval = parser.value(tickintervalOption).toInt();
-    if (tickInterval < 10 || tickInterval > 1000) {
+    if ((tickInterval < 10 || tickInterval > 1000) && !parser.isSet(ticklessOption)) {
         qWarning() << "Invalid tick interval:" << tickInterval;
         parser.showHelp(-1);
     }
@@ -117,6 +119,7 @@ int main(int argc, char *argv[])
 
     GameManager *manager = GameManager::instance();
     manager->setMaxRounds(rounds);
+    manager->setTickless(parser.isSet(ticklessOption));
 
     if (parser.isSet(autostartOption) || runHeadless) {
         manager->setCountdownDuration(500);

@@ -22,10 +22,12 @@
 GameManager::GameManager() : QObject(),
     m_roundsPlayed(0),
     m_gameRunning(false),
+    m_roundRunning(false),
     m_maxRounds(MAX_ROUNDS),
     m_randomGenerator(m_randomDevice()),
     m_map(new Map(this)),
-    m_monster(new Monster(this))
+    m_monster(new Monster(this)),
+    m_tickless(false)
 {
     m_map->loadMap(":/map1.map");
 
@@ -87,6 +89,13 @@ QList<QObject*> GameManager::playerObjects() const
     return objectList;
 }
 
+QList<Player *> GameManager::getPlayers()
+{
+    QList<Player*> players = m_players;
+    std::shuffle(players.begin(), players.end(), m_randomGenerator);
+    return players;
+}
+
 QString GameManager::version()
 {
     QString versionString;
@@ -101,7 +110,14 @@ QString GameManager::version()
 
 void GameManager::endRound()
 {
-    m_tickTimer.stop();
+    if (m_tickless) {
+        for (const Player *player : m_players) {
+            disconnect(player, SIGNAL(commandReceived()), &m_tickTimer, SIGNAL(timeout()));
+        }
+    } else {
+        m_tickTimer.stop();
+    }
+    m_roundRunning = false;
     emit roundOver();
 
     for (int i=0; i<m_players.count(); i++) {
@@ -174,7 +190,14 @@ void GameManager::startRound()
 
     m_map->resetPowerups();
 
-    m_tickTimer.start();
+    if (m_tickless) {
+        for (const Player *player : m_players) {
+            connect(player, SIGNAL(commandReceived()), &m_tickTimer, SIGNAL(timeout()));
+        }
+    } else {
+        m_tickTimer.start();
+    }
+    m_roundRunning = true;
     emit roundStarted();
 }
 
@@ -205,6 +228,14 @@ void GameManager::startGame()
 
 void GameManager::gameTick()
 {
+    if (m_tickless) {
+        // We need to wait for all players to have sent a command
+        for (const Player *player : m_players) {
+            if (!player->hasCommand()) {
+                return;
+            }
+        }
+    }
     m_monster->doMove();
 
     // Randomize the order we process players in
@@ -228,7 +259,7 @@ void GameManager::gameTick()
 
         // Get last command from player, and if there is one do the appropriate thing
         // This also resets the command to "", so we don't do a command more than once
-        QString command = player->command();
+        QString command = player->getCommand();
         if (command.isEmpty()) {
             continue;
         }
@@ -320,7 +351,7 @@ void GameManager::clientConnect()
         return;
     }
 
-    if (m_players.count() >= MAX_PLAYERS || m_tickTimer.isActive() || m_gameRunning) {
+    if (m_players.count() >= MAX_PLAYERS || m_roundRunning || m_gameRunning) {
         socket->disconnect();
         socket->deleteLater();
         return;
@@ -331,7 +362,7 @@ void GameManager::clientConnect()
 
 void GameManager::clientDisconnected()
 {
-    if (m_tickTimer.isActive()) {
+    if (m_tickTimer.isActive() || m_roundRunning || m_gameRunning) {
         return;
     }
 
@@ -434,6 +465,7 @@ void GameManager::togglePause()
     } else {
         m_tickTimer.start();
     }
+    m_roundRunning = !m_roundRunning;
     emit roundRunningChanged();
 }
 
@@ -441,6 +473,7 @@ void GameManager::stopGame()
 {
     m_startTimer.stop(); // Just in case
     m_tickTimer.stop();
+    m_roundRunning = false;
     emit roundOver();
     m_gameRunning = false;
     emit gameOver();
@@ -507,4 +540,13 @@ QJsonObject GameManager::serializeForPlayer(Player *player)
     gamestateObject["others"] = playersArray;
 
     return gamestateObject;
+}
+
+void GameManager::setTickless(bool tickless)
+{
+    if (tickless) {
+        qDebug() << "Starting game in tickless mode, good luck!";
+    }
+
+    m_tickless = tickless;
 }

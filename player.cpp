@@ -45,7 +45,7 @@ QString Player::lastCommand()
     return m_lastCommand;
 }
 
-QString Player::command()
+QString Player::getCommand()
 {
     QString command = m_command;
     m_command.clear();
@@ -116,6 +116,8 @@ void Player::setCommand(QString command)
     }
 
     m_command = command;
+
+    emit commandReceived();
 }
 
 void Player::onDisconnected()

@@ -33,8 +33,10 @@ public:
     void setId(int id);
     bool isDisconnected() { return m_disconnected; }
 
+    bool hasCommand() const { return !m_command.isEmpty(); }
+
     QString lastCommand();
-    QString command();
+    QString getCommand();
     QString direction();
     void setPower(Power power);
     Power currentPower() const;
@@ -72,11 +74,12 @@ public:
     void gameTick();
 
 public slots:
-    void setCommand(QString command);
+    void setCommand(QString getCommand);
     void setName(QString name);
     bool isHuman() { return m_networkClient == 0; }
 
 signals:
+    void commandReceived();
     void lastCommandChanged();
     void idChanged();
     void nameChanged();

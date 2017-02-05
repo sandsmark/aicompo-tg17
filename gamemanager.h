@@ -50,7 +50,7 @@ public:
     bool isGameRunning() const { return m_gameRunning; }
 
     QList<QObject *> playerObjects() const;
-    QList<Player *> getPlayers() const {return m_players; }
+    QList<Player *> getPlayers();
 
     int maxPlayerCount() { return MAX_PLAYERS; }
     int maxRounds() { return m_maxRounds; }
@@ -58,7 +58,9 @@ public:
 
     void setCountdownDuration(int duration) { m_startTimer.setInterval(duration); }
 
-    bool isRoundRunning() { return m_tickTimer.isActive(); }
+    bool isRoundRunning() { return m_roundRunning; }
+
+    void setTickless(bool tickless);
 
 public slots:
     void endRound();
@@ -106,12 +108,16 @@ private:
     QTcpServer m_server;
     int m_roundsPlayed;
     bool m_gameRunning;
+    bool m_roundRunning;
     QTimer m_startTimer;
     int m_maxRounds;
     std::random_device m_randomDevice;
     std::mt19937 m_randomGenerator;
     Map *m_map;
     Monster *m_monster;
+    bool m_tickless;
 };
+
+
 
 #endif // GAMEMANAGER_H
