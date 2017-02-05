@@ -10,6 +10,7 @@ Map::Map(QObject *parent) : QObject(parent),
     m_pelletsLeft(0),
     m_totalPellets(0)
 {
+    loadMap(":/maps/pacman.txt");
 }
 
 bool Map::loadMap(const QString filepath)
@@ -21,7 +22,7 @@ bool Map::loadMap(const QString filepath)
         return false;
     }
 
-    m_name = file.fileName();
+    m_name = filepath;
     m_tiles.clear();
     m_startingPositions.clear();
     m_totalPellets = 0;
@@ -31,6 +32,10 @@ bool Map::loadMap(const QString filepath)
     m_height = 0;
     while (!file.atEnd()) {
         QByteArray line = file.readLine().trimmed();
+        if (line.isEmpty()) {
+            continue;
+        }
+
         if (m_width == -1) {
             m_width = line.length();
         }
@@ -95,10 +100,19 @@ bool Map::loadMap(const QString filepath)
             default:
                 m_powerups.append(NoPowerup);
             }
-            emit powerupChanged(x, y);
         }
     }
     return true;
+}
+
+QStringList Map::availableMaps()
+{
+    QDir dir(":/maps/");
+    QStringList ret;
+    for (const QFileInfo &file : dir.entryInfoList(QDir::Files)) {
+        ret.append(file.absoluteFilePath());
+    }
+    return ret;
 }
 
 void Map::resetPowerups()

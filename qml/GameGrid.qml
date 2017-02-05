@@ -19,10 +19,20 @@ Grid {
     
     columns: Map.width
     rows: Map.height
+
+    Connections {
+        target: Map
+        onMapChanged: {
+            rowRepeater.model = 0
+            rowRepeater.model = Map.height
+        }
+    }
     
     Repeater {
+        id: rowRepeater
         model: Map.height
         delegate: Repeater {
+            id: columnRepeater
             property int spriteY: modelData
             model: Map.width
             delegate: Item {
@@ -81,7 +91,7 @@ Grid {
                 Image {
                     id: pellet
                     anchors.fill: parent
-                    source: sprite === "" ? "" : "qrc:///sprites/map/" + sprite + ".png"
+                    source: sprite == "" ? "" : "qrc:///sprites/map/" + sprite + ".png"
                     property string sprite: Map.powerupSprite(spriteX, spriteY)
                     smooth: false
                     Connections {
@@ -97,7 +107,7 @@ Grid {
                                 return
                             }
                             
-                            pellet.source = "qrc:///sprites/map/" + Map.powerupSprite(spriteX, spriteY) + ".png"
+                            pellet.sprite = Map.powerupSprite(spriteX, spriteY)
                             pellet.visible = true
                         }
                     }

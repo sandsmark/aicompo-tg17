@@ -5,7 +5,6 @@
         <file>qml/EndScreen.qml</file>
         <file>qml/main.qml</file>
         <file>qml/CharacterSprite.qml</file>
-        <file>map1.map</file>
         <file>sprites/players/player0-down-0.png</file>
         <file>sprites/players/player0-down-1.png</file>
         <file>sprites/players/player0-left-0.png</file>
@@ -85,5 +84,10 @@
         <file>qml/StartCountdown.qml</file>
         <file>qml/PauseText.qml</file>
         <file>qml/OldSchoolShader.qml</file>
+        <file>maps/mspacman1.txt</file>
+        <file>maps/mspacman2.txt</file>
+        <file>maps/mspacman3.txt</file>
+        <file>maps/mspacman4.txt</file>
+        <file>maps/pacman.txt</file>
     </qresource>
 </RCC>

@@ -29,8 +29,6 @@ GameManager::GameManager() : QObject(),
     m_monster(new Monster(this)),
     m_tickless(false)
 {
-    m_map->loadMap(":/map1.map");
-
     m_monster->setMap(m_map);
 
     // Set up gametick timer

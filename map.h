@@ -45,7 +45,8 @@ public:
 
     explicit Map(QObject *parent);
 
-    bool loadMap(const QString filepath);
+    Q_INVOKABLE bool loadMap(const QString filepath);
+    Q_INVOKABLE QStringList availableMaps();
     void resetPowerups();
 
     int width() const { return m_width; }

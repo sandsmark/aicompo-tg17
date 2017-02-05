@@ -299,7 +299,7 @@ Item {
         color: "#7f000000"
         anchors.centerIn: parent
         width: 640
-        height: 400
+        height: 230
         anchors.bottomMargin: 100
         border.color: "white"
         border.width: 4
@@ -342,10 +342,67 @@ Item {
                         visible: !modelData.isHuman()
                         anchors.right: parent.right
                         width: 60
-                        height: 30
+                        height: 40
                         text: "Kick"
                         fontSize: 10
                         onClicked: GameManager.kick(index)
+                    }
+                }
+            }
+        }
+    }
+
+    // List of maps
+    Rectangle {
+        id: mapList
+        color: "#7f000000"
+        anchors {
+            top: playerList.bottom
+            topMargin: 10
+            left: playerList.left
+            right: playerList.right
+        }
+
+        width: 640
+        height: 230
+        anchors.bottomMargin: 100
+        border.color: "white"
+        border.width: 4
+
+        Column {
+            id: mapListColumn
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 5
+            Repeater {
+                model: Map.availableMaps()
+                delegate: Rectangle {
+                    height: mapListColumn.height / 4 - 15
+                    property bool selected: Map.name === modelData
+//                    color: selected ? "white" : "transparent"
+                    color: selected ? "white" : (mouseArea.containsMouse ? "#1fffffff" : "transparent")
+                    border.color: "white"
+                    border.width: mouseArea.containsMouse ? 4 : 0
+                    width: mapListColumn.width
+                    Text {
+                        color: parent.selected  ? "black" : "white"
+                        text: modelData
+//                        font.pixelSize: parent.height - 5
+                        antialiasing: false
+                        renderType: Text.NativeRendering
+                    }
+
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: MouseArea.PointingHandCursor
+                        onClicked: {
+                            if (parent.selected) {
+                                return;
+                            }
+                            Map.loadMap(modelData)
+                        }
                     }
                 }
             }
@@ -356,9 +413,9 @@ Item {
     Button {
         id: startButton
         anchors {
-            top: playerList.bottom
-            right: playerList.right
-            left: playerList.left
+            top: mapList.bottom
+            right: mapList.right
+            left: mapList.left
             topMargin: 10
         }
         height: 60

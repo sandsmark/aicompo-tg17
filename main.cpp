@@ -169,8 +169,7 @@ int main(int argc, char *argv[])
             return new Settings;
         });
 
-//        qmlRegisterType<Player>();//"org.gathering.ghostly", 1, 0, "Player");
-        QQuickView *view = new QQuickView; // we leak this on exit, yolo
+        QQuickView *view = new QQuickView;
         QObject::connect(view->engine(), &QQmlEngine::quit, app, &QGuiApplication::quit);
         view->setResizeMode(QQuickView::SizeRootObjectToView);
 
