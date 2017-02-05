@@ -137,7 +137,7 @@ void GameManager::endRound()
     m_roundsPlayed++;
     emit roundsPlayedChanged();
 
-    if (m_roundsPlayed < m_maxRounds) {
+    if (m_roundsPlayed < m_maxRounds || m_maxRounds == -1) {
         // Show the countdown again
         if (m_startTimer.interval() > 0) {
             emit showCountdown();
@@ -234,7 +234,7 @@ void GameManager::gameTick()
     if (m_tickless) {
         // We need to wait for all players to have sent a command
         for (const Player *player : m_players) {
-            if (!player->hasCommand()) {
+            if (player->isAlive() && !player->hasCommand()) {
                 return;
             }
         }

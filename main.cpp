@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
                                           "ms", QString::number(DEFAULT_TICKINTERVAL));
     QCommandLineOption quitOnFinishOption("quit-on-finish", "Exit the game after playing all rounds");
     QCommandLineOption fullscreenOption("fullscreen" , "Start the game in fullscreen" );
-    QCommandLineOption roundsOption("rounds", "Set the number of rounds to <rounds>, default " + QString::number(MAX_ROUNDS),
+    QCommandLineOption roundsOption("rounds", "Set the number of rounds to <rounds>, default " + QString::number(MAX_ROUNDS) + ". Set to -1 to play forever.",
                                     "rounds", QString::number(MAX_ROUNDS));
     QCommandLineOption headlessOption("headless", "Run without showing the UI, e. g. for running on a server. This implies the start-at and quit-on-finish options.");
     QCommandLineOption ticklessOption("tickless", "Run without a timer, execute a game tick as soon as it has received commands from all players");
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     }
 
     int rounds = parser.value(roundsOption).toInt();
-    if (rounds < 1) {
+    if (rounds < 1 && rounds != -1) {
         qWarning() << "Invalid number of rounds:" << rounds;
         parser.showHelp(-1);
     }
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
         qDebug() << "Waiting for" << startAtPlayers << "players...";
 
         QObject::connect(manager, &GameManager::clientConnected, [&]{
-            if (manager->roundsPlayed() < manager->maxRounds()) {
+            if (manager->roundsPlayed() < manager->maxRounds() || manager->maxRounds() == -1) {
                 qDebug() << "Player" << manager->playerObjects().count() << "of" << startAtPlayers << "connected...";
             }
 
@@ -137,6 +137,9 @@ int main(int argc, char *argv[])
             }
         });
         QObject::connect(manager, &GameManager::clientDisconnected, [&]{
+            if (manager->maxRounds() != -1) {
+                return;
+            }
             qDebug() << "Player disconnected, stopping game";
             manager->stopGame();
         });

@@ -106,7 +106,7 @@ Rectangle {
             id: roundsPlayed
             anchors.bottom: parent.bottom
             anchors.left: parent.left
-            text: "round: " + (GameManager.roundsPlayed + 1) + "/" + GameManager.maxRounds
+            text: "round: " + (GameManager.roundsPlayed + 1) + "/" + (GameManager.maxRounds === -1 ? "Infinite" : GameManager.maxRounds)
             color: "white"
             font.bold: true
             font.pointSize: 40
