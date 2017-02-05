@@ -46,7 +46,9 @@ GameManager::GameManager() : QObject(),
 
     connect(&m_startTimer, &QTimer::timeout, this, &GameManager::startRound);
     connect(&m_tickTimer, &QTimer::timeout, this, &GameManager::gameTick);
-    connect(&m_server, &QTcpServer::newConnection, this, &GameManager::clientConnect);
+    connect(&m_server, &QTcpServer::newConnection, this, &GameManager::onClientConnect);
+
+    connect(&m_server, &QTcpServer::newConnection, this, &GameManager::clientConnected);
 
     connect(this, &GameManager::roundStarted, this, &GameManager::roundRunningChanged);
     connect(this, &GameManager::roundOver, this, &GameManager::roundRunningChanged);
@@ -68,7 +70,8 @@ void GameManager::terminate()
     // Ensure we don't crash because we delete stuff before it disconnects
     for (int i=0; i<m_players.count(); i++) {
         if (m_players[i]->networkClient()) {
-            disconnect(m_players[i]->networkClient(), &NetworkClient::clientDisconnected, this, &GameManager::clientDisconnected);
+            disconnect(m_players[i]->networkClient(), &NetworkClient::clientDisconnected, this, &GameManager::onClientDisconnect);
+            disconnect(m_players[i], &Player::clientDisconnected, this, &GameManager::clientDisconnected);
         }
     }
 
@@ -342,7 +345,7 @@ void GameManager::gameTick()
     emit secondsElapsedChanged();
 }
 
-void GameManager::clientConnect()
+void GameManager::onClientConnect()
 {
     QTcpSocket *socket = m_server.nextPendingConnection();
 
@@ -360,7 +363,7 @@ void GameManager::clientConnect()
     addPlayer(new NetworkClient(socket));
 }
 
-void GameManager::clientDisconnected()
+void GameManager::onClientDisconnect()
 {
     if (m_tickTimer.isActive() || m_roundRunning || m_gameRunning) {
         return;
@@ -403,6 +406,7 @@ void GameManager::addPlayer(NetworkClient *client)
         player->setName("Local user");
     } else {
         player->setName(client->remoteName());
+        connect(player, &Player::clientDisconnected, this, &GameManager::onClientDisconnect);
         connect(player, &Player::clientDisconnected, this, &GameManager::clientDisconnected);
     }
 

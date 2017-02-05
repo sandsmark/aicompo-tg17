@@ -84,6 +84,7 @@ signals:
     void roundOver();
 
     void clientConnected();
+    void clientDisconnected();
     void roundsPlayedChanged();
     void playersChanged();
     void explosion(QPointF position);
@@ -93,8 +94,8 @@ signals:
 
 private slots:
     void gameTick();
-    void clientConnect();
-    void clientDisconnected();
+    void onClientConnect();
+    void onClientDisconnect();
 
 private:
     explicit GameManager();

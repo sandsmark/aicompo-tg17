@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 
         qDebug() << "Waiting for" << startAtPlayers << "players...";
 
-        QObject::connect(manager, &GameManager::playersChanged, [&]{
+        QObject::connect(manager, &GameManager::clientConnected, [&]{
             if (manager->roundsPlayed() < manager->maxRounds()) {
                 qDebug() << "Player" << manager->playerObjects().count() << "of" << startAtPlayers << "connected...";
             }
@@ -135,6 +135,10 @@ int main(int argc, char *argv[])
                 qDebug() << "All players connected, starting game";
                 manager->startGame();
             }
+        });
+        QObject::connect(manager, &GameManager::clientDisconnected, [&]{
+            qDebug() << "Player disconnected, stopping game";
+            manager->stopGame();
         });
     }
 
