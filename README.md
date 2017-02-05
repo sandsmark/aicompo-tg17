@@ -1,11 +1,11 @@
 Ghostly
 ============
 
-A reverse pacman, where you are the ghost.
+A game similar to Pacman™, but where you are the ghosts.
 
 Original idea by Kepler.
 
-Graphics are from http://pacman.shaunew.com/redmine/projects/pacman and licensed under the GPLv3
+Graphics are from http://pacman.shaunew.com/redmine/projects/pacman and licensed under the GPLv3.
 
 ## Windows binary
 
@@ -192,7 +192,6 @@ The follow tiles only appear in the map file, not in the JSON messages:
  * `#`: A floor tile with a starting position for a player.
  * `@`: A floor tile with the starting position for the sudden death monster.
 
----
 
 ## Command line arguments
 
@@ -237,3 +236,6 @@ For Windows, OS X, etc.
  * Use the repository URL https://github.com/sandsmark/ghostly.git
  * Click the green play button.
 
+
+
+*PAC-MAN™ is the registered trademark of BANDAI NAMCO Entertainment, which is not affiliated with nor endorses this software.*
