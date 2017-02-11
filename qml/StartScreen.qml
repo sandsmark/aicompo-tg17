@@ -379,7 +379,6 @@ Item {
                 delegate: Rectangle {
                     height: mapListColumn.height / 4 - 15
                     property bool selected: Map.name === modelData
-//                    color: selected ? "white" : "transparent"
                     color: selected ? "white" : (mouseArea.containsMouse ? "#1fffffff" : "transparent")
                     border.color: "white"
                     border.width: mouseArea.containsMouse ? 4 : 0
@@ -387,7 +386,6 @@ Item {
                     Text {
                         color: parent.selected  ? "black" : "white"
                         text: modelData
-//                        font.pixelSize: parent.height - 5
                         antialiasing: false
                         renderType: Text.NativeRendering
                     }
