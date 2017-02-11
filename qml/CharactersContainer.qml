@@ -86,14 +86,13 @@ Item {
     
     CharacterSprite {
         id: monsterSprite
-        
+
         property QtObject monsterData: GameManager.monster()
         x: monsterData.x * charactersContainer.spriteSize
         y: monsterData.y * charactersContainer.spriteSize
-        
+
         spriteBase: "monster/" +  monsterData.direction
         alive: monsterData.active
-        
     }
 
     Loader {

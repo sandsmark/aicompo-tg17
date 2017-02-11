@@ -180,6 +180,7 @@ void GameManager::startRound()
         m_players[i]->setAlive(true);
         m_players[i]->setPower(Player::NoPower);
     }
+    m_monster->setActive(false);
 
     // Do not allow to change name after game has started
     for (int i=0; i<m_players.count(); i++) {
@@ -343,6 +344,10 @@ void GameManager::gameTick()
         QJsonObject jsonState = serializeForPlayer(player);
         jsonState["map"] = mapState;
         player->networkClient()->sendState(jsonState);
+    }
+
+    if (m_elapsedTimer.elapsed() / 1000 > SUDDEN_DEATH_TIME && !m_monster->isActive()) {
+        m_monster->setActive(true);
     }
 
     emit secondsElapsedChanged();

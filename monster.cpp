@@ -10,7 +10,7 @@ Monster::Monster(QObject *parent) : QObject(parent),
     m_map(nullptr),
     m_x(0),
     m_y(0),
-    m_active(true),
+    m_active(false),
     m_direction("spawn")
 {
 
