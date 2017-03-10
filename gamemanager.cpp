@@ -305,6 +305,7 @@ void GameManager::gameTick()
             }
 
             if (player->currentPower() == Player::SuperPellet) {
+                player->addScore(15);
                 otherPlayer->setAlive(false);
             } else if (otherPlayer->currentPower() == Player::SuperPellet) {
                 player->setAlive(false);
