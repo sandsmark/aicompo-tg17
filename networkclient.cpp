@@ -48,6 +48,13 @@ void NetworkClient::sendEndOfRound()
     sendMessage(message);
 }
 
+void NetworkClient::sendStartOfRound()
+{
+    QJsonObject message;
+    message["messagetype"] = QStringLiteral("startofround");
+    sendMessage(message);
+}
+
 void NetworkClient::sendState(const QJsonObject gameState)
 {
     QJsonObject message;

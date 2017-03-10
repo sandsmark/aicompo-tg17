@@ -170,6 +170,14 @@ There are also two other kinds of messages:
 { "messagetype": "endofround" }
 ```
 
+--
+
+`startofround` - There's a new round starting.
+
+```JSON
+{ "messagetype": "startofround" }
+```
+
 ### Controlling
 
 To do something, send the appropriate command followed by `\n`, for example `RIGHT\n`. The commands are case insensitive.

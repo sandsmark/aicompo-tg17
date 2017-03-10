@@ -179,7 +179,12 @@ void GameManager::startRound()
         m_players[i]->setCommand(QString());
         m_players[i]->setAlive(true);
         m_players[i]->setPower(Player::NoPower);
+
+        if (m_players[i]->networkClient()) {
+            m_players[i]->networkClient()->sendStartOfRound();
+        }
     }
+
     m_monster->setActive(false);
 
     // Do not allow to change name after game has started
