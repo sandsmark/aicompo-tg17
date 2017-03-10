@@ -12,7 +12,7 @@ s.connect((host, port))
 s.send(b"NAME rand0m\n")
 
 while True:
-    sleep(0.1)
+    sleep(0.005)
     r = int(random() * 4)
     if (r == 0):
         s.send(b"up\n")
