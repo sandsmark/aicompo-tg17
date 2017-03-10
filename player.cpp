@@ -169,6 +169,8 @@ QJsonObject Player::serialize()
     playerObject["id"] =  m_id;
     playerObject["x"] = m_x;
     playerObject["y"] = m_y;
+    playerObject["score"] = m_score;
+    playerObject["isdangerous"] = (m_power == SuperPellet);
 
     return playerObject;
 }

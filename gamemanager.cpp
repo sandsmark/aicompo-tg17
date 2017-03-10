@@ -551,6 +551,17 @@ QJsonObject GameManager::serializeForPlayer(Player *player)
 
         playersArray.append(otherPlayer->serialize());
     }
+
+    if (m_monster->isActive()) {
+        QJsonObject monsterObject;
+        monsterObject["id"] =  1000;
+        monsterObject["x"] = m_monster->getX();
+        monsterObject["y"] = m_monster->getY();
+        monsterObject["score"] = 0;
+        monsterObject["isdangerous"] = true;
+        playersArray.append(monsterObject);
+    }
+
     gamestateObject["others"] = playersArray;
 
     return gamestateObject;

@@ -143,7 +143,9 @@ When the game starts, you will start to get "stateupdate" messages after each ga
         "you": {
             "id": 0,
             "x": 11,
-            "y": 13
+            "y": 13,
+            "score": 130,
+            "isdangerous": true
         }
     },
     "messagetype": "stateupdate"
