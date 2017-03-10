@@ -100,6 +100,7 @@ private slots:
 private:
     explicit GameManager();
 
+    void sendStateUpdate();
     void resetPositions();
     QJsonObject serializeForPlayer(Player *player);
 
@@ -117,6 +118,7 @@ private:
     Map *m_map;
     Monster *m_monster;
     bool m_tickless;
+    int m_ticks;
 };
 
 

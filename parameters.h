@@ -8,6 +8,6 @@
 #define MAX_PLAYERS 4
 #define MAX_ROUNDS 4
 
-#define SUDDEN_DEATH_TIME 60
+#define SUDDEN_DEATH_TIME 600
 
 #endif // PARAMETERS_H

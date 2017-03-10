@@ -27,7 +27,8 @@ GameManager::GameManager() : QObject(),
     m_randomGenerator(m_randomDevice()),
     m_map(new Map(this)),
     m_monster(new Monster(this)),
-    m_tickless(false)
+    m_tickless(false),
+    m_ticks(0)
 {
     m_monster->setMap(m_map);
 
@@ -206,6 +207,8 @@ void GameManager::startRound()
         m_tickTimer.start();
     }
     m_roundRunning = true;
+    m_ticks = 0;
+    m_elapsedTimer.restart();
     emit roundStarted();
 }
 
@@ -236,11 +239,13 @@ void GameManager::startGame()
 
 void GameManager::gameTick()
 {
+    m_ticks++;
+
     if (m_tickless) {
         // We need to wait for all players to have sent a command
         for (const Player *player : m_players) {
             if (player->isAlive() && !player->hasCommand()) {
-                qDebug() << "Waiting for command from player";
+                //qDebug() << "Waiting for command from player";
                 return;
             }
         }
@@ -348,9 +353,20 @@ void GameManager::gameTick()
         return;
     }
 
+    if (m_ticks > SUDDEN_DEATH_TIME && !m_monster->isActive()) {
+        m_monster->setActive(true);
+    }
+
+    sendStateUpdate();
+
+    emit secondsElapsedChanged();
+}
+
+void GameManager::sendStateUpdate()
+{
     const QJsonObject mapState = m_map->getSerialized();
     // Send status updates to all connected players
-    for(Player *player : players) {
+    for(Player *player : m_players) {
         if (!player->networkClient()) {
             continue;
         }
@@ -359,12 +375,6 @@ void GameManager::gameTick()
         jsonState["map"] = mapState;
         player->networkClient()->sendState(jsonState);
     }
-
-    if (m_elapsedTimer.elapsed() / 1000 > SUDDEN_DEATH_TIME && !m_monster->isActive()) {
-        m_monster->setActive(true);
-    }
-
-    emit secondsElapsedChanged();
 }
 
 void GameManager::onClientConnect()
