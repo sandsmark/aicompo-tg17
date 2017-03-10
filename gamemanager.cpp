@@ -251,16 +251,13 @@ void GameManager::gameTick()
     QList<Player*> players = m_players;
     std::shuffle(players.begin(), players.end(), m_randomGenerator);
 
-    int dead = 0;
     for(Player *player : players) {
         if (!player->isAlive()) {
-            dead++;
             continue;
         }
 
         if (m_monster->isActive() && m_monster->getX() == player->x() && m_monster->getY() == player->y()) {
             player->setAlive(false);
-            dead++;
             continue;
         }
 
@@ -332,10 +329,21 @@ void GameManager::gameTick()
         }
 
         player->setPosition(newX, newY);
+
+        if (m_monster->isActive() && m_monster->getX() == player->x() && m_monster->getY() == player->y()) {
+            player->setAlive(false);
+            continue;
+        }
+    }
+    int alive = 0;
+    for(Player *player : players) {
+        if (player->isAlive()) {
+            alive++;
+        }
     }
 
     // Check if there's only one player left, but only if there is more than one player playing
-    if (dead > 0 && players.size() - dead < 2) {
+    if (m_map->pelletsLeft() == 0 || (players.count() > 1 && alive == 1) || alive < 1) {
         endRound();
         return;
     }
