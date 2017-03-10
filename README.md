@@ -1,6 +1,9 @@
 Ghostly
 ============
 
+![Screenshot of the game](/screenshot.png?raw=true)
+
+
 A game similar to Pacman™, but where you are the ghosts.
 
 You create an AI that controls one of the four ghosts. Initially you can't pass through other ghosts, so watch out for getting blocked in. You gain points by eating pellets, and by eating a super pellet you can eat other ghosts. The round is over when either the last pellet is gone or there is only one player left.
