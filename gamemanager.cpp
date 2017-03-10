@@ -579,4 +579,5 @@ void GameManager::setTickless(bool tickless)
     }
 
     m_tickless = tickless;
+    m_tickTimer.setSingleShot(tickless);
 }
