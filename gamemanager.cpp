@@ -203,6 +203,9 @@ void GameManager::startRound()
         for (const Player *player : m_players) {
             connect(player, SIGNAL(commandReceived()), &m_tickTimer, SIGNAL(timeout()));
         }
+
+        // To start bots
+        sendStateUpdate();
     } else {
         m_tickTimer.start();
     }
@@ -294,6 +297,7 @@ void GameManager::gameTick()
         }
 
         if (!m_map->isValidPosition(newX, newY)) {
+//            qDebug() << "Invalid position from player";
             continue;
         }
 
