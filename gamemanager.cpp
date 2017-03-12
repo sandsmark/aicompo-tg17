@@ -325,9 +325,12 @@ void GameManager::gameTick()
             }
 
             if (player->currentPower() == Player::SuperPellet) {
-                player->addScore(15);
+                player->addScore(otherPlayer->score());
+                otherPlayer->resetScore();
                 otherPlayer->setAlive(false);
             } else if (otherPlayer->currentPower() == Player::SuperPellet) {
+                otherPlayer->addScore(player->score());
+                player->resetScore();
                 player->setAlive(false);
                 collided = true;
                 break;
