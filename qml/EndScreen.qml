@@ -44,7 +44,7 @@ Rectangle {
                     color: "white"
                     antialiasing: false
                     renderType: Text.NativeRendering
-                    text: (index + 1) + ". " + model.modelData.name + ": " + model.modelData.wins + " wins" + " (" + model.modelData.score + " points)"
+                    text: (index + 1) + ". " + model.modelData.name + ": " + model.modelData.wins + " wins"
                 }
             }
         }

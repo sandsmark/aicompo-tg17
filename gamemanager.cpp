@@ -127,10 +127,19 @@ void GameManager::endRound()
         m_players[i]->networkClient()->sendEndOfRound();
     }
 
+    int maxScore = 0;
     for (int i=0; i<m_players.count(); i++) {
-        if (m_players[i]->isAlive()) {
+        if (!m_players[i]->isAlive()) {
+            continue;
+        }
+
+        maxScore = qMax(maxScore, m_players[i]->score());
+    }
+    for (int i=0; i<m_players.count(); i++) {
+        if (m_players[i]->isAlive() && m_players[i]->score() == maxScore) {
             m_players[i]->addWin();
         }
+        m_players[i]->resetScore();
     }
 
     m_roundsPlayed++;
