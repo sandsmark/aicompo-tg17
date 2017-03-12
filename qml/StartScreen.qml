@@ -364,7 +364,7 @@ Item {
         }
 
         width: 640
-        height: 230
+        height: 275
         anchors.bottomMargin: 100
         border.color: "white"
         border.width: 4
@@ -377,7 +377,7 @@ Item {
             Repeater {
                 model: Map.availableMaps()
                 delegate: Rectangle {
-                    height: mapListColumn.height / 4 - 15
+                    height: mapListColumn.height / 5 - 15
                     property bool selected: Map.name === modelData
                     color: selected ? "white" : (mouseArea.containsMouse ? "#1fffffff" : "transparent")
                     border.color: "white"

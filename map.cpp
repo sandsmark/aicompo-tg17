@@ -10,7 +10,7 @@ Map::Map(QObject *parent) : QObject(parent),
     m_pelletsLeft(0),
     m_totalPellets(0)
 {
-    loadMap(":/maps/pacman.txt");
+    loadMap(":/maps/default.txt");
 }
 
 bool Map::loadMap(const QString filepath)

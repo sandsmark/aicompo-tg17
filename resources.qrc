@@ -89,5 +89,6 @@
         <file>maps/mspacman3.txt</file>
         <file>maps/mspacman4.txt</file>
         <file>maps/pacman.txt</file>
+        <file>maps/default.txt</file>
     </qresource>
 </RCC>
