@@ -69,11 +69,10 @@ void GameManager::terminate()
     // Ensure we don't crash because we delete stuff before it disconnects
     for (int i=0; i<m_players.count(); i++) {
         if (m_players[i]->networkClient()) {
-            disconnect(m_players[i]->networkClient(), &NetworkClient::clientDisconnected, this, &GameManager::onClientDisconnect);
-            disconnect(m_players[i], &Player::clientDisconnected, this, &GameManager::clientDisconnected);
+            m_players[i]->networkClient()->disconnect();
         }
+        m_players[i]->disconnect();
     }
-
 }
 
 QList<QObject*> GameManager::playerObjects() const
