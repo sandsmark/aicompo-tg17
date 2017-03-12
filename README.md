@@ -14,7 +14,7 @@ Graphics are from http://pacman.shaunew.com/redmine/projects/pacman and licensed
 
 ## Windows binary
 
-There are pre-compiled Windows binaries attached to the releases here: https://github.com/sandsmark/ghostly/releases
+There are pre-compiled Windows binaries attached to the releases here: https://github.com/sandsmark/aicompo-tg17/releases
 
 There are also automatically built and untested pre-release builds available here: https://iskrembilen.com/ghostly-win32/
 
