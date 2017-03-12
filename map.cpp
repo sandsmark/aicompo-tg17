@@ -153,6 +153,7 @@ void Map::resetPowerups()
             emit powerupVisibleChanged(x, y, true);
         }
     }
+    emit pelletsLeftChanged();
 }
 
 bool Map::isValid() const
