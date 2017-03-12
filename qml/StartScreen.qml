@@ -38,9 +38,7 @@ Item {
                 width: height
                 enabled: startScreen.opacity > 0.5
                 emitRate: 1000
-                lifeSpan: startScreen.opacity == 1 ? 1000 : 500
                 size: 50
-                //        sizeVariation: startScreen.opacity == 1 ? 5 : 100
 
                 shape: MaskShape {
                     source: "qrc:///sprites/logo.png"

@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtGraphicalEffects 1.0
-import QtQuick.Particles 2.0
 
 Item {
     id: characterSprite
@@ -8,7 +7,6 @@ Item {
     property string spriteBase
     property bool alive
     property string name: ""
-    property alias spriteImageSource: image.source
 
     height: charactersContainer.spriteSize
     width: height
@@ -25,7 +23,6 @@ Item {
                 walkCycle = 1
             }
         }
-
     }
 
     Image {
