@@ -113,7 +113,7 @@ Rectangle {
             font.pointSize: 40
             antialiasing: false
             renderType: Text.NativeRendering
-            visible: GameManager.gameRunning && GameManager.roundsPlayed < GameManager.maxRounds
+            visible: GameManager.gameRunning && (GameManager.roundsPlayed < GameManager.maxRounds || GameManager.maxRounds == -1)
         }
 
         Item {
@@ -172,7 +172,7 @@ Rectangle {
 
 
         EndScreen {
-            opacity: (GameManager.roundsPlayed >= GameManager.maxRounds) ? 1 : 0
+            opacity: (GameManager.roundsPlayed >= GameManager.maxRounds && GameManager.maxRounds != -1) ? 1 : 0
             anchors.fill: parent
             objectName: "endScreen"
         }
