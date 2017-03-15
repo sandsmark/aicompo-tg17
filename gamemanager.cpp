@@ -139,6 +139,7 @@ void GameManager::endRound()
             m_players[i]->addWin();
         }
         m_players[i]->resetScore();
+        m_players[i]->setPower(Player::NoPower);
     }
 
     m_roundsPlayed++;
