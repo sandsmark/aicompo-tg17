@@ -336,23 +336,24 @@ QJsonObject Map::getSerialized() const
     QJsonArray mapData;
     for (int y=0; y<m_height; y++) {
         QString mapRow;
+        mapRow.reserve(m_width);
         for (int x=0; x<m_width; x++) {
             const Powerup powerup = powerupAt(x, y);
             if (powerup == NormalPellet) {
-                mapRow += ".";
+                mapRow += '.';
                 continue;
             } else if (powerup == SuperPellet) {
-                mapRow += "o";
+                mapRow += QLatin1Char('o');
                 continue;
             }
 
             const TileType tileType = tileAt(x, y);
             if (tileType == WallTile) {
-                mapRow += "|";
+                mapRow += QLatin1Char('|');
             } else if (tileType == DoorTile) {
-                mapRow += "-";
+                mapRow += QLatin1Char('-');
             } else {
-                mapRow += "_";
+                mapRow += QLatin1Char('_');
             }
         }
         mapData.append(mapRow);
