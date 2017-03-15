@@ -166,11 +166,11 @@ void Player::setPosition(int x, int y)
 QJsonObject Player::serialize()
 {
     QJsonObject playerObject;
-    playerObject["id"] =  m_id;
-    playerObject["x"] = m_x;
-    playerObject["y"] = m_y;
-    playerObject["score"] = m_score;
-    playerObject["isdangerous"] = (m_power == SuperPellet);
+    playerObject[QStringLiteral("id")] =  m_id;
+    playerObject[QStringLiteral("x")] = m_x;
+    playerObject[QStringLiteral("y")] = m_y;
+    playerObject[QStringLiteral("score")] = m_score;
+    playerObject[QStringLiteral("isdangerous")] = (m_power == SuperPellet);
 
     return playerObject;
 }
