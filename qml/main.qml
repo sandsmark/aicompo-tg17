@@ -112,6 +112,7 @@ Rectangle {
             font.pointSize: 40
             antialiasing: false
             renderType: Text.NativeRendering
+            visible: GameManager.gameRunning && GameManager.roundsPlayed < GameManager.maxRounds
         }
 
         Item {
