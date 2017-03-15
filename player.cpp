@@ -14,7 +14,7 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) : QObject(
     m_alive(true),
     m_x(0),
     m_y(0),
-    m_score(0),
+    m_points(0),
     m_networkClient(networkClient),
     m_power(NoPower),
     m_powerLeft(0)
@@ -90,6 +90,24 @@ Player::Power Player::currentPower() const
 QString Player::name() const
 {
     return m_name;
+}
+
+int Player::takePoints()
+{
+    const int points = m_points;
+    m_points = 0;
+    emit pointsChanged();
+    return points;
+}
+
+void Player::resetPlayer()
+{
+    m_points = 0;
+    setPower(NoPower);
+    setCommand(QString());
+    setAlive(true);
+
+    emit pointsChanged();
 }
 
 void Player::setName(QString name)
@@ -169,7 +187,7 @@ QJsonObject Player::serialize()
     playerObject[QStringLiteral("id")] =  m_id;
     playerObject[QStringLiteral("x")] = m_x;
     playerObject[QStringLiteral("y")] = m_y;
-    playerObject[QStringLiteral("score")] = m_score;
+    playerObject[QStringLiteral("score")] = m_points;
     playerObject[QStringLiteral("isdangerous")] = (m_power == SuperPellet);
 
     return playerObject;

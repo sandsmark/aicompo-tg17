@@ -11,10 +11,10 @@ Item {
         color: "#c0000000"
     }
 
-    property int totalScore: 0
+    property int totalPoints: 0
     Connections {
         target: GameManager
-        onGameStarted: totalScore = 0
+        onGameStarted: totalPoints = 0
     }
 
     Column {
@@ -32,23 +32,23 @@ Item {
                     width: height
                     smooth: false
                 }
-                property int previousScore: 0
+                property int previousPoints: 0
                 Connections {
                     target: modelData
-                    onScoreChanged:{
-                        playerNameList.totalScore += (modelData.score - previousScore)
-                        previousScore = modelData.score
+                    onPointsChanged:{
+                        playerNameList.totalPoints += (modelData.points - previousPoints)
+                        previousPoints = modelData.points
                     }
                 }
 
                 Item {
                     width: 100
                     height: playerName.height
-                    property real relativeScore: playerNameList.totalScore > 0 ? (modelData.score > 0 ? (modelData.score / playerNameList.totalScore) : 0) : 1
-                    opacity: relativeScore
+                    property real relativePoints: playerNameList.totalPoints > 0 ? (modelData.points > 0 ? (modelData.points / playerNameList.totalPoints) : 0) : 1
+                    opacity: relativePoints
                     Rectangle {
                         color: playerColors[modelData.id]
-                        width: parent.relativeScore * parent.width
+                        width: parent.relativePoints * parent.width
                         height: playerName.height
                         Behavior on width { NumberAnimation { duration: 100; } }
                     }
@@ -58,7 +58,7 @@ Item {
                         color: "white"
                         style: Text.Outline
                         styleColor: "black"
-                        text: modelData.score
+                        text: modelData.points
                     }
                 }
 

@@ -118,6 +118,7 @@ void GameManager::endRound()
     } else {
         m_tickTimer.stop();
     }
+
     m_roundRunning = false;
     emit roundOver();
 
@@ -132,14 +133,13 @@ void GameManager::endRound()
             continue;
         }
 
-        maxScore = qMax(maxScore, m_players[i]->score());
+        maxScore = qMax(maxScore, m_players[i]->points());
     }
+
     for (int i=0; i<m_players.count(); i++) {
-        if (m_players[i]->isAlive() && m_players[i]->score() == maxScore) {
+        if (m_players[i]->isAlive() && m_players[i]->points() == maxScore) {
             m_players[i]->addWin();
         }
-        m_players[i]->resetScore();
-        m_players[i]->setPower(Player::NoPower);
     }
 
     m_roundsPlayed++;
@@ -165,10 +165,10 @@ void GameManager::endRound()
             qInfo().noquote().nospace()
                      << "name:" << player->name()
                      << ";wins:" << player->wins()
-                     << ";score:" << player->score();
+                     << ";score:" << player->points();
             scoreFile.write(player->name().toUtf8() + ' ' +
                             QByteArray::number(player->wins()) + ' ' +
-                            QByteArray::number(player->score()));
+                            QByteArray::number(player->points()));
         }
     }
 }
@@ -183,13 +183,7 @@ void GameManager::startRound()
         return;
     }
 
-    resetPositions();
-
     for (int i=0; i<m_players.count(); i++) {
-        m_players[i]->setCommand(QString());
-        m_players[i]->setAlive(true);
-        m_players[i]->setPower(Player::NoPower);
-
         if (m_players[i]->networkClient()) {
             m_players[i]->networkClient()->sendStartOfRound();
         }
@@ -231,7 +225,7 @@ void GameManager::startGame()
     }
 
     for (int i=0; i<m_players.count(); i++) {
-        m_players[i]->resetScore();
+        m_players[i]->resetPlayer();
     }
 
 
@@ -325,12 +319,10 @@ void GameManager::gameTick()
             }
 
             if (player->currentPower() == Player::SuperPellet) {
-                player->addScore(otherPlayer->score());
-                otherPlayer->resetScore();
+                player->addPoints(otherPlayer->takePoints());
                 otherPlayer->setAlive(false);
             } else if (otherPlayer->currentPower() == Player::SuperPellet) {
-                otherPlayer->addScore(player->score());
-                player->resetScore();
+                otherPlayer->addPoints(player->takePoints());
                 player->setAlive(false);
                 collided = true;
                 break;
@@ -343,10 +335,10 @@ void GameManager::gameTick()
 
         Map::Powerup powerup = m_map->takePowerup(newX, newY);
         if (powerup == Map::NormalPellet) {
-            player->addScore(1);
+            player->addPoints(1);
         } else if (powerup == Map::SuperPellet) {
             player->setPower(Player::SuperPellet);
-            player->addScore(10);
+            player->addPoints(10);
         }
 
         player->setPosition(newX, newY);
@@ -447,7 +439,7 @@ void GameManager::addPlayer(NetworkClient *client)
 
     m_players.append(player);
 
-    resetPositions();
+    resetPlayers();
 
     if (!client) {
         connect(this, &GameManager::humanMove, player, &Player::setCommand);
@@ -550,7 +542,7 @@ void GameManager::stopGame()
     emit playersChanged();
 }
 
-void GameManager::resetPositions()
+void GameManager::resetPlayers()
 {
     if (m_players.count() == 0) {
         return;
@@ -571,6 +563,7 @@ void GameManager::resetPositions()
 
     for (int i=0; i<playerCount; i++) {
         players[i]->setPosition(positions[i].x(), positions[i].y());
+        players[i]->resetPlayer();
     }
 }
 

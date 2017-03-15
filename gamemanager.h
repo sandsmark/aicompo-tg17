@@ -101,7 +101,7 @@ private:
     explicit GameManager();
 
     void sendStateUpdate();
-    void resetPositions();
+    void resetPlayers();
     QJsonObject serializeForPlayer(Player *player);
 
     QList<Player*> m_players;
