@@ -200,6 +200,7 @@ void GameManager::startRound()
         m_players[i]->networkClient()->disconnect(m_players[i]->networkClient(), &NetworkClient::nameChanged, m_players[i], &Player::setName);
     }
 
+    resetPlayers();
     m_map->resetPowerups();
 
     if (m_tickless) {
