@@ -1,6 +1,6 @@
 QT += network quick
 
-CONFIG += c++11
+CONFIG += c++11 optimize_full
 
 linux: QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
 
