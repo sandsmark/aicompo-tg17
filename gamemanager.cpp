@@ -603,6 +603,9 @@ void GameManager::setTickless(bool tickless)
 {
     if (tickless) {
         qDebug() << "Starting game in tickless mode, good luck!";
+        m_startTimer.setInterval(0);
+    } else {
+        m_startTimer.setInterval(1500);
     }
 
     m_tickless = tickless;
