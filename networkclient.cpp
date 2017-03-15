@@ -55,7 +55,7 @@ void NetworkClient::sendStartOfRound()
     sendMessage(message);
 }
 
-void NetworkClient::sendState(const QJsonObject gameState)
+void NetworkClient::sendState(const QJsonObject &gameState)
 {
     QJsonObject message;
     message["messagetype"] = QStringLiteral("stateupdate");

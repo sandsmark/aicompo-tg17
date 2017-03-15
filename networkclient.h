@@ -17,7 +17,7 @@ public:
     explicit NetworkClient(QTcpSocket *socket);
     QString remoteName();
     void sendWelcome(const QJsonObject &mapData, const QJsonObject &playerdata);
-    void sendState(const QJsonObject gameState);
+    void sendState(const QJsonObject &gameState);
     void sendEndOfRound();
     void sendStartOfRound();
     void sendDead();
