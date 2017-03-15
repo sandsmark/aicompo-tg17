@@ -66,7 +66,7 @@ Rectangle {
             color: "white"
             antialiasing: false
             renderType: Text.NativeRendering
-            visible: GameManager.gameRunning
+            visible: GameManager.gameRunning && roundsPlayed.visible
         }
 
         Rectangle {
@@ -80,7 +80,7 @@ Rectangle {
             color: "transparent"
             border.color: "white"
             border.width: 4
-            visible: GameManager.gameRunning
+            visible: GameManager.gameRunning && roundsPlayed.visible
 
             Rectangle {
                 anchors {
@@ -99,7 +99,8 @@ Rectangle {
                 right: parent.right
                 top: parent.top
             }
-            visible: GameManager.gameRunning && !GameManager.roundRunning && !startCountdown.visible
+
+            visible: GameManager.gameRunning && !GameManager.roundRunning && !startCountdown.visible && roundsPlayed.visible
         }
 
         Text {
@@ -154,6 +155,7 @@ Rectangle {
         // List of names of players
         PlayerNameList {
             id: playerNameList
+            visible: roundsPlayed.visible
             anchors {
                 top: parent.top
                 left: parent.left
