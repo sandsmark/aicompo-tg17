@@ -1,6 +1,10 @@
 var parser = require('./parser.js');
 var Navigator = require('./navigation.js');
 
+/**
+ * Gamestate constructor
+ * @param socket
+ */
 function gameState(socket)
 {
     // Initial variables
@@ -19,10 +23,12 @@ function gameState(socket)
 
 /**
  * Receive data from server, and start doing stuff
+ * @param data
  */
 gameState.prototype.update = function(data)
 {
-    switch (data.messagetype) {
+    switch (data.messagetype)
+    {
         case 'welcome':
             this.state = data;
             this.map = parser.ParseMap(this.state.map.content);
@@ -33,15 +39,15 @@ gameState.prototype.update = function(data)
             break;
 
         case 'dead':
-            console.log("I ded...");
+            console.log('I ded...');
             break;
 
         case 'startofround':
-            console.log("LET'S DO THIS!!!!");
+            console.log('LET\'S DO THIS!!!!');
             break;
 
         case 'endofround':
-            console.log("Round is over - nothing more to do");
+            console.log('Round is over - nothing more to do');
             break;
 
         case 'stateupdate':
@@ -56,29 +62,32 @@ gameState.prototype.update = function(data)
             this.findMove();
             break;
     }
-}
+};
 
 /**
  * Find a move and execute it
  */
 gameState.prototype.findMove = function() {
     // This is where you would some sort of path finding algorithm
-    var navigator = new Navigator()
-    var move = navigator.randomMove();
+
+    var navigator = new Navigator(this.map);
+    var move = navigator.randomLegalMove(this.me.x, this.me.y);
+    // var move = navigator.randomMove();
     this.sendToServer(move);
-}
+};
 
 /**
  * Send input to server
+ * @param input
  */
 gameState.prototype.sendToServer = function(input)
 {
-    if (typeof input === "string") {
+    if (typeof input === 'string') {
         this.socket.write(input);
-        console.log("Sent command to server: "+ input);
+        console.log('Sent command to server: '+ input);
     } else {
-        console.log("Not sending command to server: Not a string");
+        console.log('Not sending command to server: Not a string');
     }
-}
+};
 
 module.exports = gameState;

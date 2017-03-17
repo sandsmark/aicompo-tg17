@@ -22,7 +22,7 @@ client.on('connect', function()
 {
     console.log('CONNECTED TO: ' + HOST + ':' + PORT);
     client.write('NAME #SECRETS\n');
-})
+});
 
 // Something went wrong, go die
 client.on('error', function(data) {
@@ -35,10 +35,10 @@ client.on('data', function(data) {
     var hrstart = process.hrtime();
 
     iter++;
-    console.log("--------Iteration : " + iter + "------");
+    console.log('--------Iteration : ' + iter + '------');
 
     // Splits data on \n
-    var d = data.toString("utf-8").split("\n");
+    var d = data.toString('utf-8').split('\n');
 
     // Removes last object in array, as it's an \n
     d.pop();
@@ -50,17 +50,17 @@ client.on('data', function(data) {
     }
 
     var hrend = process.hrtime(hrstart);
-    console.info("Execution time: %ds %dms", hrend[0], hrend[1]/1000000);
-    console.log("--------------------------------------\n");
+    console.info('Execution time: %ds %dms', hrend[0], hrend[1]/1000000);
+    console.log('--------------------------------------\n');
 });
 
 // Try to close in a good manner
 client.on('close', function(error) {
     if (error == true)
     {
-        console.log("Unexpected disconnect");
+        console.log('Unexpected disconnect');
     } else {
-        console.log("Disconnected. Trying reconnect in 1 second");
+        console.log('Disconnected. Trying reconnect in 1 second');
 
         // Try to reconnect once in 1 second
         setTimeout(function()
