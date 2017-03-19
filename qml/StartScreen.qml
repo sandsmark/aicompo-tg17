@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Particles 2.0
 import QtGraphicalEffects 1.0
+import QtQuick.Dialogs 1.1
 import org.gathering.ghostly 1.0
 
 Item {
@@ -405,13 +406,50 @@ Item {
         }
     }
 
-    // Start button
+    MessageDialog {
+        id: mapErrorDialog
+        title: "Error while loading map"
+        icon: StandardIcon.Critical
+    }
+
+    FileDialog {
+        id: selectMapDialog
+        title: "Please choose a map file"
+        visible: false
+        nameFilters: ["Map files (*.txt)"]
+        onAccepted: {
+            Settings.setValue(Settings.MapFolder, selectMapDialog.folder)
+            if (!Map.loadMap(fileUrl)) {
+                mapErrorDialog.text = Map.parseError()
+                mapErrorDialog.visible = true
+            }
+        }
+    }
+
+    // Custom map button
     Button {
-        id: startButton
+        id: customMapButton
         anchors {
             top: mapList.bottom
             right: mapList.right
             left: mapList.left
+            topMargin: 10
+        }
+        height: 60
+        text: "Select custom map..."
+        onClicked: {
+            selectMapDialog.folder = Settings.getValue(Settings.MapFolder, selectMapDialog.shortcuts.home)
+            selectMapDialog.visible = true
+        }
+    }
+
+    // Start button
+    Button {
+        id: startButton
+        anchors {
+            top: customMapButton.bottom
+            right: customMapButton.right
+            left: customMapButton.left
             topMargin: 10
         }
         height: 60

@@ -6,6 +6,7 @@
 #include <QPoint>
 #include <QColor>
 #include <QJsonObject>
+#include <QUrl>
 
 class Map : public QObject
 {
@@ -45,7 +46,10 @@ public:
 
     explicit Map(QObject *parent);
 
-    Q_INVOKABLE bool loadMap(const QString filepath);
+    Q_INVOKABLE bool loadMap(const QUrl &fileUrl) { return loadMap(fileUrl.toLocalFile()); }
+    Q_INVOKABLE bool loadMap(const QString &filepath);
+    Q_INVOKABLE QString parseError() const { return m_parseError; }
+
     Q_INVOKABLE QStringList availableMaps();
     void resetPowerups();
 
@@ -93,6 +97,7 @@ private:
     int m_totalPellets;
     int m_arenaTop;
     int m_arenaBottom;
+    QString m_parseError;
 };
 
 #endif // MAP_H

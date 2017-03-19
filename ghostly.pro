@@ -2,7 +2,10 @@ QT += network quick
 
 CONFIG += c++11 optimize_full
 
-linux: QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
+linux {
+    QMAKE_CXXFLAGS += -DAPP_VERSION=\\\"`git rev-parse --short HEAD`\\\"
+    QT += widgets
+}
 
 win32:RC_ICONS += ghostly.ico
 

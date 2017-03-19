@@ -11,6 +11,10 @@
 #include <QFontDatabase>
 #include <iostream>
 
+#ifdef Q_OS_LINUX
+#include <QApplication>
+#endif
+
 void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QString txt;
@@ -60,7 +64,12 @@ int main(int argc, char *argv[])
     if (runHeadless) {
         app = new QCoreApplication(argc, argv);
     } else {
+#ifdef Q_OS_LINUX
+        // Work around a bug in the KDE Plasma platform integration plugin that makes file dialogs crash with pure QtQuick applications
+        QGuiApplication *guiApp = new QApplication(argc, argv);
+#else
         QGuiApplication *guiApp = new QGuiApplication(argc, argv);
+#endif
         app = guiApp;
 
         const int fontId = QFontDatabase::addApplicationFont(":/font/Perfect DOS VGA 437 Win.ttf");

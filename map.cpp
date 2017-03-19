@@ -13,35 +13,35 @@ Map::Map(QObject *parent) : QObject(parent),
     loadMap(":/maps/default.txt");
 }
 
-bool Map::loadMap(const QString filepath)
+bool Map::loadMap(const QString &filepath)
 {
     QFile file(filepath);
 
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Map: Unable to open map file:" << filepath;
+        m_parseError = "Map: Unable to open map file: " + filepath;
         return false;
     }
 
-    m_name = filepath;
-    m_tiles.clear();
-    m_startingPositions.clear();
-    m_totalPellets = 0;
-
     QVector<TileType> tiles;
-    m_width = -1;
-    m_height = 0;
+    int width = -1;
+    int height = 0;
+    QVector<QPoint> startingPositions;
+    QPoint monsterSpawn;
+    int totalPellets = 0;
     while (!file.atEnd()) {
         QByteArray line = file.readLine().trimmed();
         if (line.isEmpty()) {
             continue;
         }
 
-        if (m_width == -1) {
-            m_width = line.length();
+        if (width == -1) {
+            width = line.length();
         }
 
-        if (line.length() > 0 && line.length() != m_width) {
-            qWarning() << "Invalid map line at line" << m_height << "width:" << line.length() << line;
+        if (line.length() > 0 && line.length() != width) {
+            qWarning() << "Invalid map line at line" << height << "width:" << line.length() << line;
+            m_parseError = "Invalid map line at line number " + QString::number(height) + " width: " + QString::number(line.length()) + "\nContents: " + line;
             return false;
         }
         int x = 0;
@@ -58,28 +58,38 @@ bool Map::loadMap(const QString filepath)
                 break;
             case '.':
                 tiles.append(PelletTile);
-                m_totalPellets++;
+                totalPellets++;
                 break;
             case 'o':
                 tiles.append(SuperPelletTile);
                 break;
             case '#':
                 tiles.append(FloorTile);
-                m_startingPositions.append(QPoint(x, m_height));
+                startingPositions.append(QPoint(x, height));
                 break;
             case '@':
                 tiles.append(FloorTile);
-                m_monsterSpawn = QPoint(x, m_height);
+                monsterSpawn = QPoint(x, height);
                 break;
             default:
                 qWarning() << "Invalid tile: '" << tile << "'";
-                tiles.append(InvalidTile);
-                break;
+                m_parseError = QStringLiteral("Invalid tile '") + tile +  "' at line number " + QString::number(height) + ":\n " + line;
+                return false;
             }
             x++;
         }
-        m_height++;
+        height++;
     }
+
+    // Map is properly parsed, now we can modify ourselves
+    m_name = filepath;
+    m_tiles.clear();
+    m_startingPositions = startingPositions;
+    m_totalPellets = totalPellets;
+    m_monsterSpawn = monsterSpawn;
+
+    m_width = width;
+    m_height = height;
     m_tiles = tiles;
 
     emit mapChanged();
@@ -102,6 +112,7 @@ bool Map::loadMap(const QString filepath)
             }
         }
     }
+
     return true;
 }
 

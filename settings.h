@@ -11,7 +11,8 @@ class Settings : public QObject
 public:
     enum Key {
         EnableEffects,
-        EnableRetro
+        EnableRetro,
+        MapFolder
     };
     Q_ENUM(Key)
 
