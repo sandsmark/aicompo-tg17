@@ -12,6 +12,26 @@ Original idea by Kepler.
 
 Graphics are from http://pacman.shaunew.com/redmine/projects/pacman and licensed under the GPLv3.
 
+## Game rules
+
+ * You can move up, down, left or right each game tick.
+ * You only move one square per game tick.
+ * If you don't send a new command until the new game tick starts your bot doesn't move.
+ * Each game tick the latest command sent by all players is handled in a randomized order (randomized for each gametick).
+ * If you try to move into a square that is already occupied by another bot the move fails.
+ * You win by having the most points at the end of the round.
+ * The round is over when there are either no pellets left, or only one player left.
+ * If you eat a superpellet (the big pellets) you gain the ability to eat other players for 100 game ticks (i. e. 100 moves).
+ * If you eat another player (i. e. collide with it when you have the superpellet powerup) the player dies and you get all their points.
+ * If two players collide and both have eaten a superpellet the superpellet is ignored and it is handled like a normal collision.
+ * If a game isn't over after 600 game ticks have elapsed, sudden death mode is activated.
+ * In sudden death mode a monster is activated (the yellow thing).
+ * The monster tries to eat all pellets as quickly as possible.
+ * If you collide with the monster you die but don't lose your points.
+
+Please file an issue if there's anything unclear about how the game works: https://github.com/sandsmark/aicompo-tg17/issues
+
+
 ## Windows binary
 
 There are pre-compiled Windows binaries attached to the releases here: https://github.com/sandsmark/aicompo-tg17/releases
@@ -239,7 +259,7 @@ It also prints debug output to stderr, and informative messages to stdout, for a
 
 ### Manual, on Linux
 
-Check out the code, install the development packages for qt5 declarative and qt5 graphicaleffects, and run: `qmake && make`.
+Check out the code with git, install the development packages for qt5 declarative and qt5 graphicaleffects, and run: `qmake && make`.
 
 ### Alternative
 
