@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QJsonArray>
+#include <QSettings>
 
 Map::Map(QObject *parent) : QObject(parent),
     m_width(0),
@@ -10,7 +11,10 @@ Map::Map(QObject *parent) : QObject(parent),
     m_pelletsLeft(0),
     m_totalPellets(0)
 {
-    loadMap(":/maps/default.txt");
+    QSettings settings;
+    if (!loadMap(settings.value("map", ":/maps/default.txt").toString())) {
+        loadMap(":/maps/default.txt");
+    }
 }
 
 bool Map::loadMap(const QString &filepath)
@@ -112,6 +116,9 @@ bool Map::loadMap(const QString &filepath)
             }
         }
     }
+
+    QSettings settings;
+    settings.setValue("map", filepath);
 
     return true;
 }
