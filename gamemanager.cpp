@@ -442,7 +442,6 @@ void GameManager::addPlayer(NetworkClient *client)
         connect(this, &GameManager::humanMove, player, &Player::setCommand);
         player->setName("Local user");
     } else {
-        client->sendWelcome(m_map->getSerialized(), player->serialize());
         player->setName(client->remoteName());
         connect(player, &Player::clientDisconnected, this, &GameManager::onClientDisconnect);
         connect(player, &Player::clientDisconnected, this, &GameManager::clientDisconnected);
@@ -561,6 +560,9 @@ void GameManager::resetPlayers()
     for (int i=0; i<playerCount; i++) {
         players[i]->setPosition(positions[i].x(), positions[i].y());
         players[i]->resetPlayer();
+        if (players[i]->networkClient()) {
+            players[i]->networkClient()->sendWelcome(m_map->getSerialized(), players[i]->serialize());
+        }
     }
 }
 
