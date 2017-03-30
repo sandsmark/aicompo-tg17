@@ -48,8 +48,9 @@ public:
 
     NetworkClient *networkClient() { return m_networkClient; }
 
-    void addPoints(int points) { m_points += points; emit pointsChanged();}
+    void addPoints(int points) { m_points += points; m_totalPoints += points; emit pointsChanged();}
     int points() const { return m_points; }
+    int totalPoints() const { return m_totalPoints; }
     int takePoints();
     void resetPlayer();
 
@@ -110,6 +111,7 @@ private:
     int m_y;
 
     int m_points;
+    int m_totalPoints;
 
     NetworkClient *m_networkClient;
     Power m_power;

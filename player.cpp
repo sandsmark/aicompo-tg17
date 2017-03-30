@@ -15,6 +15,7 @@ Player::Player(QObject *parent, int id, NetworkClient *networkClient) : QObject(
     m_x(0),
     m_y(0),
     m_points(0),
+    m_totalPoints(0),
     m_networkClient(networkClient),
     m_power(NoPower),
     m_powerLeft(0)
@@ -96,6 +97,7 @@ int Player::takePoints()
 {
     const int points = m_points;
     m_points = 0;
+    m_totalPoints -= points;
     emit pointsChanged();
     return points;
 }
