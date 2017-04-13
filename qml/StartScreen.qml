@@ -360,29 +360,42 @@ Item {
             topMargin: 10
             left: playerList.left
             right: playerList.right
+            bottom: customMapButton.top
+            bottomMargin: 10
         }
 
         width: 640
-        height: 275
-        anchors.bottomMargin: 100
         border.color: "white"
         border.width: 4
+        clip: true
+
+        Flickable {
+            id: maplistFlickable
+            anchors.fill: parent
+            anchors.margins: 10
+            contentHeight: mapListColumn.height
+            contentWidth: mapListColumn.width
+            boundsBehavior: Flickable.StopAtBounds
 
         Column {
             id: mapListColumn
-            anchors.fill: parent
-            anchors.margins: 10
             spacing: 5
             Repeater {
                 model: Map.availableMaps()
                 delegate: Rectangle {
-                    height: mapListColumn.height / 5 - 15
+                    height: mapTitle.height + 10
                     property bool selected: Map.name === modelData
                     color: selected ? "white" : (mouseArea.containsMouse ? "#1fffffff" : "transparent")
                     border.color: "white"
                     border.width: mouseArea.containsMouse ? 4 : 0
-                    width: mapListColumn.width
+                    width: maplistFlickable.width
                     Text {
+                        id: mapTitle
+                        anchors {
+                            verticalCenter: parent.verticalCenter
+                            left: parent.left
+                        }
+
                         color: parent.selected  ? "black" : "white"
                         text: modelData
                         antialiasing: false
@@ -403,6 +416,7 @@ Item {
                     }
                 }
             }
+        }
         }
     }
 
@@ -430,12 +444,12 @@ Item {
     Button {
         id: customMapButton
         anchors {
-            top: mapList.bottom
-            right: mapList.right
-            left: mapList.left
-            topMargin: 10
+            bottom: startButton.top
+            bottomMargin: 10
+            horizontalCenter: parent.horizontalCenter
         }
         height: 60
+        width: mapList.width
         text: "Select custom map..."
         onClicked: {
             selectMapDialog.folder = Settings.getValue(Settings.MapFolder, selectMapDialog.shortcuts.home)
@@ -447,12 +461,12 @@ Item {
     Button {
         id: startButton
         anchors {
-            top: customMapButton.bottom
-            right: customMapButton.right
-            left: customMapButton.left
-            topMargin: 10
+            bottom: quitButton.top
+            bottomMargin: 10
+            horizontalCenter: parent.horizontalCenter
         }
         height: 60
+        width: mapList.width
         text: "Start game"
         active: (GameManager.players.length > 0)
         onClicked: {
@@ -473,7 +487,7 @@ Item {
             bottomMargin: 10
         }
         height: 50
-        width: 200
+        width: mapList.width
         text: "Quit"
         onClicked: {
             Qt.quit()
