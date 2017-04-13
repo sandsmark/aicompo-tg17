@@ -189,6 +189,15 @@ int main(int argc, char *argv[])
         view->setSource(QUrl("qrc:/qml/main.qml"));
         QObject::connect(view->rootObject(), SIGNAL(userMove(QString)), manager, SIGNAL(humanMove(QString)));
 
+        if (parser.isSet(autostartOption)) {
+            QQuickItem *startScreen = qobject_cast<QQuickItem*>(view->rootObject()->findChild<QObject*>("startScreen"));
+            if (startScreen) {
+                startScreen->setVisible(false);
+            } else {
+                qWarning() << "Unable to find startscreen";
+            }
+        }
+
         if (parser.isSet(fullscreenOption)) {
             view->showFullScreen();
         } else {

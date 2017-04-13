@@ -6,12 +6,13 @@ import org.gathering.ghostly 1.0
 
 Item {
     id: startScreen
+    objectName: "startScreen"
 
     visible: opacity > 0
 
     Behavior on opacity {
         NumberAnimation {
-            duration: 1500
+            duration: 500
         }
     }
 
