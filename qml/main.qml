@@ -9,8 +9,8 @@ Rectangle {
 
     color: "black"
 
-    height: 1200
-    width: 1600
+    height: 1080
+    width: 1920
 
     property int scaleSize: (width < height) ? width : height
     property bool effectsEnabled: Settings.getValue(Settings.EnableEffects, true)
@@ -100,7 +100,7 @@ Rectangle {
                 top: parent.top
             }
 
-            visible: GameManager.gameRunning && !GameManager.roundRunning && !startCountdown.visible && roundsPlayed.visible
+            visible: GameManager.gameRunning && !GameManager.roundRunning && roundsPlayed.visible
         }
 
         Text {
@@ -162,13 +162,6 @@ Rectangle {
             }
         }
 
-
-        StartCountdown {
-            id: startCountdown
-            anchors.centerIn: parent
-            height: parent.height / 2
-            width: height / 3
-        }
 
 
         EndScreen {
@@ -267,7 +260,7 @@ Rectangle {
                 property variant txt_source: retroShader.source
                 property variant blurredSource: burninTexture
                 property real fps: 60
-                property real blurCoefficient: 1.0 / (fps * 0.64)
+                property real blurCoefficient: 1.0 / (fps * 0.3)
                 width: gameArea.width
                 height: gameArea.height
                 blending: false
