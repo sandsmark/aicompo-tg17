@@ -176,9 +176,10 @@ void GameManager::endRound()
                      << "name:" << player->name()
                      << ";wins:" << player->wins()
                      << ";score:" << player->totalPoints();
-            scoreFile.write(player->name().toUtf8() + ' ' +
-                            QByteArray::number(player->wins()) + ' ' +
-                            QByteArray::number(player->totalPoints()));
+            scoreFile.write(player->name().toUtf8() + ';' +
+                            QByteArray::number(player->wins()) + ';' +
+                            QByteArray::number(player->points()));
+            scoreFile.write("\n");
         }
     }
 }
