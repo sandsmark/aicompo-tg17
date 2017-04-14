@@ -9,7 +9,6 @@ NetworkClient::NetworkClient(QTcpSocket *socket) :
     QObject(socket), m_socket(socket)
 {
     socket->open(QIODevice::ReadWrite);
-    m_name = m_socket->peerAddress().toString();
 
     connect(m_socket, &QTcpSocket::disconnected, this, &NetworkClient::clientDisconnected);
     connect(m_socket, &QTcpSocket::readyRead, this, &NetworkClient::dataReceived);
@@ -81,6 +80,7 @@ void NetworkClient::dataReceived()
             if (m_name.isEmpty()) {
                 static int dumbs = 0;
                 m_name = QString("Invalid %1").arg(++dumbs);
+                qWarning() << "REceived invalid name:" << nameCommand;
             }
             emit nameChanged(m_name);
             continue;
