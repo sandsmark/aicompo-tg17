@@ -127,14 +127,28 @@ void GameManager::endRound()
         m_players[i]->networkClient()->sendEndOfRound();
     }
 
-    int maxScore = 0;
-    for (int i=0; i<m_players.count(); i++) {
-        maxScore = qMax(maxScore, m_players[i]->points());
+    int connectedPlayers = 0;
+    for (Player * player : m_players) {
+        if (!player->isDisconnected()) {
+            connectedPlayers++;
+        }
     }
+    if (connectedPlayers == 1) {
+        for (Player *player : m_players) {
+            if (!player->isDisconnected()) {
+                player->addWin();
+            }
+        }
+    } else {
+        int maxScore = 0;
+        for (int i=0; i<m_players.count(); i++) {
+            maxScore = qMax(maxScore, m_players[i]->points());
+        }
 
-    for (int i=0; i<m_players.count(); i++) {
-        if (m_players[i]->points() == maxScore) {
-            m_players[i]->addWin();
+        for (int i=0; i<m_players.count(); i++) {
+            if (m_players[i]->points() == maxScore) {
+                m_players[i]->addWin();
+            }
         }
     }
 
@@ -353,7 +367,7 @@ void GameManager::gameTick()
     }
 
     // Check if there's only one player left, but only if there is more than one player playing
-    if (m_map->pelletsLeft() == 0 || (players.count() > 1 && alive == 1) || alive < 1) {
+    if (m_map->pelletsLeft() == 0 || alive < 2) {
         endRound();
         return;
     }
