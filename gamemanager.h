@@ -62,6 +62,8 @@ public:
 
     void setTickless(bool tickless);
 
+    bool allPlayersReady() const;
+
 public slots:
     void endRound();
     void startRound();
@@ -83,6 +85,7 @@ signals:
     void roundStarted();
     void roundOver();
 
+    void clientReady();
     void clientConnected();
     void clientDisconnected();
     void roundsPlayedChanged();

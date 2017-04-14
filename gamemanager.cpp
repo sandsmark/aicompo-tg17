@@ -38,7 +38,7 @@ GameManager::GameManager() : QObject(),
     m_elapsedTimer.start();
 
     // Set up timer for delayed starting of rounds
-    m_startTimer.setInterval(1500);
+    m_startTimer.setInterval(10000);
     m_startTimer.setSingleShot(true);
 
     m_server.listen(QHostAddress::Any, 54321);
@@ -460,6 +460,7 @@ void GameManager::addPlayer(NetworkClient *client)
         player->setName(client->remoteName());
         connect(player, &Player::clientDisconnected, this, &GameManager::onClientDisconnect);
         connect(player, &Player::clientDisconnected, this, &GameManager::clientDisconnected);
+        connect(player, &Player::nameChanged, this, &GameManager::clientReady);
     }
 
     emit playersChanged();
@@ -624,4 +625,14 @@ void GameManager::setTickless(bool tickless)
 
     m_tickless = tickless;
     m_tickTimer.setSingleShot(tickless);
+}
+
+bool GameManager::allPlayersReady() const
+{
+    bool ready = true;
+    for (const Player *player : m_players) {
+        ready = ready && !player->name().isEmpty();
+    }
+
+    return ready;
 }

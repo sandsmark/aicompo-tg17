@@ -135,17 +135,15 @@ int main(int argc, char *argv[])
     manager->setTickless(parser.isSet(ticklessOption));
 
     if (parser.isSet(autostartOption) || runHeadless) {
-        manager->setCountdownDuration(500);
-
         qDebug() << "Waiting for" << startAtPlayers << "players...";
 
-        QObject::connect(manager, &GameManager::clientConnected, [&]{
+        QObject::connect(manager, &GameManager::clientReady, [&]{
             if (manager->roundsPlayed() < manager->maxRounds() || manager->maxRounds() == -1) {
                 qDebug() << "Player" << manager->playerObjects().count() << "of" << startAtPlayers << "connected...";
             }
 
-            if (manager->playerObjects().count() >= startAtPlayers) {
-                qDebug() << "All players connected, starting game";
+            if (manager->playerObjects().count() >= startAtPlayers && manager->allPlayersReady()) {
+                qDebug() << "All players connected and ready, starting game";
                 manager->startGame();
             }
         });
