@@ -38,6 +38,14 @@ There are pre-compiled Windows binaries attached to the releases here: https://g
 
 There are also automatically built and untested pre-release builds available here: https://iskrembilen.com/ghostly-win32/
 
+## Test bot
+
+The test bot used before the public release is here:
+
+https://github.com/sandsmark/ghostlybot
+
+It features some very simple Q-learning and is mostly of historical interest, I don't recommend anyone look at the code to learn anything. Other than what not to do.
+
 ---
 
 ## Keymap
