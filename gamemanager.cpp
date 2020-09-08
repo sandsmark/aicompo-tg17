@@ -118,6 +118,7 @@ void GameManager::endRound()
     } else {
         m_tickTimer.stop();
     }
+    qDebug() << "Round took" << m_elapsedTimer.elapsed() << "ms";
 
     m_roundRunning = false;
     emit roundOver();
