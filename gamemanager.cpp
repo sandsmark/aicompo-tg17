@@ -113,7 +113,7 @@ void GameManager::endRound()
 {
     if (m_tickless) {
         for (const Player *player : m_players) {
-            disconnect(player, SIGNAL(commandReceived()), &m_tickTimer, SIGNAL(timeout()));
+            disconnect(player, &Player::commandReceived, this, &GameManager::gameTick);
         }
     } else {
         m_tickTimer.stop();
@@ -216,7 +216,7 @@ void GameManager::startRound()
 
     if (m_tickless) {
         for (const Player *player : m_players) {
-            connect(player, SIGNAL(commandReceived()), &m_tickTimer, SIGNAL(timeout()));
+            connect(player, &Player::commandReceived, this, &GameManager::gameTick);
         }
 
         // To start bots

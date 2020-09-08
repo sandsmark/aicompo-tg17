@@ -96,6 +96,6 @@ void NetworkClient::sendMessage(const QJsonObject &message)
         return;
     }
 
-    QJsonDocument packet(message);
-    m_socket->write(packet.toJson(QJsonDocument::Compact) + '\n');
+    m_socket->write(QJsonDocument(message).toJson(QJsonDocument::Compact));
+    m_socket->write("\n", 1);
 }
