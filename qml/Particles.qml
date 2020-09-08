@@ -12,7 +12,10 @@ ParticleSystem {
     onHeightChanged: restart()
     Connections {
         target: GameManager
-        onRoundStarted: particles.reset()
+
+        function onRoundStarted() {
+            particles.reset();
+        }
     }
     
     property var particleGroups: ["Player1", "Player2", "Player3", "Player4"]

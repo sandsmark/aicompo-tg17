@@ -14,7 +14,9 @@ Item {
     property int totalPoints: 0
     Connections {
         target: GameManager
-        onGameStarted: totalPoints = 0
+        function onGameStarted() {
+            totalPoints = 0;
+        }
     }
 
     Column {
@@ -35,9 +37,9 @@ Item {
                 property int previousPoints: 0
                 Connections {
                     target: modelData
-                    onPointsChanged:{
-                        playerNameList.totalPoints += (modelData.points - previousPoints)
-                        previousPoints = modelData.points
+                    function onPointsChanged() {
+                        playerNameList.totalPoints += (modelData.points - previousPoints);
+                        previousPoints = modelData.points;
                     }
                 }
 

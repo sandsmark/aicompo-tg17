@@ -22,9 +22,9 @@ Grid {
 
     Connections {
         target: Map
-        onMapChanged: {
-            rowRepeater.model = 0
-            rowRepeater.model = Map.height
+        function onMapChanged() {
+            rowRepeater.model = 0;
+            rowRepeater.model = Map.height;
         }
     }
     
@@ -96,13 +96,13 @@ Grid {
                     smooth: false
                     Connections {
                         target: Map
-                        onPowerupVisibleChanged: {
+                        function onPowerupVisibleChanged(x, y, visible) {
                             if (x != spriteX || y != spriteY) {
                                 return
                             }
                             pellet.visible = visible
                         }
-                        onPowerupChanged: {
+                        function onPowerupChanged(x, y) {
                             if (x != spriteX || y != spriteY) {
                                 return
                             }

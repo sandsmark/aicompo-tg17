@@ -39,7 +39,7 @@ void myMessageHandler(QtMsgType type, const QMessageLogContext &context, const Q
     QFile outFile("log.txt");
     outFile.open(QIODevice::WriteOnly | QIODevice::Append);
     QTextStream ts(&outFile);
-    ts << txt << endl;
+    ts << txt << Qt::endl;
 
     if (type == QtInfoMsg) {
         std::cout << msg.toStdString() << std::endl;
