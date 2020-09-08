@@ -210,7 +210,7 @@ Map::Powerup Map::powerupAt(int x, int y) const
     if (!isWithinBounds(x, y)) {
         return NoPowerup;
     }
-    const int pos = y * m_width + x;
+    const quint32 pos = y * m_width + x;
     if (pos >= m_powerups.size()) {
         return NoPowerup;
     }
@@ -246,7 +246,7 @@ Map::TileType Map::tileAt(int x, int y) const
     if (!isWithinBounds(x, y)) {
         return InvalidTile;
     }
-    const int pos = y * m_width + x;
+    const quint32 pos = y * m_width + x;
     if (pos >= m_tiles.length()) {
         return InvalidTile;
     }
