@@ -352,29 +352,40 @@ QJsonObject Map::getSerialized() const
     ret["pelletsleft"] = pelletsLeft();
 
     QJsonArray mapData;
+
+    const TileType *tiles = m_tiles.data();
+    const Powerup *powerups = m_powerups.data();
     for (int y=0; y<m_height; y++) {
-        QString mapRow;
-        mapRow.reserve(m_width);
+        char *row = new char[m_width + 1];
         for (int x=0; x<m_width; x++) {
-            const Powerup powerup = powerupAt(x, y);
-            if (powerup == NormalPellet) {
-                mapRow += '.';
+            const quint32 index = y * m_width + x;
+
+            switch (powerups[index]) {
+            case NormalPellet:
+                row[x] = '.';
                 continue;
-            } else if (powerup == SuperPellet) {
-                mapRow += QLatin1Char('o');
+            case SuperPellet:
+                row[x] = 'o';
                 continue;
+            default:
+                break;
             }
 
-            const TileType tileType = tileAt(x, y);
-            if (tileType == WallTile) {
-                mapRow += QLatin1Char('|');
-            } else if (tileType == DoorTile) {
-                mapRow += QLatin1Char('-');
-            } else {
-                mapRow += QLatin1Char('_');
+            switch(tiles[index]) {
+            case WallTile:
+                row[x] = '|';
+                break;
+            case DoorTile:
+                row[x] = '-';
+                break;
+            default:
+                row[x] = '_';
+                break;
             }
         }
-        mapData.append(mapRow);
+        row[m_width] = '\0';
+        mapData.append(row);
+        delete [] row;
     }
 
     ret["content"] = mapData;
