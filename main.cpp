@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
                 qDebug() << "Round" << manager->roundsPlayed() << "of" << rounds << "finished";
             }
 
-            if (manager->roundsPlayed() >= rounds) {
+            if (manager->roundsPlayed() >= rounds && rounds != -1) {
                 qDebug() << "Game over.";
                 app->quit();
             }
